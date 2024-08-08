@@ -1,5 +1,2 @@
-test1
-test2
-test3
-test4
-test4
+https://raw.githubusercontent.com/paissaheavyindustries/Dalamud-Repo/main/repo.json
+https://raw.githubusercontent.com/LeonBlade/DalamudPlugins/main/repo.json
