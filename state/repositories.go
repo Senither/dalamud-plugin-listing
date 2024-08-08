@@ -1,25 +1,25 @@
 package state
 
 type Repository struct {
-	Author              string
-	Name                string
-	Punchline           *string
-	Description         string
-	Changelog           *string
-	InternalName        string
-	AssemblyVersion     string
-	RepoUrl             string
-	IconUrl             string
-	ApplicableVersion   *string
-	Tags                []string
-	DalamudApiLevel     int
-	IsHide              *string
-	IsTestingExclusive  *string
-	LastUpdated         uint64
-	DownloadCount       uint64
-	DownloadLinkInstall string
-	DownloadLinkTesting *string
-	DownloadLinkUpdate  *string
+	Author              string       `json:"Author"`
+	Name                string       `json:"Name"`
+	Punchline           *string      `json:"Punchline"`
+	Description         string       `json:"Description"`
+	Changelog           *string      `json:"Changelog"`
+	InternalName        string       `json:"InternalName"`
+	AssemblyVersion     interface{}  `json:"AssemblyVersion"`
+	RepoUrl             string       `json:"RepoUrl"`
+	IconUrl             string       `json:"IconUrl"`
+	ApplicableVersion   *string      `json:"ApplicableVersion"`
+	Tags                []string     `json:"Tags"`
+	DalamudApiLevel     interface{}  `json:"DalamudApiLevel"`
+	IsHide              *interface{} `json:"IsHide"`
+	IsTestingExclusive  *interface{} `json:"IsTestingExclusive"`
+	LastUpdated         interface{}  `json:"LastUpdated"`
+	DownloadCount       interface{}  `json:"DownloadCount"`
+	DownloadLinkInstall string       `json:"DownloadLinkInstall"`
+	DownloadLinkTesting *string      `json:"DownloadLinkTesting"`
+	DownloadLinkUpdate  *string      `json:"DownloadLinkUpdate"`
 }
 
 var repositories []Repository
