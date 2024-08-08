@@ -51,6 +51,17 @@ func UpsertRepository(repo Repository) {
 	writeRepositoriesToDisk()
 }
 
+func DeleteRepository(url string) {
+	index := getRepositoryIndex(url)
+	if index == -1 {
+		return
+	}
+
+	repositories = append(repositories[:index], repositories[index+1:]...)
+
+	writeRepositoriesToDisk()
+}
+
 func GetRepositories() []Repository {
 	return repositories
 }

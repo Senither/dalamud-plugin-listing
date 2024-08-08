@@ -10,21 +10,21 @@ import (
 	"github.com/senither/dalamud-plugin-listing/state"
 )
 
-func UpdateRepository(url string, interval time.Duration, runOnStartup bool) {
+func StartUpdateRepositoryJob(url string, interval time.Duration, runOnStartup bool) {
 	if runOnStartup {
-		run(url)
+		runUpdate(url)
 	}
 
 	tick := time.NewTicker(interval)
 
 	go func() {
 		for range tick.C {
-			run(url)
+			runUpdate(url)
 		}
 	}()
 }
 
-func run(url string) {
+func runUpdate(url string) {
 	fmt.Println("Sending request to update repository for: ", url)
 
 	client := http.Client{}

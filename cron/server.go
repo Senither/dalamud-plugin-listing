@@ -23,6 +23,8 @@ func SetupJobs() {
 			}
 		}
 
-		jobs.UpdateRepository(repoUrl, time.Minute*30, runOnStart)
+		jobs.StartUpdateRepositoryJob(repoUrl, time.Minute*30, runOnStart)
 	}
+
+	jobs.StartDeleteExpiredRepositoriesJob(time.Second * 30)
 }
