@@ -1,25 +1,31 @@
 package state
 
 type Repository struct {
-	Author              string       `json:"Author"`
-	Name                string       `json:"Name"`
-	Punchline           *string      `json:"Punchline"`
-	Description         string       `json:"Description"`
-	Changelog           *string      `json:"Changelog"`
-	InternalName        string       `json:"InternalName"`
-	AssemblyVersion     interface{}  `json:"AssemblyVersion"`
-	RepoUrl             string       `json:"RepoUrl"`
-	IconUrl             string       `json:"IconUrl"`
-	ApplicableVersion   *string      `json:"ApplicableVersion"`
-	Tags                []string     `json:"Tags"`
-	DalamudApiLevel     interface{}  `json:"DalamudApiLevel"`
-	IsHide              *interface{} `json:"IsHide"`
-	IsTestingExclusive  *interface{} `json:"IsTestingExclusive"`
-	LastUpdated         interface{}  `json:"LastUpdated"`
-	DownloadCount       interface{}  `json:"DownloadCount"`
-	DownloadLinkInstall string       `json:"DownloadLinkInstall"`
-	DownloadLinkTesting *string      `json:"DownloadLinkTesting"`
-	DownloadLinkUpdate  *string      `json:"DownloadLinkUpdate"`
+	Author              string           `json:"Author"`
+	Name                string           `json:"Name"`
+	Punchline           *string          `json:"Punchline"`
+	Description         string           `json:"Description"`
+	Changelog           *string          `json:"Changelog"`
+	InternalName        string           `json:"InternalName"`
+	AssemblyVersion     interface{}      `json:"AssemblyVersion"`
+	RepoUrl             string           `json:"RepoUrl"`
+	IconUrl             string           `json:"IconUrl"`
+	ApplicableVersion   *string          `json:"ApplicableVersion"`
+	Tags                []string         `json:"Tags"`
+	DalamudApiLevel     interface{}      `json:"DalamudApiLevel"`
+	IsHide              *interface{}     `json:"IsHide"`
+	IsTestingExclusive  *interface{}     `json:"IsTestingExclusive"`
+	LastUpdated         interface{}      `json:"LastUpdated"`
+	DownloadCount       interface{}      `json:"DownloadCount"`
+	DownloadLinkInstall string           `json:"DownloadLinkInstall"`
+	DownloadLinkTesting *string          `json:"DownloadLinkTesting"`
+	DownloadLinkUpdate  *string          `json:"DownloadLinkUpdate"`
+	RepositoryOrigin    RepositoryOrigin `json:"OriginRepositoryUrl"`
+}
+
+type RepositoryOrigin struct {
+	RepositoryUrl string `json:"RepositoryUrl"`
+	LastUpdatedAt string `json:"LastUpdatedAt"`
 }
 
 var repositories []Repository

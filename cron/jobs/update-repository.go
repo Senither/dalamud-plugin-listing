@@ -44,6 +44,11 @@ func run(url string) {
 	}
 
 	for _, repo := range repos {
+		repo.RepositoryOrigin = state.RepositoryOrigin{
+			RepositoryUrl: url,
+			LastUpdatedAt: time.Now().Format(time.RFC3339),
+		}
+
 		state.UpsertRepository(repo)
 	}
 }
