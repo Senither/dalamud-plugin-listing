@@ -4,11 +4,114 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hello</title>
+    <title>Dalamud Plugin Listing</title>
+    <script src="//unpkg.com/alpinejs" defer></script>
+    <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+
+    <script>
+        async function loadRepositories() {
+            const response = await fetch('/', {
+                headers: {
+                    'Accept': 'application/json'
+                }
+            })
+
+            return (await response.json())
+                .sort((a, b) => a.Name.localeCompare(b.Name))
+        }
+
+        setTimeout(() => {
+            document.getElementById('repo-url').innerText = window.location.href
+        }, 1)
+    </script>
 </head>
 
-<body>
-    Hello World!
+<body class="bg-gray-950 text-slate-50" x-data="{
+    filteredRepositories() {
+        if (this.query.trim().length === 0) {
+            return this.repositories
+        }
+
+        let query = this.query.toLowerCase().trim()
+
+        return this.repositories.filter(repo => {
+            return repo.Name.toLowerCase().includes(query) ||
+                repo.Author.toLowerCase().includes(query) ||
+                repo.Description?.toLowerCase().includes(query) ||
+                repo.Punchline?.toLowerCase().includes(query)
+        })
+    },
+    repositories: [],
+    query: '',
+}" x-init="repositories = await loadRepositories()">
+    <div class="px-4 py-12 container max-w-5xl mx-auto">
+        <div class="flex flex-col prose prose-invert max-w-full">
+            <header class="mb-6">
+                <h1>
+                    Welcome to my Dalamud Plugin List
+                </h1>
+                <p>
+                    I got tired of the clutter of having 15+ plugin repositories saved in Dalamud and not knowing what
+                    plugins comes from which repository, some plugins also exists in multiple repositories which then
+                    show up multiple times in the plugin list. So I made this page to help me keep track of what plugins
+                    come from where.
+                </p>
+
+                <p>
+                    The list itself is a collection of multiple different repositories all combined into one list, the
+                    list is then updated every 30 minutes to check for updates, this allows me to have a single plugin
+                    repository in Dalamud and still get updates from all the different repositories.
+                </p>
+
+                <p>
+                    If you want to use the list yourself you can add the following URL to your Dalamud plugin list <code
+                        id="repo-url"></code> and you'll get access to all the plugins you can find below.
+                </p>
+            </header>
+
+            <section class="mx-4 mb-8">
+                <input type="text" x-model="query"
+                    class="px-3 py-1 w-full bg-gray-950 focus:bg-slate-950 placeholder:italic placeholder:text-slate-400 border border-gray-800 focus:outline-none focus:border-indigo-700 rounded"
+                    placeholder="Search for plugins here...">
+            </section>
+
+            <section class="grid grid-cols-1 md:grid-cols-2 gap-8 divide-y divide-dashed">
+                <template x-for="repo in filteredRepositories()">
+                    <div class="flex flex-col justify-between px-4 py-3 bg-gray-900 border border-gray-800 rounded">
+                        <div>
+                            <div class="flex">
+                                <img class="my-0 w-12 h-12 rounded-sm shadow" x-bind:src="repo.IconUrl" alt="" onerror="this.src = '/assets/not-found.svg'">
+                                <div class="ml-4 flex flex-col">
+                                    <h4 class="mt-1 mb-0" x-text="repo.Name"></h4>
+                                    <p class="-mt-2 my-0">v<span x-text="repo.AssemblyVersion"></span></p>
+                                </div>
+                            </div>
+                            <div class="place-self-start">
+                                <p>Created by <span x-text="repo.Author"></span></p>
+                                <p x-text="repo.Description.length > 0 ? repo.Description : repo.Punchline"></p>
+                            </div>
+                        </div>
+
+                        <div class="flex justify-between">
+                            <a target="blank" x-bind:href="repo.RepoUrl"
+                                class="text-blue-400 hover:text-blue-300">Repository</a>
+                            <a target="blank" x-bind:href="repo.OriginRepositoryUrl.RepositoryUrl"
+                                class="text-blue-400 hover:text-blue-300">Origin Repository List</a>
+                        </div>
+                    </div>
+                </template>
+            </section>
+
+            <footer class="mt-8 flex items-center justify-center opacity-65">
+                <p>
+                    Made for fun by <a href="https://github.com/Senither" target="_blank">Senither</a> using
+                    <a href="https://go.dev/" target="_blank">Go</a>,
+                    <a href="https://tailwindcss.com/" target="_blank">TailwindCSS</a> and
+                    <a href="https://alpinejs.dev/" target="_blank">AlpineJS</a>.
+                </p>
+            </footer>
+        </div>
+    </div>
 </body>
 
 </html>
