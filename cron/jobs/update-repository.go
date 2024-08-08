@@ -1,11 +1,13 @@
 package jobs
 
 import (
+	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"log"
 	"net/http"
 	"time"
+
+	"github.com/senither/dalamud-plugin-listing/state"
 )
 
 func UpdateRepository(url string, interval time.Duration, runOnStartup bool) {
@@ -31,10 +33,17 @@ func run(url string) {
 
 	defer resp.Body.Close()
 
-	body, err := ioutil.ReadAll(resp.Body)
+	var repos []state.Repository
+
+	// Parse the JSON array from the request body
+	decoder := json.NewDecoder(resp.Body)
+	err = decoder.Decode(&repos)
 	if err != nil {
-		log.Fatal(err)
+		fmt.Println("Failed to decode JSON response:", err)
+		return
 	}
 
-	fmt.Println(string(body))
+	for _, repo := range repos {
+		state.UpsertRepository(repo)
+	}
 }

@@ -15,7 +15,7 @@ func SetupJobs() {
 
 	// Loops through all the repositories in the state and creates a new job for each one.
 	for _, repo := range state.GetUrls() {
-		jobs.UpdateRepository(repo, time.Second*5, true)
+		jobs.UpdateRepository(repo, time.Minute*30, true)
 	}
 }
 

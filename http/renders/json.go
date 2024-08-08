@@ -1,10 +1,12 @@
 package renders
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
-	"os"
+
+	"github.com/senither/dalamud-plugin-listing/state"
 )
 
 func RenderJson(w http.ResponseWriter, r *http.Request) {
@@ -12,9 +14,9 @@ func RenderJson(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 
-	content, err := os.ReadFile("./views/api-response.json")
+	content, err := json.Marshal(state.GetRepositories())
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalf("Error converting to JSON: %v", err)
 	}
 
 	fmt.Fprintf(w, string(content))
