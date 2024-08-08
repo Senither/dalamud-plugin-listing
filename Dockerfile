@@ -20,6 +20,8 @@ WORKDIR /
 
 # Copy the built application and the views
 COPY --from=build-stage /dalamud-plugin-listing /dalamud-plugin-listing
+COPY --from=build-stage /app/repositories.txt /repositories.txt
+COPY --from=build-stage /app/assets /assets
 COPY --from=build-stage /app/views /views
 
 # Expose the port the application runs on
