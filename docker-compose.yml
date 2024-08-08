@@ -1,0 +1,10 @@
+version: '3.8'
+
+services:
+  plugin-listing:
+    image: senither/dalamud-plugin-listing:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"

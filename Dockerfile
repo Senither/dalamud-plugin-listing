@@ -1,0 +1,32 @@
+FROM golang:1.19 AS build-stage
+
+# Enable Go modules
+ARG CGO_ENABLED=0
+
+# Set the working directory
+WORKDIR /app
+
+# Copy the Go modules and source files
+COPY . .
+
+# Build the application
+RUN go build -o /dalamud-plugin-listing
+
+# Setup a lean image to run the application
+FROM gcr.io/distroless/base-debian11 AS build-release-stage
+
+# Set the working directory
+WORKDIR /
+
+# Copy the built application and the views
+COPY --from=build-stage /dalamud-plugin-listing /dalamud-plugin-listing
+COPY --from=build-stage /app/views /views
+
+# Expose the port the application runs on
+EXPOSE 8080
+
+# Run as non-root user
+USER nonroot:nonroot
+
+# Run the application
+CMD ["/dalamud-plugin-listing"]
