@@ -26,7 +26,17 @@ func UpdateRepository(url string, interval time.Duration, runOnStartup bool) {
 
 func run(url string) {
 	fmt.Println("Sending request to update repository for: ", url)
-	resp, err := http.Get(url)
+
+	client := http.Client{}
+	req, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	req.Header.Set("Accept", "application/json")
+	req.Header.Set("User-Agent", "Dalamud Plugin Listing")
+
+	resp, err := client.Do(req)
 	if err != nil {
 		log.Fatal(err)
 	}
