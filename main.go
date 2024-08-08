@@ -15,7 +15,11 @@ func main() {
 }
 
 func handleRequest(w http.ResponseWriter, r *http.Request) {
+	fmt.Print(r.Method + ":" + r.URL.Path + " from " + r.RemoteAddr)
+
 	if r.URL.Path != "/" {
+		fmt.Println("404 Not Found:", r.URL.Path)
+
 		renders.RenderError(w, r)
 		return
 	}
