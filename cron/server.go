@@ -1,9 +1,6 @@
 package cron
 
 import (
-	"log"
-	"os"
-	"strings"
 	"time"
 
 	"github.com/senither/dalamud-plugin-listing/cron/jobs"
@@ -11,27 +8,21 @@ import (
 )
 
 func SetupJobs() {
-	loadRepositories()
+	state.LoadCachedRepositoryDataFromDisk()
+	state.LoadRepositoriesFromDisk()
 
 	// Loops through all the repositories in the state and creates a new job for each one.
-	for _, repo := range state.GetUrls() {
-		jobs.UpdateRepository(repo, time.Minute*30, true)
-	}
-}
+	for _, repoUrl := range state.GetUrls() {
+		repos := state.GetRepositoriesByOriginUrl(repoUrl)
 
-func loadRepositories() {
-	content, err := os.ReadFile("repositories.txt")
-	if err != nil {
-		log.Fatal(err)
-	}
+		runOnStart := true
 
-	repositories := strings.Split(string(content), "\n")
-
-	for _, repo := range repositories {
-		if repo == "" {
-			continue
+		for _, repo := range repos {
+			if repo.RepositoryOrigin.LastUpdatedAt > time.Now().Add(time.Minute*15*-1).Unix() {
+				runOnStart = false
+			}
 		}
 
-		state.AddUrl(repo)
+		jobs.UpdateRepository(repoUrl, time.Minute*30, runOnStart)
 	}
 }

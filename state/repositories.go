@@ -1,5 +1,13 @@
 package state
 
+import (
+	"encoding/json"
+	"log"
+	"os"
+	"strings"
+	"time"
+)
+
 type Repository struct {
 	Author              string           `json:"Author"`
 	Name                string           `json:"Name"`
@@ -25,10 +33,11 @@ type Repository struct {
 
 type RepositoryOrigin struct {
 	RepositoryUrl string `json:"RepositoryUrl"`
-	LastUpdatedAt string `json:"LastUpdatedAt"`
+	LastUpdatedAt int64  `json:"LastUpdatedAt"`
 }
 
 var repositories []Repository
+var timer = time.NewTimer(time.Nanosecond)
 
 func UpsertRepository(repo Repository) {
 	index := getRepositoryIndex(repo.RepoUrl)
@@ -38,10 +47,57 @@ func UpsertRepository(repo Repository) {
 	} else {
 		repositories[index] = repo
 	}
+
+	writeRepositoriesToDisk()
 }
 
 func GetRepositories() []Repository {
 	return repositories
+}
+
+func GetRepositoriesByOriginUrl(url string) []Repository {
+	var filteredRepos []Repository
+
+	for _, repository := range repositories {
+		if repository.RepositoryOrigin.RepositoryUrl == url {
+			filteredRepos = append(filteredRepos, repository)
+		}
+	}
+
+	return filteredRepos
+}
+
+func LoadCachedRepositoryDataFromDisk() {
+	content, err := os.ReadFile("cached-repositories.json")
+	if err != nil {
+		return
+	}
+
+	var repositories []Repository
+	if err := json.Unmarshal(content, &repositories); err != nil {
+		log.Fatalf("Error converting JSON: %v", err)
+	}
+
+	for _, repo := range repositories {
+		UpsertRepository(repo)
+	}
+}
+
+func LoadRepositoriesFromDisk() {
+	content, err := os.ReadFile("repositories.txt")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	repositories := strings.Split(string(content), "\n")
+
+	for _, repo := range repositories {
+		if repo == "" {
+			continue
+		}
+
+		AddUrl(repo)
+	}
 }
 
 func getRepositoryIndex(url string) int {
@@ -52,4 +108,19 @@ func getRepositoryIndex(url string) int {
 	}
 
 	return -1
+}
+
+func writeRepositoriesToDisk() {
+	if timer != nil {
+		timer.Stop()
+	}
+
+	timer = time.AfterFunc(5*time.Second, func() {
+		content, err := json.Marshal(GetRepositories())
+		if err != nil {
+			log.Fatalf("Error converting to JSON: %v", err)
+		}
+
+		os.WriteFile("./cached-repositories.json", content, 0644)
+	})
 }
