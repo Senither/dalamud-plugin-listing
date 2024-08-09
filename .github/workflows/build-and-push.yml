@@ -1,0 +1,30 @@
+name: Build and Push Images
+
+on:
+    push:
+      branches:
+        - main
+
+jobs:
+  build-and-push-image:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: true
+    permissions:
+      contents: read
+      packages: write
+
+    name: ${{ matrix.name }}
+
+    steps:
+      - name: Build the Docker images
+        run: docker compose build plugin-listing
+
+      - name: Login to GitHub Container Registry
+        run: echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+
+      - name: Tag the Docker image with GitHub Container Registry
+        run: docker tag senither/dalamud-plugin-listing:latest ghcr.io/senither/dalamud-plugin-listing:latest
+
+      - name: Publish the Docker image
+        run: docker push ghcr.io/senither/dalamud-plugin-listing:latest
