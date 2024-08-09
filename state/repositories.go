@@ -11,23 +11,23 @@ import (
 type Repository struct {
 	Author              string           `json:"Author"`
 	Name                string           `json:"Name"`
-	Punchline           *string          `json:"Punchline"`
+	Punchline           *string          `json:"Punchline,omitempty"`
 	Description         string           `json:"Description"`
-	Changelog           *string          `json:"Changelog"`
+	Changelog           *string          `json:"Changelog,omitempty"`
 	InternalName        string           `json:"InternalName"`
-	AssemblyVersion     interface{}      `json:"AssemblyVersion"`
+	AssemblyVersion     interface{}      `json:"AssemblyVersion,omitempty"`
 	RepoUrl             string           `json:"RepoUrl"`
 	IconUrl             string           `json:"IconUrl"`
-	ApplicableVersion   *string          `json:"ApplicableVersion"`
+	ApplicableVersion   *string          `json:"ApplicableVersion,omitempty"`
 	Tags                []string         `json:"Tags"`
-	DalamudApiLevel     interface{}      `json:"DalamudApiLevel"`
-	IsHide              *interface{}     `json:"IsHide"`
-	IsTestingExclusive  *interface{}     `json:"IsTestingExclusive"`
-	LastUpdated         interface{}      `json:"LastUpdated"`
-	DownloadCount       interface{}      `json:"DownloadCount"`
+	DalamudApiLevel     interface{}      `json:"DalamudApiLevel,omitempty"`
+	IsHide              *interface{}     `json:"IsHide,omitempty"`
+	IsTestingExclusive  *interface{}     `json:"IsTestingExclusive,omitempty"`
+	LastUpdated         interface{}      `json:"LastUpdated,omitempty"`
+	DownloadCount       interface{}      `json:"DownloadCount,omitempty"`
 	DownloadLinkInstall string           `json:"DownloadLinkInstall"`
-	DownloadLinkTesting *string          `json:"DownloadLinkTesting"`
-	DownloadLinkUpdate  *string          `json:"DownloadLinkUpdate"`
+	DownloadLinkTesting *string          `json:"DownloadLinkTesting,omitempty"`
+	DownloadLinkUpdate  *string          `json:"DownloadLinkUpdate,omitempty"`
 	RepositoryOrigin    RepositoryOrigin `json:"OriginRepositoryUrl"`
 }
 
