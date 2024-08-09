@@ -17,6 +17,9 @@ jobs:
     name: ${{ matrix.name }}
 
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
       - name: Build the Docker images
         run: docker compose build plugin-listing
 
