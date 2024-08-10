@@ -27,7 +27,7 @@ type Repository struct {
 	IsTestingExclusive     *interface{}     `json:"IsTestingExclusive,omitempty"`
 	LastUpdated            interface{}      `json:"LastUpdated,omitempty"`
 	DownloadCount          interface{}      `json:"DownloadCount,omitempty"`
-	LastUpdate             *int64           `json:"LastUpdate,omitempty"`
+	LastUpdate             interface{}      `json:"LastUpdate,omitempty"`
 	LoadPriority           *int64           `json:"LoadPriority,omitempty"`
 	LoadRequiredState      *int64           `json:"LoadRequiredState,omitempty"`
 	LoadSync               *bool            `json:"LoadSync,omitempty"`
