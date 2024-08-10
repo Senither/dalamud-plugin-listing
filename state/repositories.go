@@ -3,6 +3,7 @@ package state
 import (
 	"encoding/json"
 	"log"
+	"net/url"
 	"os"
 	"strings"
 	"time"
@@ -47,6 +48,10 @@ var repositories []Repository
 var timer = time.NewTimer(time.Nanosecond)
 
 func UpsertRepository(repo Repository) {
+	if repo.RepoUrl == nil || *repo.RepoUrl == "" {
+		repo.RepoUrl = findRepositoryUrl(repo)
+	}
+
 	index := getRepositoryIndex(repo.InternalName)
 
 	if index == -1 {
@@ -126,6 +131,26 @@ func getRepositoryIndex(internalName string) int {
 	}
 
 	return -1
+}
+
+func findRepositoryUrl(repo Repository) *string {
+	parsedUrl, err := url.ParseRequestURI(repo.DownloadLinkInstall)
+	if err != nil {
+		return nil
+	}
+
+	if !strings.HasPrefix(repo.DownloadLinkInstall, "https://github.com") {
+		url := parsedUrl.Scheme + "://" + parsedUrl.Host
+		return &url
+	}
+
+	pathParts := strings.Split(parsedUrl.Path, "/")
+	if len(pathParts) < 3 {
+		return nil
+	}
+
+	url := parsedUrl.Scheme + "://" + parsedUrl.Host + "/" + pathParts[1] + "/" + pathParts[2]
+	return &url
 }
 
 func writeRepositoriesToDisk() {
