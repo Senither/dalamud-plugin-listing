@@ -17,7 +17,7 @@ type Repository struct {
 	InternalName           string           `json:"InternalName"`
 	AssemblyVersion        interface{}      `json:"AssemblyVersion,omitempty"`
 	TestingAssemblyVersion interface{}      `json:"TestingAssemblyVersion,omitempty"`
-	RepoUrl                string           `json:"RepoUrl"`
+	RepoUrl                *string          `json:"RepoUrl"`
 	IconUrl                string           `json:"IconUrl"`
 	ApplicableVersion      *string          `json:"ApplicableVersion,omitempty"`
 	Tags                   []string         `json:"Tags"`
@@ -46,7 +46,7 @@ var repositories []Repository
 var timer = time.NewTimer(time.Nanosecond)
 
 func UpsertRepository(repo Repository) {
-	index := getRepositoryIndex(repo.RepoUrl)
+	index := getRepositoryIndex(repo.InternalName)
 
 	if index == -1 {
 		repositories = append(repositories, repo)
@@ -57,8 +57,8 @@ func UpsertRepository(repo Repository) {
 	writeRepositoriesToDisk()
 }
 
-func DeleteRepository(url string) {
-	index := getRepositoryIndex(url)
+func DeleteRepository(internalName string) {
+	index := getRepositoryIndex(internalName)
 	if index == -1 {
 		return
 	}
@@ -117,9 +117,9 @@ func LoadRepositoriesFromDisk() {
 	}
 }
 
-func getRepositoryIndex(url string) int {
+func getRepositoryIndex(internalName string) int {
 	for i, repository := range repositories {
-		if repository.RepoUrl == url {
+		if repository.InternalName == internalName {
 			return i
 		}
 	}

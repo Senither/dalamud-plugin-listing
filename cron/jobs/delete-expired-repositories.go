@@ -20,9 +20,17 @@ func StartDeleteExpiredRepositoriesJob(interval time.Duration) {
 func runDelete() {
 	for _, repo := range state.GetRepositories() {
 		if repo.RepositoryOrigin.LastUpdatedAt < time.Now().Add(time.Hour*24*3*-1).Unix() {
-			fmt.Println("Deleting expired repository: " + repo.Name + " (" + repo.RepoUrl + ")")
+			var repoUrl string
 
-			state.DeleteRepository(repo.RepoUrl)
+			if repo.RepoUrl == nil {
+				repoUrl = repo.RepositoryOrigin.RepositoryUrl
+			} else {
+				repoUrl = *repo.RepoUrl
+			}
+
+			fmt.Println("Deleting expired repository: " + repo.Name + " (" + repoUrl + ")")
+
+			state.DeleteRepository(repo.InternalName)
 		}
 	}
 }
