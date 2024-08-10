@@ -1,4 +1,4 @@
-FROM golang:1.19 AS build-stage
+FROM golang:1.22 AS build-stage
 
 # Enable Go modules
 ARG CGO_ENABLED=0
@@ -8,6 +8,9 @@ WORKDIR /app
 
 # Copy the Go modules and source files
 COPY . .
+
+# Install the dependencies
+RUN go mod download && go mod verify
 
 # Build the application
 RUN go build -o /dalamud-plugin-listing

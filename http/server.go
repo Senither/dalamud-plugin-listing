@@ -4,11 +4,13 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/senither/dalamud-plugin-listing/http/renders"
 )
 
 func SetupServer() {
 	http.HandleFunc("/", handleRequest)
+	http.Handle("/metrics", promhttp.Handler())
 	http.Handle("/assets/", http.StripPrefix("/assets/", http.FileServer(http.Dir("./assets"))))
 
 	fmt.Println("Server is running on port 8080")
