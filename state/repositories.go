@@ -9,26 +9,32 @@ import (
 )
 
 type Repository struct {
-	Author              string           `json:"Author"`
-	Name                string           `json:"Name"`
-	Punchline           *string          `json:"Punchline,omitempty"`
-	Description         string           `json:"Description"`
-	Changelog           *string          `json:"Changelog,omitempty"`
-	InternalName        string           `json:"InternalName"`
-	AssemblyVersion     interface{}      `json:"AssemblyVersion,omitempty"`
-	RepoUrl             string           `json:"RepoUrl"`
-	IconUrl             string           `json:"IconUrl"`
-	ApplicableVersion   *string          `json:"ApplicableVersion,omitempty"`
-	Tags                []string         `json:"Tags"`
-	DalamudApiLevel     interface{}      `json:"DalamudApiLevel,omitempty"`
-	IsHide              *interface{}     `json:"IsHide,omitempty"`
-	IsTestingExclusive  *interface{}     `json:"IsTestingExclusive,omitempty"`
-	LastUpdated         interface{}      `json:"LastUpdated,omitempty"`
-	DownloadCount       interface{}      `json:"DownloadCount,omitempty"`
-	DownloadLinkInstall string           `json:"DownloadLinkInstall"`
-	DownloadLinkTesting *string          `json:"DownloadLinkTesting,omitempty"`
-	DownloadLinkUpdate  *string          `json:"DownloadLinkUpdate,omitempty"`
-	RepositoryOrigin    RepositoryOrigin `json:"OriginRepositoryUrl"`
+	Author                 string           `json:"Author"`
+	Name                   string           `json:"Name"`
+	Punchline              *string          `json:"Punchline,omitempty"`
+	Description            string           `json:"Description"`
+	Changelog              *string          `json:"Changelog,omitempty"`
+	InternalName           string           `json:"InternalName"`
+	AssemblyVersion        interface{}      `json:"AssemblyVersion,omitempty"`
+	TestingAssemblyVersion interface{}      `json:"TestingAssemblyVersion,omitempty"`
+	RepoUrl                string           `json:"RepoUrl"`
+	IconUrl                string           `json:"IconUrl"`
+	ApplicableVersion      *string          `json:"ApplicableVersion,omitempty"`
+	Tags                   []string         `json:"Tags"`
+	DalamudApiLevel        interface{}      `json:"DalamudApiLevel,omitempty"`
+	TestingDalamudApiLevel interface{}      `json:"TestingDalamudApiLevel,omitempty"`
+	IsHide                 *interface{}     `json:"IsHide,omitempty"`
+	IsTestingExclusive     *interface{}     `json:"IsTestingExclusive,omitempty"`
+	LastUpdated            interface{}      `json:"LastUpdated,omitempty"`
+	DownloadCount          interface{}      `json:"DownloadCount,omitempty"`
+	LastUpdate             *int64           `json:"LastUpdate,omitempty"`
+	LoadPriority           *int64           `json:"LoadPriority,omitempty"`
+	LoadRequiredState      *int64           `json:"LoadRequiredState,omitempty"`
+	LoadSync               *bool            `json:"LoadSync,omitempty"`
+	DownloadLinkInstall    string           `json:"DownloadLinkInstall"`
+	DownloadLinkTesting    *string          `json:"DownloadLinkTesting,omitempty"`
+	DownloadLinkUpdate     *string          `json:"DownloadLinkUpdate,omitempty"`
+	RepositoryOrigin       RepositoryOrigin `json:"OriginRepositoryUrl"`
 }
 
 type RepositoryOrigin struct {
