@@ -31,6 +31,7 @@ type Repository struct {
 	LoadPriority           *int64           `json:"LoadPriority,omitempty"`
 	LoadRequiredState      *int64           `json:"LoadRequiredState,omitempty"`
 	LoadSync               *bool            `json:"LoadSync,omitempty"`
+	AcceptsFeedback        *bool            `json:"AcceptsFeedback,omitempty"`
 	DownloadLinkInstall    string           `json:"DownloadLinkInstall"`
 	DownloadLinkTesting    *string          `json:"DownloadLinkTesting,omitempty"`
 	DownloadLinkUpdate     *string          `json:"DownloadLinkUpdate,omitempty"`
