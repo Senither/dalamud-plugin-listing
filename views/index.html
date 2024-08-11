@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dalamud Plugin Listing</title>
     <script src="//unpkg.com/alpinejs" defer></script>
-    <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+    <link href="/assets/styles.css?id=@file-hash-replacement" rel="stylesheet">
 
     <script>
         async function loadRepositories() {
@@ -80,7 +80,8 @@
                     <div class="flex flex-col justify-between px-4 py-3 bg-gray-900 border border-gray-800 rounded">
                         <div>
                             <div class="flex">
-                                <img class="my-0 w-12 h-12 rounded-sm shadow" x-bind:src="repo.IconUrl" alt="" onerror="this.src = '/assets/not-found.svg'">
+                                <img class="my-0 w-12 h-12 rounded-sm shadow" x-bind:src="repo.IconUrl" alt=""
+                                    onerror="this.src = '/assets/not-found.svg'">
                                 <div class="ml-4 flex flex-col">
                                     <h4 class="mt-1 mb-0" x-text="repo.Name"></h4>
                                     <p class="-mt-2 my-0">v<span x-text="repo.AssemblyVersion"></span></p>

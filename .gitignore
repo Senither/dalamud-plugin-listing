@@ -21,8 +21,12 @@
 go.work
 go.work.sum
 
+# Node modules
+node_modules/
+
 # env file
 .env
 
 # Output of the go command
 cached-repositories.json
+assets/styles.css

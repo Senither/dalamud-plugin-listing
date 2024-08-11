@@ -1,1 +1,13 @@
-// This is just here to get Intellisense in VS Code
+/** @type {import('tailwindcss').Config} */
+module.exports = {
+  content: [
+    './views/**/*.html',
+  ],
+  theme: {
+    extend: {},
+  },
+  plugins: [
+    require('@tailwindcss/typography'),
+  ],
+}
+
