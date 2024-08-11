@@ -81,7 +81,7 @@
                         <div>
                             <div class="flex">
                                 <img class="my-0 w-12 h-12 rounded-sm shadow" x-bind:src="repo.IconUrl" alt=""
-                                    onerror="this.src = '/assets/not-found.svg'">
+                                    onerror="this.src = '/assets/not-found.svg'" loading="lazy">
                                 <div class="ml-4 flex flex-col">
                                     <h4 class="mt-1 mb-0" x-text="repo.Name"></h4>
                                     <p class="-mt-2 my-0">v<span x-text="repo.AssemblyVersion"></span></p>
