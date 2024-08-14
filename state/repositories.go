@@ -119,7 +119,7 @@ func LoadRepositoriesFromDisk() {
 			continue
 		}
 
-		AddUrl(repo)
+		AddUrl(strings.Trim(repo, "\r"))
 	}
 }
 

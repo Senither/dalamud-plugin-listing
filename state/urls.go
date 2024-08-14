@@ -1,27 +1,51 @@
 package state
 
-import "strings"
+import (
+	"fmt"
+	"net"
+	"net/url"
+	"strings"
+)
 
 var urls []string
 
-func AddUrl(url string) {
-	if exists(url) || len(url) < 4 {
+func AddUrl(rawUrl string) {
+	if exists(rawUrl) || len(rawUrl) < 4 {
 		return
 	}
 
-	urls = append(urls, strings.Trim(url, "\r"))
+	if !isValidUrl(rawUrl) {
+		return
+	}
+
+	urls = append(urls, strings.Trim(rawUrl, "\r"))
 }
 
 func GetUrls() []string {
 	return urls
 }
 
-func exists(url string) bool {
+func exists(rawUrl string) bool {
 	for _, repo := range urls {
-		if repo == url {
+		if repo == rawUrl {
 			return true
 		}
 	}
 
 	return false
+}
+
+func isValidUrl(rawUrl string) bool {
+	url, err := url.ParseRequestURI(rawUrl)
+	if err != nil {
+		fmt.Println("Error parsing url: ", err)
+		return false
+	}
+
+	address := net.ParseIP(url.Host)
+	if address == nil {
+		return strings.Contains(url.Host, ".")
+	}
+
+	return true
 }
