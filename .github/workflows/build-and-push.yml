@@ -6,8 +6,39 @@ on:
         - main
 
 jobs:
+  tests:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: true
+    permissions:
+      contents: read
+      packages: write
+
+    name: ${{ matrix.name }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.22'
+
+      - run: go version
+
+      - name: Install dependencies
+        run: go mod download
+
+      - name: Verify the dependencies
+        run: go mod verify
+
+      - name: Run tests
+        run: go test -v ./...
+
   build-and-push-image:
     runs-on: ubuntu-latest
+    needs: tests
     strategy:
       fail-fast: true
     permissions:
