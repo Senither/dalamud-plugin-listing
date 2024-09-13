@@ -1,6 +1,7 @@
 package cron
 
 import (
+	"math/rand/v2"
 	"time"
 
 	"github.com/senither/dalamud-plugin-listing/cron/jobs"
@@ -18,12 +19,15 @@ func SetupJobs() {
 		runOnStart := true
 
 		for _, repo := range repos {
-			if repo.RepositoryOrigin.LastUpdatedAt > time.Now().Add(time.Minute*15*-1).Unix() {
+			if repo.RepositoryOrigin.LastUpdatedAt > time.Now().Add(time.Minute*35*-1).Unix() {
 				runOnStart = false
 			}
 		}
 
-		jobs.StartUpdateRepositoryJob(repoUrl, time.Minute*30, runOnStart)
+		// Gets a random number between 55 and 70 to add some randomness to
+		// the job delay, then starts the job with the specified values.
+		jobDelay := rand.IntN(15) + 55
+		jobs.StartUpdateRepositoryJob(repoUrl, time.Minute*time.Duration(jobDelay), runOnStart)
 	}
 
 	jobs.StartDeleteExpiredRepositoriesJob(time.Second * 30)
