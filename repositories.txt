@@ -12,3 +12,8 @@ https://raw.githubusercontent.com/FFXIV-CombatReborn/CombatRebornRepo/main/plugi
 https://raw.githubusercontent.com/Aida-Enna/XIVPlugins/main/repo.json
 https://github.com/NightmareXIV/MyDalamudPlugins/raw/main/pluginmaster.json
 https://plugins.carvel.li/
+https://raw.githubusercontent.com/Sevii77/ffxiv_materialui_accent/master/repo.json
+https://raw.githubusercontent.com/chirpxiv/PalettePlus/main/repo.json
+https://raw.githubusercontent.com/XIV-Tools/DalamudPlugins/main/repo.json
+https://aetherment.sevii.dev/plugin
+https://raw.githubusercontent.com/Warpholomey/DalamudPlugins/master/repository.json
