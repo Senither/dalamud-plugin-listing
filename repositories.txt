@@ -10,3 +10,5 @@ https://puni.sh/api/repository/veyn
 https://puni.sh/api/repository/herc
 https://raw.githubusercontent.com/FFXIV-CombatReborn/CombatRebornRepo/main/pluginmaster.json
 https://raw.githubusercontent.com/Aida-Enna/XIVPlugins/main/repo.json
+https://github.com/NightmareXIV/MyDalamudPlugins/raw/main/pluginmaster.json
+https://plugins.carvel.li/
