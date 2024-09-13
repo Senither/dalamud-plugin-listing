@@ -2,7 +2,6 @@ https://raw.githubusercontent.com/paissaheavyindustries/Dalamud-Repo/main/repo.j
 https://raw.githubusercontent.com/LeonBlade/DalamudPlugins/main/repo.json
 https://raw.githubusercontent.com/jawslouis/MakePlacePlugin/master/MakePlacePlugin.json
 https://raw.githubusercontent.com/Aireil/MyDalamudPlugins/master/pluginmaster.json
-https://raw.githubusercontent.com/Ottermandias/SeaOfStars/main/repo.json
 https://love.puni.sh/ment.json
 https://raw.githubusercontent.com/KangasZ/DalamudPluginRepository/main/plugin_repository.json
 https://raw.githubusercontent.com/UnknownX7/DalamudPluginRepo/master/pluginmaster.json
@@ -10,10 +9,15 @@ https://puni.sh/api/repository/veyn
 https://puni.sh/api/repository/herc
 https://raw.githubusercontent.com/FFXIV-CombatReborn/CombatRebornRepo/main/pluginmaster.json
 https://raw.githubusercontent.com/Aida-Enna/XIVPlugins/main/repo.json
-https://github.com/NightmareXIV/MyDalamudPlugins/raw/main/pluginmaster.json
+https://raw.githubusercontent.com/NightmareXIV/MyDalamudPlugins/main/pluginmaster.json
 https://plugins.carvel.li/
 https://raw.githubusercontent.com/Sevii77/ffxiv_materialui_accent/master/repo.json
 https://raw.githubusercontent.com/chirpxiv/PalettePlus/main/repo.json
 https://raw.githubusercontent.com/XIV-Tools/DalamudPlugins/main/repo.json
 https://aetherment.sevii.dev/plugin
 https://raw.githubusercontent.com/Warpholomey/DalamudPlugins/master/repository.json
+https://raw.githubusercontent.com/InitialDet/MyDalamudPlugins/main/pluginmaster.json
+https://raw.githubusercontent.com/awgil/ffxiv_plugin_distribution/master/pluginmaster.json
+https://raw.githubusercontent.com/eqbot/DalamudPluginRepo/master/pluginmaster.json
+https://raw.githubusercontent.com/dodingdaga/DalamudPlugins/main/PuppetMaster.json
+http://puni.sh/api/repository/croizat
