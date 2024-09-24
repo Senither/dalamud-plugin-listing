@@ -78,6 +78,10 @@ func GetRepositories() []Repository {
 	return repositories
 }
 
+func GetRepositoriesSize() int {
+	return len(repositories)
+}
+
 func GetRepositoriesByOriginUrl(url string) []Repository {
 	var filteredRepos []Repository
 

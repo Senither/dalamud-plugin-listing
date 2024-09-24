@@ -7,9 +7,11 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strconv"
 	"strings"
 
 	"github.com/senither/dalamud-plugin-listing/metrics"
+	"github.com/senither/dalamud-plugin-listing/state"
 )
 
 var (
@@ -31,7 +33,15 @@ func RenderHtml(w http.ResponseWriter, r *http.Request) {
 		fileHash = &hash
 	}
 
-	fmt.Fprint(w, strings.Replace(string(content), "@file-hash", *fileHash, 1))
+	fmt.Fprint(w, renderTemplateStrings(string(content)))
+}
+
+func renderTemplateStrings(template string) string {
+	template = strings.Replace(template, "@file-hash", *fileHash, 1)
+	template = strings.ReplaceAll(template, "@state-url-size", strconv.Itoa(state.GetUrlsSize()))
+	template = strings.ReplaceAll(template, "@state-repo-size", strconv.Itoa(state.GetRepositoriesSize()))
+
+	return template
 }
 
 func createSHA1Hash(input string) string {

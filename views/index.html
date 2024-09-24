@@ -48,30 +48,75 @@
         <div class="flex flex-col prose prose-invert max-w-full">
             <header class="mb-6">
                 <h1>
-                    Welcome to my Dalamud Plugin List
+                    Welcome to my <span class="text-[#fb8e81]">Dalamud</span> Plugin List
                 </h1>
+
                 <p>
                     I got tired of the clutter of having 15+ plugin repositories saved in Dalamud and not knowing what
                     plugins comes from which repository, some plugins also exists in multiple repositories which then
-                    show up multiple times in the plugin list. So I made this page to help me keep track of what plugins
-                    come from where.
+                    show up multiple times in the plugin list. So I made this small project to help some friends and
+                    myself keep track of what plugins comes from where.
                 </p>
 
                 <p>
-                    The list itself is a collection of multiple different repositories all combined into one list, the
-                    list is then updated every 30 minutes to check for updates, this allows me to have a single plugin
+                    The list itself is a collection of <span class="font-bold text-indigo-100">@state-url-size</span>
+                    different repositories, combined providing access to
+                    <span class="font-bold text-indigo-100">@state-repo-size</span> plugins within a single repository.
+                    The list is then updated once an hour to check for updates, this makes it possible to have a single
+                    plugin
                     repository in Dalamud and still get updates from all the different repositories.
                 </p>
 
-                <p>
-                    If you want to use the list yourself you can add the following URL to your Dalamud plugin list <code
-                        id="repo-url"></code> and you'll get access to all the plugins you can find below.
-                </p>
+                <h2>FAQ</h2>
+
+                <div class="flex flex-col gap-4">
+                    <div class="px-4 py-1 bg-gray-900/20 border border-gray-900 rounded">
+                        <details>
+                            <summary>
+                                <span class="cursor-pointer">
+                                    Can I use this plugin list too?
+                                </span>
+                            </summary>
+
+                            <p>Ofcourse! You can add this repository to Dalamud by following the steps below:</p>
+
+                            <ul>
+                                <li>Open Dalamud's settings (<code>/xlsettings</code>)</li>
+                                <li>Click on the <code>Experimental</code> tab</li>
+                                <li>Scroll Down to <code>Custom Plugin Repositories</code></li>
+                                <li>
+                                    Add the following URL: <code id="repo-url"></code>, then click on the Plus next to
+                                    it
+                                </li>
+                                <li>Click on the Save icon in the bottom right corner</li>
+                            </ul>
+                        </details>
+                    </div>
+
+                    <div class="px-4 py-1 bg-gray-900/20 border border-gray-900 rounded">
+                        <details>
+                            <summary>
+                                <span class="cursor-pointer">
+                                    Where is Mare, Penumbra, Glamourer, ...etc?
+                                </span>
+                            </summary>
+                            <p>
+                                Mare Synchronos and some related plugins only works when they're installed from their
+                                original repository list, if you'd like to use those plugins you should add the
+                                official repository url.
+                                <br>
+                                <br>
+                                <code>https://raw.githubusercontent.com/Ottermandias/SeaOfStars/main/repo.json</code>
+                            </p>
+                        </details>
+                    </div>
+                </div>
             </header>
 
-            <section class="mx-4 mb-8">
+            <section class="mb-8">
+                <h2>Available Plugins</h2>
                 <input type="text" x-model="query"
-                    class="px-3 py-1 w-full bg-gray-950 focus:bg-slate-950 placeholder:italic placeholder:text-slate-400 border border-gray-800 focus:outline-none focus:border-indigo-700 rounded"
+                    class="mx-4 px-3 py-1 w-full bg-gray-950 focus:bg-slate-950 placeholder:italic placeholder:text-slate-400 border border-gray-800 focus:outline-none focus:border-indigo-700 rounded"
                     placeholder="Search for plugins here...">
             </section>
 
@@ -95,9 +140,9 @@
 
                         <div class="flex justify-between">
                             <a target="blank" x-bind:href="repo.RepoUrl"
-                                class="text-blue-400 hover:text-blue-300">Repository</a>
+                                class="text-indigo-400 hover:text-indigo-300">Repository</a>
                             <a target="blank" x-bind:href="repo.OriginRepositoryUrl.RepositoryUrl"
-                                class="text-blue-400 hover:text-blue-300">Origin Repository List</a>
+                                class="text-indigo-400 hover:text-indigo-300">Origin Repository List</a>
                         </div>
                     </div>
                 </template>
@@ -105,10 +150,12 @@
 
             <footer class="mt-8 flex items-center justify-center opacity-65">
                 <p>
-                    Made for fun by <a href="https://github.com/Senither" target="_blank">Senither</a> using
-                    <a href="https://go.dev/" target="_blank">Go</a>,
-                    <a href="https://tailwindcss.com/" target="_blank">TailwindCSS</a> and
-                    <a href="https://alpinejs.dev/" target="_blank">AlpineJS</a>.
+                    Made for fun by
+                    <a href="https://github.com/Senither" target="_blank" class="hover:text-indigo-400">Senither</a>
+                    using
+                    <a href="https://go.dev/" target="_blank" class="hover:text-indigo-400">Go</a>,
+                    <a href="https://tailwindcss.com/" target="_blank" class="hover:text-indigo-400">TailwindCSS</a> and
+                    <a href="https://alpinejs.dev/" target="_blank" class="hover:text-indigo-400">AlpineJS</a>.
                 </p>
             </footer>
         </div>

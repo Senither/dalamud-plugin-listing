@@ -25,6 +25,10 @@ func GetUrls() []string {
 	return urls
 }
 
+func GetUrlsSize() int {
+	return len(GetUrls())
+}
+
 func exists(rawUrl string) bool {
 	for _, repo := range urls {
 		if repo == rawUrl {
