@@ -1,7 +1,7 @@
 package jobs
 
 import (
-	"fmt"
+	"log/slog"
 	"time"
 
 	"github.com/senither/dalamud-plugin-listing/state"
@@ -28,7 +28,10 @@ func runDelete() {
 				repoUrl = *repo.RepoUrl
 			}
 
-			fmt.Println("Deleting expired repository: " + repo.Name + " (" + repoUrl + ")")
+			slog.Info("Deleting expired repository",
+				"repository", repo.Name,
+				"url", repoUrl,
+			)
 
 			state.DeleteRepository(repo.InternalName)
 		}

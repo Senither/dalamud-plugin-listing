@@ -13,8 +13,6 @@ import (
 func RenderJson(w http.ResponseWriter, r *http.Request) {
 	metrics.IncrementRouteRequestCounter(metrics.JsonRoute)
 
-	fmt.Println(" - Rendering JSON")
-
 	w.Header().Set("Content-Type", "application/json")
 
 	content, err := json.Marshal(state.GetRepositories())

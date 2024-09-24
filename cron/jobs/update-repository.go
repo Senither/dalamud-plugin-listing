@@ -2,8 +2,8 @@ package jobs
 
 import (
 	"encoding/json"
-	"fmt"
 	"log"
+	"log/slog"
 	"net/http"
 	"time"
 
@@ -25,7 +25,9 @@ func StartUpdateRepositoryJob(url string, interval time.Duration, runOnStartup b
 }
 
 func runUpdate(url string) {
-	fmt.Println("Sending request to update repository for: ", url)
+	slog.Info("Sending request to update repository for",
+		"url", url,
+	)
 
 	client := http.Client{}
 	req, err := http.NewRequest("GET", url, nil)
@@ -49,7 +51,10 @@ func runUpdate(url string) {
 	decoder := json.NewDecoder(resp.Body)
 	err = decoder.Decode(&repos)
 	if err != nil {
-		fmt.Println("Failed to decode JSON response:", err)
+		slog.Error("Failed to decode JSON response",
+			"err", err,
+			"url", url,
+		)
 		return
 	}
 
