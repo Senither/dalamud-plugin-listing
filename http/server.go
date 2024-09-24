@@ -11,11 +11,16 @@ import (
 
 func SetupServer() {
 	http.HandleFunc("/", handleRequest)
+	http.HandleFunc("/favicon.ico", handleFavicon)
 	http.Handle("/metrics", promhttp.Handler())
 	http.Handle("/assets/", http.StripPrefix("/assets/", http.FileServer(http.Dir("./assets"))))
 
 	slog.Info("Starting server on port 8080")
 	http.ListenAndServe(":8080", nil)
+}
+
+func handleFavicon(w http.ResponseWriter, r *http.Request) {
+	http.ServeFile(w, r, "./assets/icons/favicon.ico")
 }
 
 func handleRequest(w http.ResponseWriter, r *http.Request) {
