@@ -1,10 +1,13 @@
 package jobs
 
 import (
+	"bytes"
 	"encoding/json"
+	"io"
 	"log"
 	"log/slog"
 	"net/http"
+	"regexp"
 	"time"
 
 	"github.com/senither/dalamud-plugin-listing/state"
@@ -45,11 +48,7 @@ func runUpdate(url string) {
 
 	defer resp.Body.Close()
 
-	var repos []state.Repository
-
-	// Parse the JSON array from the request body
-	decoder := json.NewDecoder(resp.Body)
-	err = decoder.Decode(&repos)
+	repos, err := decodeJsonRequestBody(resp.Body)
 	if err != nil {
 		slog.Error("Failed to decode JSON response",
 			"err", err,
@@ -66,4 +65,25 @@ func runUpdate(url string) {
 
 		state.UpsertRepository(repo)
 	}
+}
+
+func decodeJsonRequestBody(body io.ReadCloser) ([]state.Repository, error) {
+	reqBytes, err := io.ReadAll(body)
+	if err != nil {
+		return nil, err
+	}
+
+	reqBody := string(reqBytes)
+	exp := regexp.MustCompile(`,(\s*[\}\]])`)
+	reqBody = exp.ReplaceAllString(reqBody, "$1")
+
+	var repos []state.Repository
+
+	decoder := json.NewDecoder(bytes.NewBufferString(reqBody))
+	err = decoder.Decode(&repos)
+
+	if err != nil {
+		return nil, err
+	}
+	return repos, nil
 }
