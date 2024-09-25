@@ -18,6 +18,5 @@ https://aetherment.sevii.dev/plugin
 https://raw.githubusercontent.com/Warpholomey/DalamudPlugins/master/repository.json
 https://raw.githubusercontent.com/InitialDet/MyDalamudPlugins/main/pluginmaster.json
 https://raw.githubusercontent.com/awgil/ffxiv_plugin_distribution/master/pluginmaster.json
-https://raw.githubusercontent.com/eqbot/DalamudPluginRepo/master/pluginmaster.json
 https://raw.githubusercontent.com/dodingdaga/DalamudPlugins/main/PuppetMaster.json
 http://puni.sh/api/repository/croizat
