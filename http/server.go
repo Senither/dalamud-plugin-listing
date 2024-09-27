@@ -85,6 +85,11 @@ func handleRequest(w http.ResponseWriter, r *http.Request) {
 		"requestType", requestType,
 	)
 
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Methods", "GET")
+	w.Header().Set("Access-Control-Allow-Headers", "accept,content-type")
+	w.Header().Set("Access-Control-Max-Age", "300")
+
 	w.Header().Set("Server", "'; DROP TABLE servertypes; --")
 	w.Header().Set("X-Powered-By", "Nerd Rage and Caffeine")
 	w.Header().Set("X-Accepts", "text/html,application/json")
