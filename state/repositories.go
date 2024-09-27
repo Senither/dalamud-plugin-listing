@@ -44,8 +44,11 @@ type RepositoryOrigin struct {
 	LastUpdatedAt int64  `json:"LastUpdatedAt"`
 }
 
-var repositories []Repository
-var timer = time.NewTimer(time.Nanosecond)
+var (
+	repositories  []Repository
+	timer         = time.NewTimer(time.Nanosecond)
+	lastUpdatedAt = time.Now().Unix()
+)
 
 func UpsertRepository(repo Repository) {
 	if repo.RepoUrl == nil || *repo.RepoUrl == "" {
@@ -92,6 +95,10 @@ func GetRepositoriesByOriginUrl(url string) []Repository {
 	}
 
 	return filteredRepos
+}
+
+func GetRepositoriesLastUpdatedAt() int64 {
+	return lastUpdatedAt
 }
 
 func LoadCachedRepositoryDataFromDisk() {
@@ -158,6 +165,8 @@ func findRepositoryUrl(repo Repository) *string {
 }
 
 func writeRepositoriesToDisk() {
+	lastUpdatedAt = time.Now().Unix()
+
 	if timer != nil {
 		timer.Stop()
 	}
