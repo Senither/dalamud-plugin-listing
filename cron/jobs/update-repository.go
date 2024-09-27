@@ -13,6 +13,14 @@ import (
 	"github.com/senither/dalamud-plugin-listing/state"
 )
 
+type UpdateRepositoryJob struct {
+	Interval     time.Duration
+	RunOnStartup bool
+	Ticker       *time.Ticker
+}
+
+var jobs = make(map[string]*UpdateRepositoryJob)
+
 func StartUpdateRepositoryJob(url string, interval time.Duration, runOnStartup bool) {
 	if runOnStartup {
 		runUpdate(url)
@@ -20,11 +28,21 @@ func StartUpdateRepositoryJob(url string, interval time.Duration, runOnStartup b
 
 	tick := time.NewTicker(interval)
 
+	jobs[url] = &UpdateRepositoryJob{
+		Interval:     interval,
+		RunOnStartup: runOnStartup,
+		Ticker:       tick,
+	}
+
 	go func() {
 		for range tick.C {
 			runUpdate(url)
 		}
 	}()
+}
+
+func GetJobs() map[string]*UpdateRepositoryJob {
+	return jobs
 }
 
 func runUpdate(url string) {

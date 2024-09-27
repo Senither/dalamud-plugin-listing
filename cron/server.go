@@ -1,6 +1,7 @@
 package cron
 
 import (
+	"log/slog"
 	"math/rand/v2"
 	"time"
 
@@ -31,4 +32,12 @@ func SetupJobs() {
 	}
 
 	jobs.StartDeleteExpiredRepositoriesJob(time.Second * 30)
+}
+
+func ShutdownJobs() {
+	for url, job := range jobs.GetJobs() {
+		slog.Debug("Shutting down job", "url", url)
+
+		job.Ticker.Stop()
+	}
 }
