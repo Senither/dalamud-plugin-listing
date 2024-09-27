@@ -24,11 +24,15 @@ func main() {
 		slog.Info("Stopping all running jobs...")
 		cron.ShutdownJobs()
 
+		slog.Info("Shutting down the HTTP server...")
+		http.ShutdownServer()
+
 		runningCh <- struct{}{}
 
 		go func() {
-			// This shuts down the application after 3 seconds if it does not exit on its own.
-			time.Sleep(3 * time.Second)
+			// This shuts down the application after 10 seconds if it does not exit on its own.
+			time.Sleep(10 * time.Second)
+			slog.Info("Forcing the application to exit after 10 seconds")
 			os.Exit(0)
 		}()
 	}()

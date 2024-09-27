@@ -1,22 +1,60 @@
 package http
 
 import (
+	"context"
+	"errors"
 	"log/slog"
 	"net/http"
+	"os"
 	"strings"
+	"time"
 
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/senither/dalamud-plugin-listing/http/renders"
 )
 
-func SetupServer() {
-	http.HandleFunc("/", handleRequest)
-	http.HandleFunc("/favicon.ico", handleFavicon)
-	http.Handle("/metrics", promhttp.Handler())
-	http.Handle("/assets/", http.StripPrefix("/assets/", http.FileServer(http.Dir("./assets"))))
+var srv *http.Server
 
-	slog.Info("Starting server on port 8080")
-	http.ListenAndServe(":8080", nil)
+func SetupServer() {
+	mux := http.NewServeMux()
+
+	mux.HandleFunc("/", handleRequest)
+	mux.HandleFunc("/favicon.ico", handleFavicon)
+	mux.Handle("/metrics", promhttp.Handler())
+	mux.Handle("/assets/", http.StripPrefix("/assets/", http.FileServer(http.Dir("./assets"))))
+
+	srv = &http.Server{
+		Addr:         ":8080",
+		Handler:      mux,
+		ReadTimeout:  10 * time.Second,
+		WriteTimeout: 5 * time.Second,
+	}
+
+	go func() {
+		slog.Info("Starting server on port 8080")
+		if err := srv.ListenAndServe(); err != nil {
+			if errors.Is(err, http.ErrServerClosed) {
+				slog.Info("Server has been shutdown gracefully")
+				return
+			}
+
+			slog.Error("Server caught an unexpected error", "error", err)
+			os.Exit(1)
+		}
+	}()
+}
+
+func ShutdownServer() {
+	slog.Info("Shutting down server gracefully")
+
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	if err := srv.Shutdown(ctx); err != nil {
+		slog.Error("Failed to shutdown server",
+			"error", err,
+		)
+	}
 }
 
 func handleFavicon(w http.ResponseWriter, r *http.Request) {
