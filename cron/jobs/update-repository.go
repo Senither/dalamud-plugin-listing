@@ -57,7 +57,7 @@ func runUpdate(url string) {
 	}
 
 	req.Header.Set("Accept", "application/json")
-	req.Header.Set("User-Agent", "Dalamud Plugin Listing")
+	req.Header.Set("User-Agent", "Dalamud Plugin Listing (https://dalamud-plugins.senither.com/)")
 
 	resp, err := client.Do(req)
 	if err != nil {
