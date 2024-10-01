@@ -21,3 +21,4 @@ https://raw.githubusercontent.com/awgil/ffxiv_plugin_distribution/master/pluginm
 https://raw.githubusercontent.com/dodingdaga/DalamudPlugins/main/PuppetMaster.json
 http://puni.sh/api/repository/croizat
 https://raw.githubusercontent.com/TomestoneGG/Dalamud.Tomestone/master/repo.json
+https://raw.githubusercontent.com/Eisenhuth/TrustworthyDalamudPlugins/master/pluginmaster.json
