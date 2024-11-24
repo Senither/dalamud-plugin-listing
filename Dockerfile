@@ -39,6 +39,7 @@ WORKDIR /
 # Copy the built application and the views
 COPY --from=go-build /dalamud-plugin-listing /dalamud-plugin-listing
 COPY --from=go-build /app/repositories.txt /repositories.txt
+COPY --from=go-build /app/plugins.txt /plugins.txt
 COPY --from=node-build /app/assets /assets
 COPY --from=node-build /app/views /views
 
