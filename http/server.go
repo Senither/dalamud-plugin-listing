@@ -67,6 +67,11 @@ func handleFavicon(w http.ResponseWriter, r *http.Request) {
 }
 
 func handleRequest(w http.ResponseWriter, r *http.Request) {
+	if strings.ToLower(r.URL.Path) == "/webhook/github-release" && r.Method == "POST" {
+		handleGitHubReleaseWebhook(w, r)
+		return
+	}
+
 	if r.URL.Path != "/" {
 		slog.InfoContext(r.Context(), "Received request to invalid route",
 			"method", r.Method,

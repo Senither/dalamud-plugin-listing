@@ -59,6 +59,10 @@ func StartUpdatePluginReleaseJob(repoName string, interval time.Duration, runOnS
 	}()
 }
 
+func RunGitHubReleaseUpdateJob(repoName string) {
+	runUpdatePluginRelease(repoName)
+}
+
 func GetPluginReleasesJobs() map[string]*UpdatePluginReleaseJob {
 	return jobs
 }

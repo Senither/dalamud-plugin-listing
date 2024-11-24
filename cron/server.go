@@ -52,4 +52,10 @@ func ShutdownJobs() {
 
 		job.Ticker.Stop()
 	}
+
+	for repoName, job := range jobs.GetPluginReleasesJobs() {
+		slog.Debug("Shutting down job", "repoName", repoName)
+
+		job.Ticker.Stop()
+	}
 }
