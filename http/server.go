@@ -23,15 +23,20 @@ func SetupServer() {
 	mux.Handle("/metrics", promhttp.Handler())
 	mux.Handle("/assets/", http.StripPrefix("/assets/", http.FileServer(http.Dir("./assets"))))
 
+	addr := os.Getenv("APP_ADDR")
+	if addr == "" {
+		addr = "127.0.0.1:8080"
+	}
+
 	srv = &http.Server{
-		Addr:         ":8080",
+		Addr:         addr,
 		Handler:      mux,
 		ReadTimeout:  10 * time.Second,
 		WriteTimeout: 5 * time.Second,
 	}
 
 	go func() {
-		slog.Info("Starting server on port 8080")
+		slog.Info("Starting server on", "addr", addr)
 		if err := srv.ListenAndServe(); err != nil {
 			if errors.Is(err, http.ErrServerClosed) {
 				slog.Info("Server has been shutdown gracefully")
