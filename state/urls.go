@@ -10,7 +10,7 @@ import (
 var urls []string
 
 func AddUrl(rawUrl string) {
-	if exists(rawUrl) || len(rawUrl) < 4 {
+	if urlExists(rawUrl) || len(rawUrl) < 4 {
 		return
 	}
 
@@ -29,7 +29,7 @@ func GetUrlsSize() int {
 	return len(GetUrls())
 }
 
-func exists(rawUrl string) bool {
+func urlExists(rawUrl string) bool {
 	for _, repo := range urls {
 		if repo == rawUrl {
 			return true

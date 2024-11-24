@@ -36,6 +36,7 @@ type Repository struct {
 	DownloadLinkInstall    string           `json:"DownloadLinkInstall"`
 	DownloadLinkTesting    *string          `json:"DownloadLinkTesting,omitempty"`
 	DownloadLinkUpdate     *string          `json:"DownloadLinkUpdate,omitempty"`
+	IsInternalPlugin       *bool            `json:"IsInternalPlugin,omitempty"`
 	RepositoryOrigin       RepositoryOrigin `json:"OriginRepositoryUrl"`
 }
 
@@ -97,6 +98,18 @@ func GetRepositoriesByOriginUrl(url string) []Repository {
 	return filteredRepos
 }
 
+func GetRepositoryByGitHubReleaseRepositoryName(repoName string) *Repository {
+	partial := "github.com/" + repoName
+
+	for _, repository := range repositories {
+		if strings.Contains(repository.DownloadLinkInstall, partial) {
+			return &repository
+		}
+	}
+
+	return nil
+}
+
 func GetRepositoriesLastUpdatedAt() int64 {
 	return lastUpdatedAt
 }
@@ -131,6 +144,23 @@ func LoadRepositoriesFromDisk() {
 		}
 
 		AddUrl(strings.Trim(repo, "\r"))
+	}
+}
+
+func LoadPluginsFromDisk() {
+	content, err := os.ReadFile("plugins.txt")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	plugins := strings.Split(string(content), "\n")
+
+	for _, repo := range plugins {
+		if repo == "" {
+			continue
+		}
+
+		AddInternalPluginUrl(strings.Trim(repo, "\r"))
 	}
 }
 
