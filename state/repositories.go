@@ -19,7 +19,7 @@ type Repository struct {
 	AssemblyVersion        interface{}      `json:"AssemblyVersion,omitempty"`
 	TestingAssemblyVersion interface{}      `json:"TestingAssemblyVersion,omitempty"`
 	RepoUrl                *string          `json:"RepoUrl"`
-	IconUrl                string           `json:"IconUrl"`
+	IconUrl                *string          `json:"IconUrl,omitempty"`
 	ApplicableVersion      *string          `json:"ApplicableVersion,omitempty"`
 	Tags                   []string         `json:"Tags"`
 	DalamudApiLevel        interface{}      `json:"DalamudApiLevel,omitempty"`
@@ -33,16 +33,16 @@ type Repository struct {
 	LoadRequiredState      *int64           `json:"LoadRequiredState,omitempty"`
 	LoadSync               *bool            `json:"LoadSync,omitempty"`
 	AcceptsFeedback        *bool            `json:"AcceptsFeedback,omitempty"`
-	DownloadLinkInstall    string           `json:"DownloadLinkInstall"`
+	DownloadLinkInstall    *string          `json:"DownloadLinkInstall,omitempty"`
 	DownloadLinkTesting    *string          `json:"DownloadLinkTesting,omitempty"`
 	DownloadLinkUpdate     *string          `json:"DownloadLinkUpdate,omitempty"`
-	IsInternalPlugin       *bool            `json:"IsInternalPlugin,omitempty"`
 	RepositoryOrigin       RepositoryOrigin `json:"OriginRepositoryUrl"`
 }
 
 type RepositoryOrigin struct {
-	RepositoryUrl string `json:"RepositoryUrl"`
-	LastUpdatedAt int64  `json:"LastUpdatedAt"`
+	RepositoryUrl    string `json:"RepositoryUrl"`
+	LastUpdatedAt    int64  `json:"LastUpdatedAt"`
+	IsInternalPlugin *bool  `json:"IsInternalPlugin,omitempty"`
 }
 
 var (
@@ -102,7 +102,7 @@ func GetRepositoryByGitHubReleaseRepositoryName(repoName string) *Repository {
 	partial := "github.com/" + repoName
 
 	for _, repository := range repositories {
-		if strings.Contains(repository.DownloadLinkInstall, partial) {
+		if strings.Contains(*repository.DownloadLinkInstall, partial) {
 			return &repository
 		}
 	}
@@ -175,12 +175,12 @@ func getRepositoryIndex(internalName string) int {
 }
 
 func findRepositoryUrl(repo Repository) *string {
-	parsedUrl, err := url.ParseRequestURI(repo.DownloadLinkInstall)
+	parsedUrl, err := url.ParseRequestURI(*repo.DownloadLinkInstall)
 	if err != nil {
 		return nil
 	}
 
-	if !strings.HasPrefix(repo.DownloadLinkInstall, "https://github.com") {
+	if !strings.HasPrefix(*repo.DownloadLinkInstall, "https://github.com") {
 		url := parsedUrl.Scheme + "://" + parsedUrl.Host
 		return &url
 	}

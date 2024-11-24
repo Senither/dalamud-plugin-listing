@@ -34,29 +34,20 @@ func SetupJobs() {
 
 	for _, repoName := range state.GetInternalPlugins() {
 		repo := state.GetRepositoryByGitHubReleaseRepositoryName(repoName)
-		if repo == nil {
-			slog.Warn("Failed to find plugin", "repo", repoName)
-			// TODO: Start the job right away if the repo isn't found
-			continue
+		runOnStart := true
+
+		if repo != nil {
+			runOnStart = repo.RepositoryOrigin.LastUpdatedAt <= time.Now().Add(time.Minute*60*-1).Unix()
 		}
 
-		slog.Info("Found plugin", "repo", repoName, "url", repo.RepositoryOrigin.RepositoryUrl)
-
-		runOnStart := repo.RepositoryOrigin.LastUpdatedAt <= time.Now().Add(time.Minute*35*-1).Unix()
-
-		// TODO: Starts the job and either runs it right away, or with a delay around 3 - 6 hours.
-		slog.Info("Starting job",
-			"repo", repoName,
-			"url", repo.RepositoryOrigin.RepositoryUrl,
-			"runOnStart", runOnStart,
-		)
+		jobs.StartUpdatePluginReleaseJob(repoName, time.Minute*time.Duration(240), runOnStart)
 	}
 
 	jobs.StartDeleteExpiredRepositoriesJob(time.Second * 30)
 }
 
 func ShutdownJobs() {
-	for url, job := range jobs.GetJobs() {
+	for url, job := range jobs.GetRepositoryJobs() {
 		slog.Debug("Shutting down job", "url", url)
 
 		job.Ticker.Stop()

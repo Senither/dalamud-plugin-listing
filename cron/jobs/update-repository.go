@@ -19,16 +19,16 @@ type UpdateRepositoryJob struct {
 	Ticker       *time.Ticker
 }
 
-var jobs = make(map[string]*UpdateRepositoryJob)
+var repositoryJobs = make(map[string]*UpdateRepositoryJob)
 
 func StartUpdateRepositoryJob(url string, interval time.Duration, runOnStartup bool) {
 	if runOnStartup {
-		runUpdate(url)
+		runRepositoryUpdate(url)
 	}
 
 	tick := time.NewTicker(interval)
 
-	jobs[url] = &UpdateRepositoryJob{
+	repositoryJobs[url] = &UpdateRepositoryJob{
 		Interval:     interval,
 		RunOnStartup: runOnStartup,
 		Ticker:       tick,
@@ -36,16 +36,16 @@ func StartUpdateRepositoryJob(url string, interval time.Duration, runOnStartup b
 
 	go func() {
 		for range tick.C {
-			runUpdate(url)
+			runRepositoryUpdate(url)
 		}
 	}()
 }
 
-func GetJobs() map[string]*UpdateRepositoryJob {
-	return jobs
+func GetRepositoryJobs() map[string]*UpdateRepositoryJob {
+	return repositoryJobs
 }
 
-func runUpdate(url string) {
+func runRepositoryUpdate(url string) {
 	slog.Info("Sending request to update repository for",
 		"url", url,
 	)
