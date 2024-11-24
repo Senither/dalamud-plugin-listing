@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"log/slog"
 	"net/http"
+	"time"
 
 	"github.com/senither/dalamud-plugin-listing/cron/jobs"
 	"github.com/senither/dalamud-plugin-listing/state"
@@ -26,8 +27,6 @@ func handleGitHubReleaseWebhook(w http.ResponseWriter, r *http.Request) {
 		"remote", r.RemoteAddr,
 	)
 
-	slog.Info("Received GitHub release webhook")
-
 	var req GitHubWebhookRequest = GitHubWebhookRequest{}
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		slog.Error("Failed to decode GitHub release webhook request",
@@ -39,7 +38,18 @@ func handleGitHubReleaseWebhook(w http.ResponseWriter, r *http.Request) {
 
 	for _, repoName := range state.GetInternalPlugins() {
 		if repoName == req.Repository.FullName {
-			jobs.RunGitHubReleaseUpdateJob(req.Repository.FullName)
+			go func() {
+				slog.Info("Running GitHub release update job in 10 seconds",
+					"repository", req.Repository.FullName,
+				)
+
+				// Run the job in 10 seconds to give GitHub time to process the release
+				// and make it available for the job to fetch.
+				<-time.After(10 * time.Second)
+
+				jobs.RunGitHubReleaseUpdateJob(req.Repository.FullName)
+			}()
+
 			w.WriteHeader(http.StatusAccepted)
 			return
 		}
