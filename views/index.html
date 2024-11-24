@@ -138,11 +138,20 @@
                             </div>
                         </div>
 
-                        <div class="flex justify-between">
+                        <div class="flex justify-between items-end">
                             <a target="blank" x-bind:href="repo.RepoUrl"
                                 class="text-indigo-400 hover:text-indigo-300">Repository</a>
-                            <a target="blank" x-bind:href="repo.OriginRepositoryUrl.RepositoryUrl"
-                                class="text-indigo-400 hover:text-indigo-300">Origin Repository List</a>
+
+                            <template x-if="repo.OriginRepositoryUrl.IsInternalPlugin">
+                                <span
+                                    class="px-2 py-1 bg-gray-800 text-sm opacity-40 hover:opacity-75 transition-opacity rounded">
+                                    Internal plugin
+                                </span>
+                            </template>
+                            <template x-if="!repo.OriginRepositoryUrl.IsInternalPlugin">
+                                <a target="blank" x-bind:href="repo.OriginRepositoryUrl.RepositoryUrl"
+                                    class="text-indigo-400 hover:text-indigo-300">Origin Repository List</a>
+                            </template>
                         </div>
                     </div>
                 </template>
