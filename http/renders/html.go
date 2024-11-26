@@ -40,6 +40,7 @@ func renderTemplateStrings(template string) string {
 	template = strings.Replace(template, "@file-hash", *fileHash, 1)
 	template = strings.ReplaceAll(template, "@state-url-size", strconv.Itoa(state.GetUrlsSize()))
 	template = strings.ReplaceAll(template, "@state-repo-size", strconv.Itoa(state.GetRepositoriesSize()))
+	template = strings.ReplaceAll(template, "@state-internal-size", strconv.Itoa(state.GetInternalPluginSize()))
 
 	return template
 }
