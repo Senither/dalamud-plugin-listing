@@ -73,10 +73,10 @@ func handleRequest(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if strings.HasPrefix(r.URL.Path, "/plugins/") && r.Method == "GET" {
-		handleRenderingPluginByInternalName(w, r.URL.Path[9:])
+		handleRenderingPluginByInternalName(w, r, r.URL.Path[9:])
 		return
 	} else if strings.HasPrefix(r.URL.Path, "/authors/") && r.Method == "GET" {
-		handleRenderingPluginByAuthors(w, r.URL.Path[9:])
+		handleRenderingPluginByAuthors(w, r, r.URL.Path[9:])
 		return
 	}
 

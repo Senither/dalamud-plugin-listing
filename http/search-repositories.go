@@ -3,6 +3,7 @@ package http
 import (
 	"encoding/json"
 	"log"
+	"log/slog"
 	"net/http"
 	"strings"
 
@@ -11,25 +12,31 @@ import (
 
 type RepositorySearchCallback func(repo *state.Repository, searchQuery string) bool
 
-func handleRenderingPluginByInternalName(w http.ResponseWriter, internalName string) {
-	renderPluginRepositorySearch(w, internalName, func(repo *state.Repository, searchQuery string) bool {
+func handleRenderingPluginByInternalName(w http.ResponseWriter, r *http.Request, internalName string) {
+	renderPluginRepositorySearch(w, r, internalName, func(repo *state.Repository, searchQuery string) bool {
 		return strings.HasPrefix(strings.ToLower(repo.InternalName), searchQuery)
 	})
 }
 
-func handleRenderingPluginByAuthors(w http.ResponseWriter, author string) {
-	renderPluginRepositorySearch(w, author, func(repo *state.Repository, searchQuery string) bool {
+func handleRenderingPluginByAuthors(w http.ResponseWriter, r *http.Request, author string) {
+	renderPluginRepositorySearch(w, r, author, func(repo *state.Repository, searchQuery string) bool {
 		return strings.HasPrefix(strings.ToLower(repo.Author), searchQuery)
 	})
 }
 
-func renderPluginRepositorySearch(w http.ResponseWriter, value string, callback RepositorySearchCallback) {
+func renderPluginRepositorySearch(w http.ResponseWriter, r *http.Request, value string, callback RepositorySearchCallback) {
 	ApplyHttpBaseResponseHeaders(w)
 	w.Header().Set("Content-Type", "application/json")
 
 	searchQuery := strings.ToLower(value)
 	searchQuery = strings.Trim(searchQuery, "/")
 	searchQuery = strings.TrimSuffix(searchQuery, ".json")
+
+	slog.Info("Handling search request",
+		"searchQuery", searchQuery,
+		"path", r.URL.Path,
+		"remote", r.RemoteAddr,
+	)
 
 	var repositories []*state.Repository
 	for _, repo := range state.GetRepositories() {
