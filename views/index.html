@@ -19,10 +19,6 @@
             return (await response.json())
                 .sort((a, b) => a.Name.localeCompare(b.Name))
         }
-
-        setTimeout(() => {
-            document.getElementById('repo-url').innerText = window.location.href
-        }, 1)
     </script>
 </head>
 
@@ -85,8 +81,8 @@
                                 <li>Click on the <code>Experimental</code> tab</li>
                                 <li>Scroll Down to <code>Custom Plugin Repositories</code></li>
                                 <li>
-                                    Add the following URL: <code id="repo-url"></code>, then click on the Plus next to
-                                    it
+                                    Add the following URL: <code x-text="window.location.href"></code>, then click on
+                                    the Plus next to it
                                 </li>
                                 <li>Click on the Save icon in the bottom right corner</li>
                             </ul>
@@ -107,6 +103,36 @@
                                 <br>
                                 <br>
                                 <code>https://raw.githubusercontent.com/Ottermandias/SeaOfStars/main/repo.json</code>
+                            </p>
+                        </details>
+                    </div>
+
+                    <div class="px-4 py-1 bg-gray-900/20 border border-gray-900 rounded">
+                        <details>
+                            <summary>
+                                <span class="cursor-pointer">
+                                    Can I get only a small selection of the plugins?
+                                </span>
+                            </summary>
+                            <p>
+                                Yes! If you'd like to only get plugins which match specific criteria, such as containing
+                                some text in the name, or getting plugins from a subset of authors, you can use the
+                                following URLs:
+                            </p>
+
+                            <ul>
+                                <li>/authors/&lt;search query&gt;.json</li>
+                                <li>/plugins/&lt;search query&gt;.json</li>
+                            </ul>
+                            <p>
+                                As an example, if you only want to get plugins I've made you could add the following
+                                URL:
+                                <br>
+                                <code class="ml-4" x-text="window.location.href + 'authors/senither.json'"></code>
+                                <br>
+                                or to get all plugins containing the word "auto" you could use the following URL:
+                                <br>
+                                <code class="ml-4" x-text="window.location.href + 'plugins/auto.json'"></code>
                             </p>
                         </details>
                     </div>
