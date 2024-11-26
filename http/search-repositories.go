@@ -12,9 +12,19 @@ import (
 
 type RepositorySearchCallback func(repo *state.Repository, searchQuery string) bool
 
-func handleRenderingPluginByInternalName(w http.ResponseWriter, r *http.Request, internalName string) {
+func handleRenderingPluginByName(w http.ResponseWriter, r *http.Request, internalName string) {
 	renderPluginRepositorySearch(w, r, internalName, func(repo *state.Repository, searchQuery string) bool {
-		return strings.HasPrefix(strings.ToLower(repo.InternalName), searchQuery)
+		if strings.HasPrefix(strings.ToLower(repo.InternalName), searchQuery) ||
+			strings.HasPrefix(strings.ToLower(repo.Name), searchQuery) ||
+			strings.Contains(strings.ToLower(repo.Description), searchQuery) {
+			return true
+		}
+
+		if repo.Punchline != nil && strings.Contains(strings.ToLower(*repo.Punchline), searchQuery) {
+			return true
+		}
+
+		return false
 	})
 }
 
