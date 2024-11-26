@@ -72,6 +72,14 @@ func handleRequest(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if strings.HasPrefix(r.URL.Path, "/plugins/") && r.Method == "GET" {
+		handleRenderingPluginByInternalName(w, r.URL.Path[9:])
+		return
+	} else if strings.HasPrefix(r.URL.Path, "/authors/") && r.Method == "GET" {
+		handleRenderingPluginByAuthors(w, r.URL.Path[9:])
+		return
+	}
+
 	if r.URL.Path != "/" {
 		slog.InfoContext(r.Context(), "Received request to invalid route",
 			"method", r.Method,
@@ -95,6 +103,17 @@ func handleRequest(w http.ResponseWriter, r *http.Request) {
 		"requestType", requestType,
 	)
 
+	ApplyHttpBaseResponseHeaders(w)
+
+	if r.Header.Get("Accept") == "application/json" {
+		renders.RenderJson(w, r)
+		return
+	}
+
+	renders.RenderHtml(w, r)
+}
+
+func ApplyHttpBaseResponseHeaders(w http.ResponseWriter) {
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.Header().Set("Access-Control-Allow-Methods", "GET")
 	w.Header().Set("Access-Control-Allow-Headers", "accept,content-type")
@@ -103,11 +122,4 @@ func handleRequest(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Server", "'; DROP TABLE servertypes; --")
 	w.Header().Set("X-Powered-By", "Nerd Rage and Caffeine")
 	w.Header().Set("X-Accepts", "text/html,application/json")
-
-	if r.Header.Get("Accept") == "application/json" {
-		renders.RenderJson(w, r)
-		return
-	}
-
-	renders.RenderHtml(w, r)
 }
