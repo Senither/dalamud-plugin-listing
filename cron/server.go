@@ -37,10 +37,10 @@ func SetupJobs() {
 		runOnStart := true
 
 		if repo != nil {
-			runOnStart = repo.RepositoryOrigin.LastUpdatedAt <= time.Now().Add(time.Minute*60*-1).Unix()
+			runOnStart = repo.RepositoryOrigin.LastUpdatedAt <= time.Now().Add(time.Minute*120*-1).Unix()
 		}
 
-		jobs.StartUpdatePluginReleaseJob(repoName, time.Minute*time.Duration(240), runOnStart)
+		jobs.StartUpdatePluginReleaseJob(repoName, time.Minute*time.Duration(60*12), runOnStart)
 	}
 
 	jobs.StartDeleteExpiredRepositoriesJob(time.Second * 30)
