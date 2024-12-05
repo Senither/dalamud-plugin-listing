@@ -21,7 +21,7 @@ type UpdatePluginReleaseJob struct {
 	Ticker       *time.Ticker
 }
 
-type GitHubPluginReleaseResponse struct {
+type GitHubPluginRelease struct {
 	Url        string `json:"url"`
 	TagName    string `json:"tag_name"`
 	Draft      bool   `json:"draft"`
@@ -35,6 +35,7 @@ type GitHubPluginReleaseAsset struct {
 	Name               string `json:"name"`
 	ContentType        string `json:"content_type"`
 	BrowserDownloadUrl string `json:"browser_download_url"`
+	DownloadCount      int    `json:"download_count"`
 }
 
 var jobs = make(map[string]*UpdatePluginReleaseJob)
@@ -73,31 +74,38 @@ func runUpdatePluginRelease(repoName string) {
 	)
 
 	client := http.Client{}
-	releaseReq, releaseErr := http.NewRequest("GET", fmt.Sprintf("https://api.github.com/repos/%s/releases/latest", repoName), nil)
-	if releaseErr != nil {
-		log.Fatal(releaseErr)
+	releaseReq, releasesErr := http.NewRequest("GET", fmt.Sprintf("https://api.github.com/repos/%s/releases?per_page=100", repoName), nil)
+	if releasesErr != nil {
+		log.Fatal(releasesErr)
 	}
 
 	releaseReq.Header.Set("Accept", "application/json")
 	releaseReq.Header.Set("User-Agent", "Dalamud Plugin Listing (https://dalamud-plugins.senither.com/)")
 
-	releaseResp, releaseErr := client.Do(releaseReq)
-	if releaseErr != nil {
-		log.Fatal(releaseErr)
+	releaseResp, releasesErr := client.Do(releaseReq)
+	if releasesErr != nil {
+		log.Fatal(releasesErr)
 	}
 
 	defer releaseResp.Body.Close()
 
-	release, releaseErr := decodeJsonPluginReleaseRequestBody(releaseResp.Body)
-	if releaseErr != nil {
+	releases, releasesErr := decodeJsonPluginReleaseRequestBody(releaseResp.Body)
+	if releasesErr != nil {
 		slog.Error("Failed to decode JSON response",
-			"err", releaseErr,
+			"err", releasesErr,
 			"repoName", repoName,
 		)
 		return
 	}
 
-	var manifestAsset, releaseAsset = getManifestAndLatestReleaseAssets(*release)
+	if len(releases) == 0 {
+		slog.Error("Failed to find any releases for repository",
+			"repoName", repoName,
+		)
+		return
+	}
+
+	var manifestAsset, releaseAsset = getManifestAndLatestReleaseAssets(releases[0])
 	if manifestAsset == nil || releaseAsset == nil {
 		slog.Error("Failed to find a manifest or release asset in the release",
 			"repoName", repoName,
@@ -145,15 +153,25 @@ func runUpdatePluginRelease(repoName string) {
 		IsInternalPlugin: &truthy,
 	}
 
+	totalDownloadCount := 0
+	for _, release := range releases {
+		for _, asset := range release.Assets {
+			if strings.Contains(asset.Name, ".zip") {
+				totalDownloadCount += asset.DownloadCount
+			}
+		}
+	}
+
 	repository.RepoUrl = &repoUrl
 	repository.DownloadLinkInstall = &releaseAsset.BrowserDownloadUrl
 	repository.DownloadLinkUpdate = &releaseAsset.BrowserDownloadUrl
 	repository.RepositoryOrigin = repositoryOrigin
+	repository.DownloadCount = totalDownloadCount
 
 	state.UpsertRepository(repository)
 }
 
-func getManifestAndLatestReleaseAssets(release GitHubPluginReleaseResponse) (*GitHubPluginReleaseAsset, *GitHubPluginReleaseAsset) {
+func getManifestAndLatestReleaseAssets(release GitHubPluginRelease) (*GitHubPluginReleaseAsset, *GitHubPluginReleaseAsset) {
 	var manifestAsset *GitHubPluginReleaseAsset = nil
 	var latestAsset *GitHubPluginReleaseAsset = nil
 
@@ -168,7 +186,7 @@ func getManifestAndLatestReleaseAssets(release GitHubPluginReleaseResponse) (*Gi
 	return manifestAsset, latestAsset
 }
 
-func decodeJsonPluginReleaseRequestBody(body io.ReadCloser) (*GitHubPluginReleaseResponse, error) {
+func decodeJsonPluginReleaseRequestBody(body io.ReadCloser) ([]GitHubPluginRelease, error) {
 	reqBytes, err := io.ReadAll(body)
 	if err != nil {
 		return nil, err
@@ -178,7 +196,7 @@ func decodeJsonPluginReleaseRequestBody(body io.ReadCloser) (*GitHubPluginReleas
 	exp := regexp.MustCompile(`,(\s*[\}\]])`)
 	reqBody = exp.ReplaceAllString(reqBody, "$1")
 
-	var release GitHubPluginReleaseResponse
+	var release []GitHubPluginRelease
 
 	decoder := json.NewDecoder(bytes.NewBufferString(reqBody))
 	err = decoder.Decode(&release)
@@ -186,5 +204,6 @@ func decodeJsonPluginReleaseRequestBody(body io.ReadCloser) (*GitHubPluginReleas
 	if err != nil {
 		return nil, err
 	}
-	return &release, nil
+
+	return release, nil
 }
