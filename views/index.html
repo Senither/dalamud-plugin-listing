@@ -157,7 +157,13 @@
             </header>
 
             <section class="mb-8">
-                <h2>Available Plugins</h2>
+                <div class="flex justify-between items-end">
+                    <h2>Available Plugins</h2>
+                    <p class="opacity-75">
+                        <span x-text="filteredRepositories().length"></span>
+                        <span x-text="filteredRepositories().length == 1 ? 'plugin' : 'plugins'"></span>
+                    </p>
+                </div>
                 <input type="text" x-model="query"
                     class="mx-4 px-3 py-1 w-full bg-gray-950 focus:bg-slate-950 placeholder:italic placeholder:text-slate-400 border border-gray-800 focus:outline-none focus:border-indigo-700 rounded"
                     placeholder="Search for plugins here...">
@@ -178,7 +184,7 @@
                                 </div>
 
                                 <template x-if="repo.DownloadCount">
-                                    <span class="flex items-center gap-2 opacity-80 text-sm">
+                                    <span class="flex items-center gap-2 opacity-75 text-sm">
                                         <span x-text="() => repo.DownloadCount.toLocaleString(undefined)"></span>
 
                                         <svg class="w-5 h-5" data-slot="icon" fill="none" stroke-width="1.5"
