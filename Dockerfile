@@ -10,7 +10,7 @@ COPY . ./
 RUN npm install
 
 # Build the assets
-RUN npx tailwindcss -i ./styles.css -o ./assets/styles.css --minify
+RUN npm run build
 
 # Setup the Go build stage
 FROM golang:1.22 AS go-build
