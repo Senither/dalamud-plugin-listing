@@ -24,6 +24,8 @@
 
 <body class="bg-gray-950 text-slate-50" x-data="{
     filteredRepositories() {
+        this.updateUrlQuery()
+
         if (this.query.trim().length === 0) {
             return this.repositories
         }
@@ -37,9 +39,33 @@
                 repo.Punchline?.toLowerCase().includes(query)
         })
     },
+    loadQueryFromUrl() {
+        let url = new URL(window.location.href)
+        let query = url.searchParams.get('q')
+
+        if (query) {
+            this.query = query
+        }
+    },
+    updateUrlQuery() {
+        let url = new URL(window.location.href)
+
+        if (this.query.trim().length === 0) {
+            url.searchParams.delete('q')
+            window.history.pushState({}, '', url)
+            return
+        }
+
+        url.searchParams.set('q', this.query)
+        window.history.pushState({}, '', url)
+    },
     repositories: [],
     query: '',
-}" x-init="repositories = await loadRepositories()">
+}" x-init="async () => {
+    loadQueryFromUrl()
+
+    repositories = await loadRepositories()
+}">
     <div class="mx-auto px-4 py-12 max-w-5xl container">
         <div class="flex flex-col max-w-full prose-invert prose">
             <header class="mb-6">
@@ -159,14 +185,33 @@
             <section class="mb-8">
                 <div class="flex justify-between items-end">
                     <h2>Available Plugins</h2>
-                    <p class="opacity-75">
+
+                    <p class="flex justify-center items-center gap-1 opacity-75">
+                        <span class="flex items-center" x-show="query.trim().length > 0">
+                            <svg class="mr-2 w-5 h-5" data-slot="icon" fill="none" stroke-width="1.5"
+                                stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"
+                                aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M12 3c2.755 0 5.455.232 8.083.678.533.09.917.556.917 1.096v1.044a2.25 2.25 0 0 1-.659 1.591l-5.432 5.432a2.25 2.25 0 0 0-.659 1.591v2.927a2.25 2.25 0 0 1-1.244 2.013L9.75 21v-6.568a2.25 2.25 0 0 0-.659-1.591L3.659 7.409A2.25 2.25 0 0 1 3 5.818V4.774c0-.54.384-1.006.917-1.096A48.32 48.32 0 0 1 12 3Z">
+                                </path>
+                            </svg>
+                            Found
+                        </span>
                         <span x-text="filteredRepositories().length"></span>
                         <span x-text="filteredRepositories().length == 1 ? 'plugin' : 'plugins'"></span>
                     </p>
                 </div>
-                <input type="text" x-model="query"
-                    class="border-gray-800 focus:border-indigo-700 bg-gray-950 focus:bg-slate-950 mx-4 px-3 py-1 border rounded w-full placeholder:text-slate-400 placeholder:italic focus:outline-none"
-                    placeholder="Search for plugins here...">
+                <!-- Add reset button for the query on the right side of the input -->
+                <div class="flex justify-between items-center mx-4 rounded">
+                    <input type="text" x-model="query"
+                        class="border-gray-800 focus:border-indigo-700 bg-gray-950 focus:bg-slate-950 px-3 py-1 border rounded-l w-full placeholder:text-slate-400 placeholder:italic peer focus:outline-none"
+                        placeholder="Search for plugins here...">
+                    <button
+                        class="flex items-center border-gray-800 focus:border-indigo-700 peer-focus:border-indigo-700 bg-indigo-900 disabled:bg-gray-950 px-3 py-1 border rounded-r"
+                        x-bind:disabled="query.trim().length === 0" @click="query = ''">
+                        <span x-bind:class="{ 'opacity-20': query.trim().length == 0 }">Reset</span>
+                    </button>
+                </div>
             </section>
 
             <section class="gap-8 grid grid-cols-1 md:grid-cols-2 divide-y divide-dashed">
