@@ -102,7 +102,7 @@ func GetRepositoryByGitHubReleaseRepositoryName(repoName string) *Repository {
 	partial := "github.com/" + repoName
 
 	for _, repository := range repositories {
-		if strings.Contains(*repository.DownloadLinkInstall, partial) {
+		if repository.DownloadLinkInstall != nil && strings.Contains(*repository.DownloadLinkInstall, partial) {
 			return &repository
 		}
 	}
@@ -202,7 +202,7 @@ func writeRepositoriesToDisk() {
 	}
 
 	timer = time.AfterFunc(5*time.Second, func() {
-		content, err := json.Marshal(GetRepositories())
+		content, err := json.Marshal(repositories)
 		if err != nil {
 			log.Fatalf("Error converting to JSON: %v", err)
 		}
