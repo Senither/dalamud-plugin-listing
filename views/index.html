@@ -107,7 +107,7 @@
                                 <li>Click on the <code>Experimental</code> tab</li>
                                 <li>Scroll Down to <code>Custom Plugin Repositories</code></li>
                                 <li>
-                                    Add the following URL: <code x-text="window.location.href"></code>, then click on
+                                    Add the following URL: <code x-text="window.origin"></code>, then click on
                                     the Plus next to it
                                 </li>
                                 <li>Click on the Save icon in the bottom right corner</li>
@@ -171,11 +171,11 @@
                                 As an example, if you only want to get plugins I've made you could add the following
                                 URL:
                                 <br>
-                                <code class="ml-4" x-text="window.location.href + 'authors/senither.json'"></code>
+                                <code class="ml-4" x-text="window.origin + '/authors/senither.json'"></code>
                                 <br>
                                 or to get all plugins containing the word "auto" you could use the following URL:
                                 <br>
-                                <code class="ml-4" x-text="window.location.href + 'plugins/auto.json'"></code>
+                                <code class="ml-4" x-text="window.origin + '/plugins/auto.json'"></code>
                             </p>
                         </details>
                     </div>
