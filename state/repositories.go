@@ -53,7 +53,7 @@ var (
 
 func UpsertRepository(repo Repository) {
 	// Skips any repository that is specifically marked as "CN Edition"
-	if strings.Contains(repo.InternalName, "CN Edition") {
+	if strings.Contains(strings.ToLower(repo.Name), "cn edition") {
 		return
 	}
 
