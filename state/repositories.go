@@ -53,15 +53,15 @@ var (
 
 func UpsertRepository(repo Repository) {
 	// Skips any repository that is specifically marked as "CN Edition"
-	if strings.Contains(strings.ToLower(repo.Name), "cn edition") {
-		return
-	}
+	// if strings.Contains(strings.ToLower(repo.Name), "cn edition") {
+	// 	return
+	// }
 
 	if repo.RepoUrl == nil || *repo.RepoUrl == "" {
 		repo.RepoUrl = findRepositoryUrl(repo)
 	}
 
-	index := getRepositoryIndex(repo.InternalName)
+	index := getRepositoryIndex(repo)
 
 	if index == -1 {
 		repositories = append(repositories, repo)
@@ -72,8 +72,8 @@ func UpsertRepository(repo Repository) {
 	writeRepositoriesToDisk()
 }
 
-func DeleteRepository(internalName string) {
-	index := getRepositoryIndex(internalName)
+func DeleteRepository(repo Repository) {
+	index := getRepositoryIndex(repo)
 	if index == -1 {
 		return
 	}
@@ -169,9 +169,11 @@ func LoadPluginsFromDisk() {
 	}
 }
 
-func getRepositoryIndex(internalName string) int {
+func getRepositoryIndex(repo Repository) int {
 	for i, repository := range repositories {
-		if repository.InternalName == internalName {
+		if repository.Name == repo.Name &&
+			repository.Author == repo.Author &&
+			repository.InternalName == repo.InternalName {
 			return i
 		}
 	}

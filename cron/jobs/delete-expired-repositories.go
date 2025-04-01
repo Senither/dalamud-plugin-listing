@@ -33,7 +33,7 @@ func runDelete() {
 				"url", repoUrl,
 			)
 
-			state.DeleteRepository(repo.InternalName)
+			state.DeleteRepository(repo)
 		}
 	}
 }
