@@ -41,6 +41,7 @@ func renderTemplateStrings(template string) string {
 	template = strings.ReplaceAll(template, "@state-url-size", strconv.Itoa(state.GetUrlsSize()))
 	template = strings.ReplaceAll(template, "@state-repo-size", strconv.Itoa(state.GetRepositoriesSize()))
 	template = strings.ReplaceAll(template, "@state-internal-size", strconv.Itoa(state.GetInternalPluginSize()))
+	template = strings.ReplaceAll(template, "@state-senither-size", strconv.Itoa(state.GetSenitherPluginSize()))
 
 	return template
 }

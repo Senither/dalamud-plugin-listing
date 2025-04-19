@@ -67,7 +67,7 @@
     repositories = await loadRepositories()
 }">
     <div class="mx-auto px-4 py-12 max-w-5xl container">
-        <div class="flex flex-col max-w-full prose-invert prose">
+        <div class="flex flex-col prose-invert max-w-full prose">
             <header class="mb-6">
                 <h1>
                     Welcome to my <span class="text-[#fb8e81]">Dalamud</span> Plugin List
@@ -84,7 +84,8 @@
                     The list itself is a collection of <span class="font-bold text-indigo-100">@state-url-size</span>
                     different repositories, combined providing access to
                     <span class="font-bold text-indigo-100">@state-repo-size</span> plugins within a single repository,
-                    including <span class="font-bold text-indigo-100">@state-internal-size</span> of my own plugins.
+                    including <span class="font-bold text-indigo-100">@state-internal-size</span> internal plugins with
+                    <span class="font-bold text-indigo-100">@state-senither-size</span> of them being my own plugins.
                     The list is then updated once an hour to check for updates, this makes it possible to have a single
                     plugin repository in Dalamud and still get updates from all the different repositories.
                 </p>
@@ -92,7 +93,7 @@
                 <h2>FAQ</h2>
 
                 <div class="flex flex-col gap-4">
-                    <div class="border-gray-900 bg-gray-900/20 px-4 py-1 border rounded">
+                    <div class="bg-gray-900/20 px-4 py-1 border border-gray-900 rounded">
                         <details>
                             <summary>
                                 <span class="cursor-pointer">
@@ -121,7 +122,7 @@
                         </details>
                     </div>
 
-                    <div class="border-gray-900 bg-gray-900/20 px-4 py-1 border rounded">
+                    <div class="bg-gray-900/20 px-4 py-1 border border-gray-900 rounded">
                         <details>
                             <summary>
                                 <span class="cursor-pointer">
@@ -139,7 +140,7 @@
                         </details>
                     </div>
 
-                    <div class="border-gray-900 bg-gray-900/20 px-4 py-1 border rounded">
+                    <div class="bg-gray-900/20 px-4 py-1 border border-gray-900 rounded">
                         <details>
                             <summary>
                                 <span class="cursor-pointer">
@@ -204,10 +205,10 @@
                 <!-- Add reset button for the query on the right side of the input -->
                 <div class="flex justify-between items-center mx-4 rounded">
                     <input type="text" x-model="query"
-                        class="border-gray-800 focus:border-indigo-700 bg-gray-950 focus:bg-slate-950 px-3 py-1 border rounded-l w-full placeholder:text-slate-400 placeholder:italic peer focus:outline-none"
+                        class="peer bg-gray-950 focus:bg-slate-950 px-3 py-1 border border-gray-800 focus:border-indigo-700 rounded-l focus:outline-none w-full placeholder:text-slate-400 placeholder:italic"
                         placeholder="Search for plugins here...">
                     <button
-                        class="flex items-center border-gray-800 focus:border-indigo-700 peer-focus:border-indigo-700 bg-indigo-900 disabled:bg-gray-950 px-3 py-1 border rounded-r"
+                        class="flex items-center bg-indigo-900 disabled:bg-gray-950 px-3 py-1 border border-gray-800 focus:border-indigo-700 peer-focus:border-indigo-700 rounded-r"
                         x-bind:disabled="query.trim().length === 0" @click="query = ''">
                         <span x-bind:class="{ 'opacity-20': query.trim().length == 0 }">Reset</span>
                     </button>
@@ -216,7 +217,7 @@
 
             <section class="gap-8 grid grid-cols-1 md:grid-cols-2 divide-y divide-dashed">
                 <template x-for="repo in filteredRepositories()">
-                    <div class="flex flex-col justify-between border-gray-800 bg-gray-900 px-4 py-3 border rounded">
+                    <div class="flex flex-col justify-between bg-gray-900 px-4 py-3 border border-gray-800 rounded">
                         <div>
                             <div class="flex justify-between">
                                 <div class="flex">
@@ -274,9 +275,9 @@
 
             <template x-if="query.trim().length > 0 && filteredRepositories().length === 0">
                 <div
-                    class="flex flex-col justify-center items-center border-gray-900 py-16 border border-dashed rounded text-center text-gray-400">
-                    <svg class="my-3 mr-4 w-12 h-12" data-slot="icon" fill="none" stroke-width="1.5" stroke="currentColor"
-                        viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                    class="flex flex-col justify-center items-center py-16 border border-gray-900 border-dashed rounded text-gray-400 text-center">
+                    <svg class="my-3 mr-4 w-12 h-12" data-slot="icon" fill="none" stroke-width="1.5"
+                        stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                         <path stroke-linecap="round" stroke-linejoin="round"
                             d="M12 3c2.755 0 5.455.232 8.083.678.533.09.917.556.917 1.096v1.044a2.25 2.25 0 0 1-.659 1.591l-5.432 5.432a2.25 2.25 0 0 0-.659 1.591v2.927a2.25 2.25 0 0 1-1.244 2.013L9.75 21v-6.568a2.25 2.25 0 0 0-.659-1.591L3.659 7.409A2.25 2.25 0 0 1 3 5.818V4.774c0-.54.384-1.006.917-1.096A48.32 48.32 0 0 1 12 3Z">
                         </path>

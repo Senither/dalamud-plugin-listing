@@ -1,6 +1,9 @@
 package state
 
-import "strings"
+import (
+	"log/slog"
+	"strings"
+)
 
 var internalPlugins []string
 
@@ -18,6 +21,19 @@ func GetInternalPlugins() []string {
 
 func GetInternalPluginSize() int {
 	return len(GetInternalPlugins())
+}
+
+func GetSenitherPluginSize() int {
+	counter := 0
+
+	for _, repo := range internalPlugins {
+		slog.Info("repo", "repo", repo)
+		if strings.HasPrefix(strings.ToLower(repo), "senither/") {
+			counter++
+		}
+	}
+
+	return counter
 }
 
 func pluginExists(repoName string) bool {
