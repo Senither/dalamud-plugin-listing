@@ -52,11 +52,6 @@ var (
 )
 
 func UpsertRepository(repo Repository) {
-	// Skips any repository that is specifically marked as "CN Edition"
-	// if strings.Contains(strings.ToLower(repo.Name), "cn edition") {
-	// 	return
-	// }
-
 	if repo.RepoUrl == nil || *repo.RepoUrl == "" {
 		repo.RepoUrl = findRepositoryUrl(repo)
 	}
