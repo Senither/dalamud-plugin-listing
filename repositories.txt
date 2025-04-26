@@ -7,6 +7,7 @@ https://raw.githubusercontent.com/KangasZ/DalamudPluginRepository/main/plugin_re
 https://raw.githubusercontent.com/UnknownX7/DalamudPluginRepo/master/pluginmaster.json
 https://puni.sh/api/repository/veyn
 https://puni.sh/api/repository/herc
+https://puni.sh/api/repository/ice
 https://raw.githubusercontent.com/FFXIV-CombatReborn/CombatRebornRepo/main/pluginmaster.json
 https://raw.githubusercontent.com/Aida-Enna/XIVPlugins/main/repo.json
 https://raw.githubusercontent.com/NightmareXIV/MyDalamudPlugins/main/pluginmaster.json
