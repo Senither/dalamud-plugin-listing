@@ -102,7 +102,9 @@ func GetRepositoryByGitHubReleaseRepositoryName(repoName string) *Repository {
 	partial := "github.com/" + repoName
 
 	for _, repository := range repositories {
-		if repository.DownloadLinkInstall != nil && strings.Contains(*repository.DownloadLinkInstall, partial) {
+		downloadLink := getAvailableDownloadLink(repository)
+
+		if downloadLink != nil && strings.Contains(*downloadLink, partial) {
 			return &repository
 		}
 	}
@@ -177,12 +179,17 @@ func getRepositoryIndex(repo Repository) int {
 }
 
 func findRepositoryUrl(repo Repository) *string {
-	parsedUrl, err := url.ParseRequestURI(*repo.DownloadLinkInstall)
+	downloadLink := getAvailableDownloadLink(repo)
+	if downloadLink == nil {
+		return nil
+	}
+
+	parsedUrl, err := url.ParseRequestURI(*downloadLink)
 	if err != nil {
 		return nil
 	}
 
-	if !strings.HasPrefix(*repo.DownloadLinkInstall, "https://github.com") {
+	if !strings.HasPrefix(*downloadLink, "https://github.com") {
 		url := parsedUrl.Scheme + "://" + parsedUrl.Host
 		return &url
 	}
@@ -194,6 +201,22 @@ func findRepositoryUrl(repo Repository) *string {
 
 	url := parsedUrl.Scheme + "://" + parsedUrl.Host + "/" + pathParts[1] + "/" + pathParts[2]
 	return &url
+}
+
+func getAvailableDownloadLink(repo Repository) *string {
+	if repo.DownloadLinkInstall != nil && *repo.DownloadLinkInstall != "" {
+		return repo.DownloadLinkInstall
+	}
+
+	if repo.DownloadLinkTesting != nil && *repo.DownloadLinkTesting != "" {
+		return repo.DownloadLinkTesting
+	}
+
+	if repo.DownloadLinkUpdate != nil && *repo.DownloadLinkUpdate != "" {
+		return repo.DownloadLinkUpdate
+	}
+
+	return nil
 }
 
 func writeRepositoriesToDisk() {
