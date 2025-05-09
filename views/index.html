@@ -67,10 +67,10 @@
     repositories = await loadRepositories()
 }">
     <div
-        class="top-0 left-0 z-[-1] absolute bg-gradient-to-t from-gray-950 via-gray-500/5 to-indigo-500/20 w-full h-screen">
+        class="top-3 right-3 left-3 z-[-1] absolute bg-gradient-to-t from-gray-950 via-gray-500/5 to-indigo-500/20 rounded-t-3xl w-[95sw] h-[150vh]">
     </div>
 
-    <div class="relative mx-auto px-4 py-12 max-w-5xl container">
+    <div class="relative mx-auto px-4 pt-16 pb-12 max-w-5xl container">
         <div class="flex flex-col prose-invert max-w-full prose">
             <header class="mb-6">
                 <h1>
@@ -97,7 +97,7 @@
                 <h2>FAQ</h2>
 
                 <div class="flex flex-col gap-4">
-                    <div class="bg-gray-900/20 px-4 py-1 border border-gray-900 rounded">
+                    <div class="bg-gray-600/20 shadow shadow-gray-900 px-4 py-1 border border-gray-900 rounded">
                         <details>
                             <summary>
                                 <span class="cursor-pointer">
@@ -126,7 +126,7 @@
                         </details>
                     </div>
 
-                    <div class="bg-gray-900/20 px-4 py-1 border border-gray-900 rounded">
+                    <div class="bg-gray-600/20 shadow shadow-gray-900 px-4 py-1 border border-gray-900 rounded">
                         <details>
                             <summary>
                                 <span class="cursor-pointer">
@@ -144,7 +144,7 @@
                         </details>
                     </div>
 
-                    <div class="bg-gray-900/20 px-4 py-1 border border-gray-900 rounded">
+                    <div class="bg-gray-600/20 shadow shadow-gray-900 px-4 py-1 border border-gray-900 rounded">
                         <details>
                             <summary>
                                 <span class="cursor-pointer">
@@ -185,7 +185,7 @@
                         </details>
                     </div>
 
-                    <div class="bg-gray-900/20 px-4 py-1 border border-gray-900 rounded">
+                    <div class="bg-gray-600/20 shadow shadow-gray-900 px-4 py-1 border border-gray-900 rounded">
                         <details>
                             <summary>
                                 <span class="cursor-pointer">
@@ -243,7 +243,7 @@
                 <template x-for="repo in filteredRepositories()">
                     <div class="group relative flex flex-col justify-between">
                         <div
-                            class="absolute -inset-2 bg-gradient-to-br from-indigo-600 to-violet-600 opacity-0 group-hover:opacity-20 blur-2xl rounded-lg transition-opacity duration-700">
+                            class="absolute -inset-2 bg-gradient-to-br from-indigo-600 to-violet-600 opacity-0 group-hover:opacity-15 blur-2xl rounded-lg transition-opacity duration-700">
                         </div>
 
                         <div
