@@ -23,6 +23,7 @@ type Repository struct {
 	ApplicableVersion      *string          `json:"ApplicableVersion,omitempty"`
 	Tags                   []string         `json:"Tags"`
 	DalamudApiLevel        interface{}      `json:"DalamudApiLevel,omitempty"`
+	IsOutdated             bool             `json:"IsOutdated"`
 	TestingDalamudApiLevel interface{}      `json:"TestingDalamudApiLevel,omitempty"`
 	IsHide                 *interface{}     `json:"IsHide,omitempty"`
 	IsTestingExclusive     *interface{}     `json:"IsTestingExclusive,omitempty"`
@@ -79,6 +80,17 @@ func DeleteRepository(repo Repository) {
 }
 
 func GetRepositories() []Repository {
+	latestDalamudApiLevel := GetLatestDalamudApiLevel()
+
+	for i, repository := range repositories {
+		if repository.DalamudApiLevel != nil {
+			level, ok := repository.DalamudApiLevel.(float64)
+			if ok {
+				repositories[i].IsOutdated = level != latestDalamudApiLevel
+			}
+		}
+	}
+
 	return repositories
 }
 
@@ -89,7 +101,7 @@ func GetRepositoriesSize() int {
 func GetRepositoriesByOriginUrl(url string) []Repository {
 	var filteredRepos []Repository
 
-	for _, repository := range repositories {
+	for _, repository := range GetRepositories() {
 		if repository.RepositoryOrigin.RepositoryUrl == url {
 			filteredRepos = append(filteredRepos, repository)
 		}
@@ -101,7 +113,7 @@ func GetRepositoriesByOriginUrl(url string) []Repository {
 func GetRepositoryByGitHubReleaseRepositoryName(repoName string) *Repository {
 	partial := "github.com/" + repoName
 
-	for _, repository := range repositories {
+	for _, repository := range GetRepositories() {
 		downloadLink := getAvailableDownloadLink(repository)
 
 		if downloadLink != nil && strings.Contains(*downloadLink, partial) {
@@ -164,6 +176,23 @@ func LoadPluginsFromDisk() {
 
 		AddInternalPluginUrl(strings.Trim(repo, "\r"))
 	}
+}
+
+func GetLatestDalamudApiLevel() float64 {
+	var latestDalamudApiLevel float64
+
+	for _, repo := range repositories {
+		if repo.DalamudApiLevel == nil {
+			continue
+		}
+
+		level, ok := repo.DalamudApiLevel.(float64)
+		if ok && level > latestDalamudApiLevel {
+			latestDalamudApiLevel = level
+		}
+	}
+
+	return latestDalamudApiLevel
 }
 
 func getRepositoryIndex(repo Repository) int {
