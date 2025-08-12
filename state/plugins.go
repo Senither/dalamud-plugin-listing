@@ -1,7 +1,6 @@
 package state
 
 import (
-	"log/slog"
 	"strings"
 )
 
@@ -27,7 +26,6 @@ func GetSenitherPluginSize() int {
 	counter := 0
 
 	for _, repo := range internalPlugins {
-		slog.Info("repo", "repo", repo)
 		if strings.HasPrefix(strings.ToLower(repo), "senither/") {
 			counter++
 		}
