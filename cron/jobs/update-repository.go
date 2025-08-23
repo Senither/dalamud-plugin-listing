@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"io"
-	"log"
 	"log/slog"
 	"net/http"
 	"regexp"
@@ -53,7 +52,11 @@ func runRepositoryUpdate(url string) {
 	client := http.Client{}
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
-		log.Fatal(err)
+		slog.Error("Failed to create repository update request",
+			"err", err,
+			"url", url,
+		)
+		return
 	}
 
 	req.Header.Set("Accept", "application/json")
@@ -61,7 +64,11 @@ func runRepositoryUpdate(url string) {
 
 	resp, err := client.Do(req)
 	if err != nil {
-		log.Fatal(err)
+		slog.Error("Failed to communicate with repository URL",
+			"err", err,
+			"url", url,
+		)
+		return
 	}
 
 	defer resp.Body.Close()

@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"log"
 	"log/slog"
 	"net/http"
 	"regexp"
@@ -76,7 +75,11 @@ func runUpdatePluginRelease(repoName string) {
 	client := http.Client{}
 	releaseReq, releasesErr := http.NewRequest("GET", fmt.Sprintf("https://api.github.com/repos/%s/releases?per_page=100", repoName), nil)
 	if releasesErr != nil {
-		log.Fatal(releasesErr)
+		slog.Error("Failed to create plugin release request",
+			"err", releasesErr,
+			"repoName", repoName,
+		)
+		return
 	}
 
 	releaseReq.Header.Set("Accept", "application/json")
@@ -84,7 +87,11 @@ func runUpdatePluginRelease(repoName string) {
 
 	releaseResp, releasesErr := client.Do(releaseReq)
 	if releasesErr != nil {
-		log.Fatal(releasesErr)
+		slog.Error("Failed to communicate with GitHub API",
+			"err", releasesErr,
+			"repoName", repoName,
+		)
+		return
 	}
 
 	defer releaseResp.Body.Close()
@@ -117,21 +124,37 @@ func runUpdatePluginRelease(repoName string) {
 
 	assetReq, assetErr := http.NewRequest("GET", manifestAsset.BrowserDownloadUrl, nil)
 	if assetErr != nil {
-		log.Fatal(assetErr)
+		slog.Error("Failed to create asset request",
+			"err", assetErr,
+			"repoName", repoName,
+			"manifestAsset", manifestAsset,
+			"downloadUrl", manifestAsset.BrowserDownloadUrl,
+		)
+		return
 	}
 
 	assetReq.Header.Set("User-Agent", "Dalamud Plugin Listing (https://dalamud-plugins.senither.com/)")
 
 	manifestResp, assetErr := client.Do(assetReq)
 	if assetErr != nil {
-		log.Fatal(assetErr)
+		slog.Error("Failed to communicate with asset URL",
+			"err", assetErr,
+			"repoName", repoName,
+			"downloadUrl", manifestAsset.BrowserDownloadUrl,
+		)
+		return
 	}
 
 	defer manifestResp.Body.Close()
 
 	manifestBytes, assetErr := io.ReadAll(manifestResp.Body)
 	if assetErr != nil {
-		log.Fatal(assetErr)
+		slog.Error("Failed to read asset response body",
+			"err", assetErr,
+			"repoName", repoName,
+			"downloadUrl", manifestAsset.BrowserDownloadUrl,
+		)
+		return
 	}
 
 	var repository state.Repository
