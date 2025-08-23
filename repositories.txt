@@ -11,7 +11,6 @@ https://puni.sh/api/repository/ice
 https://raw.githubusercontent.com/FFXIV-CombatReborn/CombatRebornRepo/main/pluginmaster.json
 https://raw.githubusercontent.com/Aida-Enna/XIVPlugins/main/repo.json
 https://raw.githubusercontent.com/NightmareXIV/MyDalamudPlugins/main/pluginmaster.json
-https://plugins.carvel.li/
 https://raw.githubusercontent.com/Sevii77/ffxiv_materialui_accent/master/repo.json
 https://raw.githubusercontent.com/chirpxiv/PalettePlus/main/repo.json
 https://raw.githubusercontent.com/XIV-Tools/DalamudPlugins/main/repo.json
