@@ -18,6 +18,7 @@ https://puni.sh/api/repository/wah
 https://puni.sh/api/repository/xan
 https://puni.sh/api/repository/justbees
 https://puni.sh/api/repository/knightmore
+https://puni.sh/api/repository/erdelf
 https://raw.githubusercontent.com/FFXIV-CombatReborn/CombatRebornRepo/main/pluginmaster.json
 https://raw.githubusercontent.com/Aida-Enna/XIVPlugins/main/repo.json
 https://raw.githubusercontent.com/NightmareXIV/MyDalamudPlugins/main/pluginmaster.json
