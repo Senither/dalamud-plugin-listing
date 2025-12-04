@@ -23,12 +23,9 @@ https://raw.githubusercontent.com/FFXIV-CombatReborn/CombatRebornRepo/main/plugi
 https://raw.githubusercontent.com/Aida-Enna/XIVPlugins/main/repo.json
 https://raw.githubusercontent.com/NightmareXIV/MyDalamudPlugins/main/pluginmaster.json
 https://raw.githubusercontent.com/Sevii77/ffxiv_materialui_accent/master/repo.json
-https://raw.githubusercontent.com/chirpxiv/PalettePlus/main/repo.json
-https://raw.githubusercontent.com/XIV-Tools/DalamudPlugins/main/repo.json
 https://aetherment.sevii.dev/plugin
 https://raw.githubusercontent.com/Warpholomey/DalamudPlugins/master/repository.json
 https://raw.githubusercontent.com/InitialDet/MyDalamudPlugins/main/pluginmaster.json
-https://raw.githubusercontent.com/awgil/ffxiv_plugin_distribution/master/pluginmaster.json
 https://raw.githubusercontent.com/dodingdaga/DalamudPlugins/main/PuppetMaster.json
 https://raw.githubusercontent.com/TomestoneGG/Dalamud.Tomestone/master/repo.json
 https://raw.githubusercontent.com/Eisenhuth/TrustworthyDalamudPlugins/master/pluginmaster.json
