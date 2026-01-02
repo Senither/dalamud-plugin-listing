@@ -30,3 +30,4 @@ https://raw.githubusercontent.com/dodingdaga/DalamudPlugins/main/PuppetMaster.js
 https://raw.githubusercontent.com/TomestoneGG/Dalamud.Tomestone/master/repo.json
 https://raw.githubusercontent.com/Eisenhuth/TrustworthyDalamudPlugins/master/pluginmaster.json
 https://raw.githubusercontent.com/OhKannaDuh/plugins/refs/heads/master/manifest.json
+https://raw.githubusercontent.com/decorwdyun/DalamudPlugins/main/pluginmaster.json
