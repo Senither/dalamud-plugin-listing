@@ -78,6 +78,9 @@ func handleRequest(w http.ResponseWriter, r *http.Request) {
 	} else if strings.HasPrefix(r.URL.Path, "/authors/") && r.Method == "GET" {
 		handleRenderingPluginByAuthors(w, r, r.URL.Path[9:])
 		return
+	} else if strings.HasPrefix(r.URL.Path, "/download/") && r.Method == "GET" {
+		handlePrivatePluginDownload(w, r, r.URL.Path[10:])
+		return
 	}
 
 	if r.URL.Path != "/" {

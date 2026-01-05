@@ -202,9 +202,14 @@ func runUpdatePluginRelease(ip *state.InternalPlugin) {
 		}
 	}
 
+	downloadUrl := releaseAsset.BrowserDownloadUrl
+	if ip.Private {
+		downloadUrl = state.GetDownloadUrlForPrivatePlugin(ip.Name, releases[0].TagName, releaseAsset)
+	}
+
 	repository.RepoUrl = &repoUrl
-	repository.DownloadLinkInstall = &releaseAsset.BrowserDownloadUrl
-	repository.DownloadLinkUpdate = &releaseAsset.BrowserDownloadUrl
+	repository.DownloadLinkInstall = &downloadUrl
+	repository.DownloadLinkUpdate = &downloadUrl
 	repository.RepositoryOrigin = repositoryOrigin
 	repository.DownloadCount = totalDownloadCount
 

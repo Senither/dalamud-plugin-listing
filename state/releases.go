@@ -2,6 +2,7 @@ package state
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"os"
 	"strings"
@@ -65,6 +66,22 @@ func UpsertReleaseMetadata(repoName string, releases []GitHubPluginRelease) {
 	}
 
 	writePluginReleasesToDisk()
+}
+
+func GetDownloadUrlForPrivatePlugin(repoName string, tag string, asset *GitHubPluginReleaseAsset) string {
+	url := strings.TrimSuffix(strings.TrimSpace(os.Getenv("APP_URL")), "/")
+
+	return fmt.Sprintf("%s/download/%s/%s/%s", url, repoName, tag, asset.Name)
+}
+
+func GetReleaseMetadataByRepositoryName(repoName string) *GitHubReleaseContext {
+	for _, r := range releaseContexts {
+		if r.RepositoryName == repoName {
+			return &r
+		}
+	}
+
+	return nil
 }
 
 func GetManifestAndLatestReleaseAssets(release GitHubPluginRelease) (*GitHubPluginReleaseAsset, *GitHubPluginReleaseAsset) {

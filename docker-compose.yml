@@ -5,6 +5,8 @@ services:
       context: .
       dockerfile: Dockerfile
     environment:
+      - 'APP_URL=http://localhost:8080'
       - 'APP_ADDR=0.0.0.0:8080'
+      # - 'GITHUB_TOKEN=your_github_token_here'
     ports:
       - "8080:8080"
