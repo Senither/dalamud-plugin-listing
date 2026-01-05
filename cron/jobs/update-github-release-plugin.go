@@ -24,6 +24,12 @@ type UpdatePluginReleaseJob struct {
 var jobs = make(map[string]*UpdatePluginReleaseJob)
 
 func StartUpdatePluginReleaseJob(repoName string, interval time.Duration, runOnStartup bool) {
+	slog.Info("Starting update plugin release job",
+		"repoName", repoName,
+		"interval", interval,
+		"runOnStartup", runOnStartup,
+	)
+
 	ip := state.GetInternalPluginByName(repoName)
 	if ip == nil {
 		slog.Error("Failed to find internal plugin for GitHub release update job",

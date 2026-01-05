@@ -2,6 +2,7 @@ package state
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/url"
 	"os"
@@ -112,12 +113,24 @@ func GetRepositoriesByOriginUrl(url string) []Repository {
 }
 
 func GetRepositoryByGitHubReleaseRepositoryName(repoName string) *Repository {
-	partial := "github.com/" + repoName
+	githubLink := "github.com/" + repoName
+	localLink := fmt.Sprintf(
+		"%s/download/%s",
+		strings.TrimSuffix(strings.TrimSpace(os.Getenv("APP_URL")), "/"),
+		repoName,
+	)
 
 	for _, repository := range GetRepositories() {
+		ip := GetInternalPluginByName(repoName)
+		if ip == nil {
+			continue
+		}
+
 		downloadLink := getAvailableDownloadLink(repository)
 
-		if downloadLink != nil && strings.Contains(*downloadLink, partial) {
+		if ip.Private && strings.Contains(*downloadLink, localLink) {
+			return &repository
+		} else if !ip.Private && strings.Contains(*downloadLink, githubLink) {
 			return &repository
 		}
 	}
