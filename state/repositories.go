@@ -44,6 +44,7 @@ type RepositoryOrigin struct {
 	RepositoryUrl    string `json:"RepositoryUrl"`
 	LastUpdatedAt    int64  `json:"LastUpdatedAt"`
 	IsInternalPlugin *bool  `json:"IsInternalPlugin,omitempty"`
+	IsPrivatePlugin  *bool  `json:"IsPrivatePlugin,omitempty"`
 }
 
 var (

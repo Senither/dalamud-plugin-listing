@@ -191,6 +191,7 @@ func runUpdatePluginRelease(ip *state.InternalPlugin) {
 		LastUpdatedAt:    time.Now().Unix(),
 		RepositoryUrl:    repoUrl,
 		IsInternalPlugin: &truthy,
+		IsPrivatePlugin:  &ip.Private,
 	}
 
 	totalDownloadCount := 0

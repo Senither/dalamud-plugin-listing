@@ -268,7 +268,7 @@
                                         d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"></path>
                                 </svg>
                             </button>
-                            <button x-show="hideOutdatedPlugins"style="display: none;">
+                            <button x-show="hideOutdatedPlugins" style="display: none;">
                                 <svg class="w-6 h-6" data-slot="icon" fill="none" stroke-width="1.5"
                                     stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"
                                     aria-hidden="true">
@@ -343,8 +343,16 @@
                             </div>
 
                             <div class="flex justify-between items-end">
-                                <a target="blank" x-bind:href="repo.RepoUrl"
-                                    class="text-indigo-400 hover:text-indigo-300">Repository</a>
+                                <template x-if="repo.OriginRepositoryUrl.IsPrivatePlugin">
+                                    <span
+                                        class="bg-gray-800 opacity-40 hover:opacity-75 px-2 py-1 rounded text-sm transition-opacity">
+                                        Private plugin
+                                    </span>
+                                </template>
+                                <template x-if="!repo.OriginRepositoryUrl.IsPrivatePlugin">
+                                    <a target="blank" x-bind:href="repo.RepoUrl"
+                                        class="text-indigo-400 hover:text-indigo-300">Repository</a>
+                                </template>
 
                                 <template x-if="repo.OriginRepositoryUrl.IsInternalPlugin">
                                     <span
