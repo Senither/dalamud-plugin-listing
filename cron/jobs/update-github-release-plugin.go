@@ -68,6 +68,17 @@ func GetPluginReleasesJobs() map[string]*UpdatePluginReleaseJob {
 }
 
 func runUpdatePluginRelease(ip *state.InternalPlugin) {
+	var githubToken = ""
+	if ip.Private {
+		githubToken = os.Getenv("GITHUB_TOKEN")
+		if githubToken == "" {
+			slog.Error("Cannot update private plugin release, missing GITHUB_TOKEN",
+				"repoName", ip.Name,
+			)
+			return
+		}
+	}
+
 	slog.Info("Sending request to update plugin release for",
 		"repoName", ip.Name,
 		"private", ip.Private,
@@ -86,8 +97,8 @@ func runUpdatePluginRelease(ip *state.InternalPlugin) {
 	releaseReq.Header.Set("Accept", "application/json")
 	releaseReq.Header.Set("User-Agent", "Dalamud Plugin Listing (https://dalamud-plugins.senither.com/)")
 
-	if token := os.Getenv("GITHUB_TOKEN"); token != "" && ip.Private {
-		releaseReq.Header.Set("Authorization", "Bearer "+token)
+	if ip.Private {
+		releaseReq.Header.Set("Authorization", "Bearer "+githubToken)
 	}
 
 	releaseResp, releasesErr := client.Do(releaseReq)
@@ -147,8 +158,8 @@ func runUpdatePluginRelease(ip *state.InternalPlugin) {
 
 	assetReq.Header.Set("User-Agent", "Dalamud Plugin Listing (https://dalamud-plugins.senither.com/)")
 
-	if token := os.Getenv("GITHUB_TOKEN"); token != "" && ip.Private {
-		assetReq.Header.Set("Authorization", "Bearer "+token)
+	if ip.Private {
+		assetReq.Header.Set("Authorization", "Bearer "+githubToken)
 		assetReq.Header.Set("Accept", "application/octet-stream")
 	}
 
