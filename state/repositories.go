@@ -47,9 +47,9 @@ type RepositoryOrigin struct {
 }
 
 var (
-	repositories  []Repository
-	timer         = time.NewTimer(time.Nanosecond)
-	lastUpdatedAt = time.Now().Unix()
+	repositories            []Repository
+	repositoryTimer         = time.NewTimer(time.Nanosecond)
+	repositoryLastUpdatedAt = time.Now().Unix()
 )
 
 func UpsertRepository(repo Repository) {
@@ -125,7 +125,7 @@ func GetRepositoryByGitHubReleaseRepositoryName(repoName string) *Repository {
 }
 
 func GetRepositoriesLastUpdatedAt() int64 {
-	return lastUpdatedAt
+	return repositoryLastUpdatedAt
 }
 
 func LoadCachedRepositoryDataFromDisk() {
@@ -249,13 +249,13 @@ func getAvailableDownloadLink(repo Repository) *string {
 }
 
 func writeRepositoriesToDisk() {
-	lastUpdatedAt = time.Now().Unix()
+	repositoryLastUpdatedAt = time.Now().Unix()
 
-	if timer != nil {
-		timer.Stop()
+	if repositoryTimer != nil {
+		repositoryTimer.Stop()
 	}
 
-	timer = time.AfterFunc(5*time.Second, func() {
+	repositoryTimer = time.AfterFunc(5*time.Second, func() {
 		content, err := json.Marshal(repositories)
 		if err != nil {
 			log.Fatalf("Error converting to JSON: %v", err)

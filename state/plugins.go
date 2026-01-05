@@ -4,17 +4,42 @@ import (
 	"strings"
 )
 
-var internalPlugins []string
+type InternalPlugin struct {
+	Name    string
+	Private bool
+}
+
+var internalPlugins []InternalPlugin
 
 func AddInternalPluginUrl(repoName string) {
+	var private = false
+
+	if strings.HasPrefix(repoName, "P:") {
+		private = true
+		repoName = strings.TrimPrefix(repoName, "P:")
+	}
+
 	if pluginExists(repoName) || len(repoName) < 4 || !strings.Contains(repoName, "/") {
 		return
 	}
 
-	internalPlugins = append(internalPlugins, strings.Trim(repoName, "\r"))
+	internalPlugins = append(internalPlugins, InternalPlugin{
+		Name:    repoName,
+		Private: private,
+	})
 }
 
-func GetInternalPlugins() []string {
+func GetInternalPluginByName(repoName string) *InternalPlugin {
+	for _, repo := range internalPlugins {
+		if repo.Name == repoName {
+			return &repo
+		}
+	}
+
+	return nil
+}
+
+func GetInternalPlugins() []InternalPlugin {
 	return internalPlugins
 }
 
@@ -26,7 +51,7 @@ func GetSenitherPluginSize() int {
 	counter := 0
 
 	for _, repo := range internalPlugins {
-		if strings.HasPrefix(strings.ToLower(repo), "senither/") {
+		if strings.HasPrefix(strings.ToLower(repo.Name), "senither/") {
 			counter++
 		}
 	}
@@ -36,7 +61,7 @@ func GetSenitherPluginSize() int {
 
 func pluginExists(repoName string) bool {
 	for _, repo := range internalPlugins {
-		if repo == repoName {
+		if repo.Name == repoName {
 			return true
 		}
 	}

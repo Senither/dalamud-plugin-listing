@@ -36,8 +36,8 @@ func handleGitHubReleaseWebhook(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	for _, repoName := range state.GetInternalPlugins() {
-		if repoName == req.Repository.FullName {
+	for _, internalPlugin := range state.GetInternalPlugins() {
+		if internalPlugin.Name == req.Repository.FullName {
 			go func() {
 				slog.Info("Running GitHub release update job in 10 seconds",
 					"repository", req.Repository.FullName,

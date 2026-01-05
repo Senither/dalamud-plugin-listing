@@ -7,6 +7,7 @@ import (
 	"io"
 	"log/slog"
 	"net/http"
+	"os"
 	"regexp"
 	"strings"
 	"time"
@@ -20,28 +21,19 @@ type UpdatePluginReleaseJob struct {
 	Ticker       *time.Ticker
 }
 
-type GitHubPluginRelease struct {
-	Url        string `json:"url"`
-	TagName    string `json:"tag_name"`
-	Draft      bool   `json:"draft"`
-	Prerelease bool   `json:"prerelease"`
-	Body       string `json:"body"`
-	Assets     []GitHubPluginReleaseAsset
-}
-
-type GitHubPluginReleaseAsset struct {
-	Url                string `json:"url"`
-	Name               string `json:"name"`
-	ContentType        string `json:"content_type"`
-	BrowserDownloadUrl string `json:"browser_download_url"`
-	DownloadCount      int    `json:"download_count"`
-}
-
 var jobs = make(map[string]*UpdatePluginReleaseJob)
 
 func StartUpdatePluginReleaseJob(repoName string, interval time.Duration, runOnStartup bool) {
+	ip := state.GetInternalPluginByName(repoName)
+	if ip == nil {
+		slog.Error("Failed to find internal plugin for GitHub release update job",
+			"repoName", repoName,
+		)
+		return
+	}
+
 	if runOnStartup {
-		runUpdatePluginRelease(repoName)
+		runUpdatePluginRelease(ip)
 	}
 
 	tick := time.NewTicker(interval)
@@ -54,30 +46,39 @@ func StartUpdatePluginReleaseJob(repoName string, interval time.Duration, runOnS
 
 	go func() {
 		for range tick.C {
-			runUpdatePluginRelease(repoName)
+			runUpdatePluginRelease(ip)
 		}
 	}()
 }
 
 func RunGitHubReleaseUpdateJob(repoName string) {
-	runUpdatePluginRelease(repoName)
+	ip := state.GetInternalPluginByName(repoName)
+	if ip == nil {
+		slog.Error("Failed to find internal plugin for GitHub release update job",
+			"repoName", repoName,
+		)
+		return
+	}
+
+	runUpdatePluginRelease(ip)
 }
 
 func GetPluginReleasesJobs() map[string]*UpdatePluginReleaseJob {
 	return jobs
 }
 
-func runUpdatePluginRelease(repoName string) {
+func runUpdatePluginRelease(ip *state.InternalPlugin) {
 	slog.Info("Sending request to update plugin release for",
-		"repoName", repoName,
+		"repoName", ip.Name,
+		"private", ip.Private,
 	)
 
 	client := http.Client{}
-	releaseReq, releasesErr := http.NewRequest("GET", fmt.Sprintf("https://api.github.com/repos/%s/releases?per_page=100", repoName), nil)
+	releaseReq, releasesErr := http.NewRequest("GET", fmt.Sprintf("https://api.github.com/repos/%s/releases?per_page=100", ip.Name), nil)
 	if releasesErr != nil {
 		slog.Error("Failed to create plugin release request",
 			"err", releasesErr,
-			"repoName", repoName,
+			"repoName", ip.Name,
 		)
 		return
 	}
@@ -85,11 +86,15 @@ func runUpdatePluginRelease(repoName string) {
 	releaseReq.Header.Set("Accept", "application/json")
 	releaseReq.Header.Set("User-Agent", "Dalamud Plugin Listing (https://dalamud-plugins.senither.com/)")
 
+	if token := os.Getenv("GITHUB_TOKEN"); token != "" && ip.Private {
+		releaseReq.Header.Set("Authorization", "Bearer "+token)
+	}
+
 	releaseResp, releasesErr := client.Do(releaseReq)
 	if releasesErr != nil {
 		slog.Error("Failed to communicate with GitHub API",
 			"err", releasesErr,
-			"repoName", repoName,
+			"repoName", ip.Name,
 		)
 		return
 	}
@@ -100,33 +105,40 @@ func runUpdatePluginRelease(repoName string) {
 	if releasesErr != nil {
 		slog.Error("Failed to decode JSON response",
 			"err", releasesErr,
-			"repoName", repoName,
+			"repoName", ip.Name,
 		)
 		return
 	}
 
 	if len(releases) == 0 {
 		slog.Error("Failed to find any releases for repository",
-			"repoName", repoName,
+			"repoName", ip.Name,
 		)
 		return
 	}
 
-	var manifestAsset, releaseAsset = getManifestAndLatestReleaseAssets(releases[0])
+	state.UpsertReleaseMetadata(ip.Name, releases)
+
+	var manifestAsset, releaseAsset = state.GetManifestAndLatestReleaseAssets(releases[0])
 	if manifestAsset == nil || releaseAsset == nil {
 		slog.Error("Failed to find a manifest or release asset in the release",
-			"repoName", repoName,
+			"repoName", ip.Name,
 			"release", releaseAsset,
 			"manifest", manifestAsset,
 		)
 		return
 	}
 
-	assetReq, assetErr := http.NewRequest("GET", manifestAsset.BrowserDownloadUrl, nil)
+	manifestUrl := manifestAsset.BrowserDownloadUrl
+	if ip.Private {
+		manifestUrl = manifestAsset.Url
+	}
+
+	assetReq, assetErr := http.NewRequest("GET", manifestUrl, nil)
 	if assetErr != nil {
 		slog.Error("Failed to create asset request",
 			"err", assetErr,
-			"repoName", repoName,
+			"repoName", ip.Name,
 			"manifestAsset", manifestAsset,
 			"downloadUrl", manifestAsset.BrowserDownloadUrl,
 		)
@@ -135,11 +147,16 @@ func runUpdatePluginRelease(repoName string) {
 
 	assetReq.Header.Set("User-Agent", "Dalamud Plugin Listing (https://dalamud-plugins.senither.com/)")
 
+	if token := os.Getenv("GITHUB_TOKEN"); token != "" && ip.Private {
+		assetReq.Header.Set("Authorization", "Bearer "+token)
+		assetReq.Header.Set("Accept", "application/octet-stream")
+	}
+
 	manifestResp, assetErr := client.Do(assetReq)
 	if assetErr != nil {
 		slog.Error("Failed to communicate with asset URL",
 			"err", assetErr,
-			"repoName", repoName,
+			"repoName", ip.Name,
 			"downloadUrl", manifestAsset.BrowserDownloadUrl,
 		)
 		return
@@ -151,7 +168,7 @@ func runUpdatePluginRelease(repoName string) {
 	if assetErr != nil {
 		slog.Error("Failed to read asset response body",
 			"err", assetErr,
-			"repoName", repoName,
+			"repoName", ip.Name,
 			"downloadUrl", manifestAsset.BrowserDownloadUrl,
 		)
 		return
@@ -162,14 +179,14 @@ func runUpdatePluginRelease(repoName string) {
 	if manifestErr != nil {
 		slog.Error("Failed to decode JSON manifest",
 			"err", manifestErr,
-			"repoName", repoName,
+			"repoName", ip.Name,
 		)
 		return
 	}
 
 	var truthy = true
 
-	var repoUrl = fmt.Sprintf("https://github.com/%s", repoName)
+	var repoUrl = fmt.Sprintf("https://github.com/%s", ip.Name)
 	var repositoryOrigin = state.RepositoryOrigin{
 		LastUpdatedAt:    time.Now().Unix(),
 		RepositoryUrl:    repoUrl,
@@ -194,22 +211,7 @@ func runUpdatePluginRelease(repoName string) {
 	state.UpsertRepository(repository)
 }
 
-func getManifestAndLatestReleaseAssets(release GitHubPluginRelease) (*GitHubPluginReleaseAsset, *GitHubPluginReleaseAsset) {
-	var manifestAsset *GitHubPluginReleaseAsset = nil
-	var latestAsset *GitHubPluginReleaseAsset = nil
-
-	for _, asset := range release.Assets {
-		if strings.Contains(asset.Name, ".json") && asset.ContentType == "application/json" {
-			manifestAsset = &asset
-		} else if strings.Contains(asset.Name, ".zip") {
-			latestAsset = &asset
-		}
-	}
-
-	return manifestAsset, latestAsset
-}
-
-func decodeJsonPluginReleaseRequestBody(body io.ReadCloser) ([]GitHubPluginRelease, error) {
+func decodeJsonPluginReleaseRequestBody(body io.ReadCloser) ([]state.GitHubPluginRelease, error) {
 	reqBytes, err := io.ReadAll(body)
 	if err != nil {
 		return nil, err
@@ -219,7 +221,7 @@ func decodeJsonPluginReleaseRequestBody(body io.ReadCloser) ([]GitHubPluginRelea
 	exp := regexp.MustCompile(`,(\s*[\}\]])`)
 	reqBody = exp.ReplaceAllString(reqBody, "$1")
 
-	var release []GitHubPluginRelease
+	var release []state.GitHubPluginRelease
 
 	decoder := json.NewDecoder(bytes.NewBufferString(reqBody))
 	err = decoder.Decode(&release)

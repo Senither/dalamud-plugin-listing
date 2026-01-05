@@ -14,6 +14,8 @@ func SetupJobs() {
 	state.LoadRepositoriesFromDisk()
 	state.LoadPluginsFromDisk()
 
+	state.LoadCachedPluginReleasesDataFromDisk()
+
 	// Loops through all the repositories in the state and creates a new job for each one.
 	for _, repoUrl := range state.GetUrls() {
 		repos := state.GetRepositoriesByOriginUrl(repoUrl)
@@ -32,15 +34,15 @@ func SetupJobs() {
 		jobs.StartUpdateRepositoryJob(repoUrl, time.Minute*time.Duration(jobDelay), runOnStart)
 	}
 
-	for _, repoName := range state.GetInternalPlugins() {
-		repo := state.GetRepositoryByGitHubReleaseRepositoryName(repoName)
+	for _, internalPlugin := range state.GetInternalPlugins() {
+		repo := state.GetRepositoryByGitHubReleaseRepositoryName(internalPlugin.Name)
 		runOnStart := true
 
 		if repo != nil {
 			runOnStart = repo.RepositoryOrigin.LastUpdatedAt <= time.Now().Add(time.Minute*120*-1).Unix()
 		}
 
-		jobs.StartUpdatePluginReleaseJob(repoName, time.Minute*time.Duration(60*12), runOnStart)
+		jobs.StartUpdatePluginReleaseJob(internalPlugin.Name, time.Minute*time.Duration(60*12), runOnStart)
 	}
 
 	jobs.StartDeleteExpiredRepositoriesJob(time.Second * 30)
