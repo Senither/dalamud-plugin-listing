@@ -230,6 +230,14 @@ func runUpdatePluginRelease(ip *state.InternalPlugin) {
 		downloadUrl = state.GetDownloadUrlForPrivatePlugin(ip.Name, releases[0].TagName, releaseAsset)
 	}
 
+	releaseBody := releases[0].Body
+	repository.Changelog = &releaseBody
+
+	t, err := time.Parse(time.RFC3339, releases[0].CreatedAt)
+	if err == nil {
+		repository.LastUpdate = t.Unix()
+	}
+
 	repository.RepoUrl = &repoUrl
 	repository.DownloadLinkInstall = &downloadUrl
 	repository.DownloadLinkUpdate = &downloadUrl

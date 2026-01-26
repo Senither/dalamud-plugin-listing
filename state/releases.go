@@ -21,6 +21,7 @@ type GitHubPluginRelease struct {
 	Draft      bool   `json:"draft"`
 	Prerelease bool   `json:"prerelease"`
 	Body       string `json:"body"`
+	CreatedAt  string `json:"created_at"`
 	Assets     []GitHubPluginReleaseAsset
 }
 
