@@ -134,7 +134,12 @@ func runUpdatePluginRelease(ip *state.InternalPlugin) {
 		return
 	}
 
-	state.UpsertReleaseMetadata(ip.Name, releases)
+	if !state.UpsertReleaseMetadata(ip.Name, releases) {
+		slog.Info("No changes detected in releases, skipping processing",
+			"repoName", ip.Name,
+		)
+		return
+	}
 
 	var manifestAsset, releaseAsset = state.GetManifestAndLatestReleaseAssets(releases[0])
 	if manifestAsset == nil || releaseAsset == nil {

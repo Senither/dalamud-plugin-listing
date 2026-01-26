@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"reflect"
 	"strings"
 	"time"
 )
@@ -37,11 +38,11 @@ var (
 	releasesLastUpdatedAt = time.Now().Unix()
 )
 
-func UpsertReleaseMetadata(repoName string, releases []GitHubPluginRelease) {
+func UpsertReleaseMetadata(repoName string, releases []GitHubPluginRelease) bool {
 	ip := GetInternalPluginByName(repoName)
 	if ip == nil {
 		log.Printf("Failed to find internal plugin for release metadata upsert: %s", repoName)
-		return
+		return false
 	}
 
 	var index = -1
@@ -58,14 +59,22 @@ func UpsertReleaseMetadata(repoName string, releases []GitHubPluginRelease) {
 			RepositoryName: ip.Name,
 			Releases:       releases,
 		})
-	} else {
-		releaseContexts[index] = GitHubReleaseContext{
-			RepositoryName: ip.Name,
-			Releases:       releases,
-		}
+
+		writePluginReleasesToDisk()
+		return true
+	}
+
+	if releaseContexts[index].Releases != nil && reflect.DeepEqual(releaseContexts[index].Releases, releases) {
+		return false
+	}
+
+	releaseContexts[index] = GitHubReleaseContext{
+		RepositoryName: ip.Name,
+		Releases:       releases,
 	}
 
 	writePluginReleasesToDisk()
+	return true
 }
 
 func GetDownloadUrlForPrivatePlugin(repoName string, tag string, asset *GitHubPluginReleaseAsset) string {
