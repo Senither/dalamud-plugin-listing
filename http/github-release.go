@@ -2,6 +2,8 @@ package http
 
 import (
 	"io"
+	"log/slog"
+	"net"
 	"net/http"
 	"os"
 	"strings"
@@ -63,6 +65,18 @@ func handlePrivatePluginDownload(w http.ResponseWriter, r *http.Request, release
 	req.Header.Set("Authorization", "Bearer "+token)
 	req.Header.Set("User-Agent", "Dalamud Plugin Listing (https://dalamud-plugins.senither.com/)")
 
+	clientIP := clientIPForForward(r)
+	if clientIP != "" {
+		req.Header.Set("X-Forward-For", clientIP)
+	}
+
+	slog.Info("Requesting file download for",
+		"plugin", plugin.Name,
+		"tag", parts[2],
+		"asset", parts[3],
+		"clientIP", clientIP,
+	)
+
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
@@ -93,4 +107,25 @@ func handlePrivatePluginDownload(w http.ResponseWriter, r *http.Request, release
 
 	w.WriteHeader(resp.StatusCode)
 	_, _ = io.Copy(w, resp.Body)
+}
+
+func clientIPForForward(r *http.Request) string {
+	if v := strings.TrimSpace(r.Header.Get("CF-Connecting-IP")); v != "" {
+		return v
+	}
+
+	if v := strings.TrimSpace(r.Header.Get("True-Client-IP")); v != "" {
+		return v
+	}
+
+	if v := strings.TrimSpace(r.Header.Get("X-Forwarded-For")); v != "" {
+		return strings.TrimSpace(strings.Split(v, ",")[0])
+	}
+
+	host, _, err := net.SplitHostPort(strings.TrimSpace(r.RemoteAddr))
+	if err == nil && host != "" {
+		return host
+	}
+
+	return strings.TrimSpace(r.RemoteAddr)
 }
