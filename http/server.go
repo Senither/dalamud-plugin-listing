@@ -81,6 +81,9 @@ func handleRequest(w http.ResponseWriter, r *http.Request) {
 	} else if strings.HasPrefix(r.URL.Path, "/download/") && r.Method == "GET" {
 		handlePrivatePluginDownload(w, r, r.URL.Path[10:])
 		return
+	} else if strings.HasPrefix(r.URL.Path, "/changelog/") {
+		handleInternalPluginChangelog(w, r, r.URL.Path[11:])
+		return
 	}
 
 	if r.URL.Path != "/" {

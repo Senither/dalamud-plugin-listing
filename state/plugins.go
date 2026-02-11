@@ -31,7 +31,7 @@ func AddInternalPluginUrl(repoName string) {
 
 func GetInternalPluginByName(repoName string) *InternalPlugin {
 	for _, repo := range internalPlugins {
-		if repo.Name == repoName {
+		if strings.EqualFold(repo.Name, repoName) {
 			return &repo
 		}
 	}
@@ -61,7 +61,7 @@ func GetSenitherPluginSize() int {
 
 func pluginExists(repoName string) bool {
 	for _, repo := range internalPlugins {
-		if repo.Name == repoName {
+		if strings.EqualFold(repo.Name, repoName) {
 			return true
 		}
 	}
