@@ -12,6 +12,12 @@ import (
 
 type RepositorySearchCallback func(repo *state.Repository, searchQuery string) bool
 
+func handleRenderingExactPluginByName(w http.ResponseWriter, r *http.Request, internalName string) {
+	renderPluginRepositorySearch(w, r, internalName, func(repo *state.Repository, searchQuery string) bool {
+		return strings.EqualFold(repo.InternalName, searchQuery)
+	})
+}
+
 func handleRenderingPluginByName(w http.ResponseWriter, r *http.Request, internalName string) {
 	renderPluginRepositorySearch(w, r, internalName, func(repo *state.Repository, searchQuery string) bool {
 		if strings.HasPrefix(strings.ToLower(repo.InternalName), searchQuery) ||
