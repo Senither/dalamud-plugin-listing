@@ -24,7 +24,7 @@ func handleGitHubReleaseWebhook(w http.ResponseWriter, r *http.Request) {
 	slog.InfoContext(r.Context(), "Handling GitHub release webhook",
 		"method", r.Method,
 		"path", r.URL.Path,
-		"remote", r.RemoteAddr,
+		"remote", GetRequestIP(r),
 	)
 
 	var req GitHubWebhookRequest = GitHubWebhookRequest{}

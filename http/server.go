@@ -93,7 +93,7 @@ func handleRequest(w http.ResponseWriter, r *http.Request) {
 		slog.InfoContext(r.Context(), "Received request to invalid route",
 			"method", r.Method,
 			"path", r.URL.Path,
-			"remote", r.RemoteAddr,
+			"remote", GetRequestIP(r),
 		)
 
 		renders.RenderError(w, r)
@@ -108,7 +108,7 @@ func handleRequest(w http.ResponseWriter, r *http.Request) {
 	slog.InfoContext(r.Context(), "Handling request",
 		"method", r.Method,
 		"path", r.URL.Path,
-		"remote", r.RemoteAddr,
+		"remote", GetRequestIP(r),
 		"requestType", requestType,
 	)
 

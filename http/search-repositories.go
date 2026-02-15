@@ -51,7 +51,7 @@ func renderPluginRepositorySearch(w http.ResponseWriter, r *http.Request, value 
 	slog.Info("Handling search request",
 		"searchQuery", searchQuery,
 		"path", r.URL.Path,
-		"remote", r.RemoteAddr,
+		"remote", GetRequestIP(r),
 	)
 
 	var repositories []*state.Repository
