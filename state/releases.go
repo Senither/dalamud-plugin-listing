@@ -110,7 +110,7 @@ func GetManifestAndLatestReleaseAssets(release GitHubPluginRelease) (*GitHubPlug
 }
 
 func LoadCachedPluginReleasesDataFromDisk() {
-	content, err := os.ReadFile("cached-plugin-releases.json")
+	content, err := os.ReadFile(cachePath("cached-plugin-releases.json"))
 	if err != nil {
 		return
 	}
@@ -138,6 +138,6 @@ func writePluginReleasesToDisk() {
 			log.Fatalf("Error converting to JSON: %v", err)
 		}
 
-		os.WriteFile("./cached-plugin-releases.json", content, 0644)
+		os.WriteFile(cachePath("cached-plugin-releases.json"), content, 0644)
 	})
 }

@@ -143,7 +143,7 @@ func GetRepositoriesLastUpdatedAt() int64 {
 }
 
 func LoadCachedRepositoryDataFromDisk() {
-	content, err := os.ReadFile("cached-repositories.json")
+	content, err := os.ReadFile(cachePath("cached-repositories.json"))
 	if err != nil {
 		return
 	}
@@ -275,6 +275,6 @@ func writeRepositoriesToDisk() {
 			log.Fatalf("Error converting to JSON: %v", err)
 		}
 
-		os.WriteFile("./cached-repositories.json", content, 0644)
+		os.WriteFile(cachePath("cached-repositories.json"), content, 0644)
 	})
 }

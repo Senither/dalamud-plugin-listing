@@ -28,26 +28,23 @@ COPY . .
 RUN go mod download && go mod verify
 
 # Build the application
-RUN go build -o /dalamud-plugin-listing
+RUN go build -o /app/dalamud-plugin-listing
 
 # Setup a lean image to run the application
 FROM gcr.io/distroless/base-debian11 AS build-release-stage
 
 # Set the working directory
-WORKDIR /
+WORKDIR /app
 
 # Copy the built application and the views
-COPY --from=go-build /dalamud-plugin-listing /dalamud-plugin-listing
-COPY --from=go-build /app/repositories.txt /repositories.txt
-COPY --from=go-build /app/plugins.txt /plugins.txt
-COPY --from=node-build /app/assets /assets
-COPY --from=node-build /app/views /views
+COPY --from=go-build /app/dalamud-plugin-listing /app/dalamud-plugin-listing
+COPY --from=go-build /app/repositories.txt /app/repositories.txt
+COPY --from=go-build /app/plugins.txt /app/plugins.txt
+COPY --from=node-build /app/assets /app/assets
+COPY --from=node-build /app/views /app/views
 
 # Expose the port the application runs on
 EXPOSE 8080
 
-# Run as non-root user
-USER nonroot:nonroot
-
 # Run the application
-CMD ["/dalamud-plugin-listing"]
+CMD ["/app/dalamud-plugin-listing"]
