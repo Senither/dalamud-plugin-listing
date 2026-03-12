@@ -33,6 +33,7 @@ func SetupServer() {
 	app.Post("/webhook/github-release", routes.GitHubReleaseWebhook)
 	app.Get("/download/*", routes.DownloadPlugin)
 
+	app.Get("/plugin/*", middleware.RouteSplitter(routes.PluginHtml, routes.PluginJson))
 	app.Get("/", middleware.RouteSplitter(routes.HomepageHtml, routes.HomepageJson))
 
 	app.Listen(addr)

@@ -1,0 +1,271 @@
+<section class="max-w-6xl mx-auto px-6 pt-10 pb-8">
+    <a href="/"
+        class="inline-flex items-center gap-2 rounded-lg border border-gray-700 bg-gray-900/70 px-3 py-2 text-xs font-medium text-gray-300 transition-colors hover:border-indigo-500 hover:text-indigo-300">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+            class="size-4">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
+        </svg>
+        Back to plugin list
+    </a>
+</section>
+
+<section class="max-w-6xl mx-auto px-6 pb-8">
+    <div class="overflow-hidden rounded-xl border border-gray-700 bg-gray-900">
+        <div class="flex flex-col gap-6 p-6 md:flex-row md:items-start md:justify-between md:p-8">
+            <div class="flex min-w-0 flex-1 items-start gap-5">
+                <img src="{{Plugin.IconUrl}}" alt="{{Plugin.Name}} icon" onerror="this.src = '/assets/not-found.svg'"
+                    class="size-20 shrink-0 rounded-xl bg-gray-800 object-cover" loading="lazy" />
+
+                <div class="min-w-0 space-y-3">
+                    <h1 class="text-3xl font-bold tracking-tight text-white md:text-4xl">{{Plugin.Name}}</h1>
+                    <p class="text-sm text-gray-400">by <span
+                            class="font-semibold text-gray-200">{{Plugin.Author}}</span></p>
+
+                    {{if Plugin.Punchline}}
+                    <p class="text-sm text-indigo-100">{{Plugin.Punchline}}</p>
+                    {{end}}
+
+                    <div class="flex flex-wrap gap-2 text-xs">
+                        <span class="rounded-md border border-gray-700 bg-gray-950/70 px-2.5 py-1 text-gray-300">
+                            Internal Name: {{Plugin.InternalName}}
+                        </span>
+
+                        {{if Plugin.AssemblyVersion}}
+                        <span class="rounded-md border border-gray-700 bg-gray-950/70 px-2.5 py-1 text-gray-300">
+                            Stable v{{Plugin.AssemblyVersion}}
+                        </span>
+                        {{end}}
+
+                        {{if Plugin.TestingAssemblyVersion}}
+                        <span
+                            class="rounded-md border border-indigo-500/40 bg-indigo-500/10 px-2.5 py-1 text-indigo-100">
+                            Testing v{{Plugin.TestingAssemblyVersion}}
+                        </span>
+                        {{end}}
+
+                        {{if Plugin.IsOutdated}}
+                        <span class="rounded-md border border-amber-500/40 bg-amber-500/10 px-2.5 py-1 text-amber-100">
+                            Outdated API
+                        </span>
+                        {{end}}
+
+                        {{if IsInternal}}
+                        <span
+                            class="rounded-md border border-emerald-500/40 bg-emerald-500/10 px-2.5 py-1 text-emerald-100">
+                            Internal Plugin
+                        </span>
+                        {{end}}
+
+                        {{if IsPrivate}}
+                        <span class="rounded-md border border-rose-500/40 bg-rose-500/10 px-2.5 py-1 text-rose-100">
+                            Private Plugin
+                        </span>
+                        {{end}}
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid w-full grid-cols-1 gap-2 text-xs md:w-auto md:min-w-44">
+                {{if Plugin.DownloadLinkInstall}}
+                <a href="#install-plugin" data-install-trigger
+                    class="inline-flex items-center justify-center gap-2 rounded-lg border border-indigo-500 bg-indigo-500/80 px-4 py-2.5 font-semibold text-white transition-colors hover:bg-indigo-400">
+                    Install
+                </a>
+                {{end}}
+
+                {{if !IsPrivate && Plugin.RepoUrl}}
+                <a href="{{Plugin.RepoUrl}}" target="_blank" rel="noopener noreferrer"
+                    class="inline-flex items-center justify-center gap-2 rounded-lg border border-gray-700 bg-gray-950 px-4 py-2.5 font-semibold text-gray-200 transition-colors hover:border-indigo-500 hover:text-white">
+                    Source Repository
+                </a>
+                {{end}}
+            </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-px border-t border-gray-700 bg-gray-700 md:grid-cols-5">
+            <div class="bg-gray-950/40 px-4 py-3">
+                <p class="text-[11px] uppercase tracking-wide text-gray-500">Download Count</p>
+                {{if Plugin.DownloadCount}}
+                <p class="mt-1 text-sm font-semibold text-gray-200" data-download-count="{{Plugin.DownloadCount}}">
+                    {{Plugin.DownloadCount}}</p>
+                {{else}}
+                <p class="mt-1 text-sm font-semibold text-gray-400">N/A</p>
+                {{end}}
+            </div>
+
+            <div class="bg-gray-950/40 px-4 py-3">
+                <p class="text-[11px] uppercase tracking-wide text-gray-500">Last Update</p>
+                {{if Plugin.LastUpdate}}
+                <p class="mt-1 text-sm font-semibold text-gray-200" data-last-update="{{Plugin.LastUpdate}}">
+                    {{Plugin.LastUpdate}}</p>
+                {{else if Plugin.LastUpdated}}
+                <p class="mt-1 text-sm font-semibold text-gray-200" data-last-update="{{Plugin.LastUpdated}}">
+                    {{Plugin.LastUpdated}}</p>
+                {{else}}
+                <p class="mt-1 text-sm font-semibold text-gray-400">Unknown</p>
+                {{end}}
+            </div>
+
+            <div class="bg-gray-950/40 px-4 py-3">
+                <p class="text-[11px] uppercase tracking-wide text-gray-500">Dalamud API</p>
+                {{if Plugin.DalamudApiLevel}}
+                <p class="mt-1 text-sm font-semibold text-gray-200">{{Plugin.DalamudApiLevel}}</p>
+                {{else}}
+                <p class="mt-1 text-sm font-semibold text-gray-400">Unknown</p>
+                {{end}}
+            </div>
+
+            <div class="bg-gray-950/40 px-4 py-3 col-span-1 md:col-span-2">
+                <p class="text-[11px] uppercase tracking-wide text-gray-500">Origin</p>
+                {{if IsInternal}}
+                <a data-url="/plugin/{{Plugin.InternalName}}.json" href="/plugin/{{Plugin.InternalName}}.json" target="_blank" rel="noopener noreferrer"
+                    class="mt-1 block truncate text-sm font-semibold text-indigo-200 transition-colors hover:text-indigo-100"
+                    title="{{Plugin.Name}} plugin repository"></a>
+                {{else}}
+                <a href="{{Plugin.RepositoryOrigin.RepositoryUrl}}" target="_blank" rel="noopener noreferrer"
+                    class="mt-1 block truncate text-sm font-semibold text-indigo-200 transition-colors hover:text-indigo-100"
+                    title="{{Plugin.RepositoryOrigin.RepositoryUrl}}">
+                    {{Plugin.RepositoryOrigin.RepositoryUrl}}
+                </a>
+                {{end}}
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="max-w-6xl mx-auto px-6 pb-8">
+    <div class="rounded-xl border border-gray-700 bg-gray-900 p-6 md:p-8">
+        <h2 class="text-2xl font-bold text-white">Description</h2>
+        {{if Plugin.Description}}
+        <p class="mt-4 whitespace-pre-line text-gray-300 leading-relaxed">{{Plugin.Description}}</p>
+        {{else}}
+        <p class="mt-4 text-gray-400">No description provided.</p>
+        {{end}}
+
+        {{if HasTags}}
+        <h2 class="mt-8 text-2xl font-bold text-white">Tags</h2>
+        <div class="mt-4 flex flex-wrap gap-2">
+            {{range _, tag := Plugin.Tags}}
+            <span
+                class="rounded-md border border-gray-700 bg-gray-950/70 px-3 py-1.5 text-xs font-medium text-gray-300">{{tag}}</span>
+            {{end}}
+        </div>
+        {{end}}
+    </div>
+</section>
+
+{{if HasChangelog}}
+<section class="max-w-6xl mx-auto px-6 pb-20">
+    <div class="rounded-xl border border-gray-700 bg-gray-900 p-6 md:p-8">
+        <h2 class="text-2xl font-bold text-white">Changelog</h2>
+        {{if Plugin.Changelog}}
+        <pre
+            class="mt-4 max-h-120 overflow-auto whitespace-pre-wrap rounded-lg border border-gray-700 bg-gray-950/60 p-4 text-xs text-gray-300">{{Plugin.Changelog}}</pre>
+        {{else}}
+        <p class="mt-4 text-gray-400">No changelog provided.</p>
+        {{end}}
+    </div>
+</section>
+{{end}}
+
+<div id="install-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4" aria-hidden="true">
+    <div data-install-close class="absolute inset-0 bg-black/70"></div>
+
+    <div class="relative z-10 w-full max-w-3xl rounded-xl border border-gray-700 bg-gray-900 shadow-2xl shadow-indigo-950/40"
+        role="dialog" aria-modal="true" aria-labelledby="install-modal-title">
+        <div class="border-b border-gray-700 px-6 py-4">
+            <h3 id="install-modal-title" class="text-lg font-semibold text-white">Install {{Plugin.Name}}</h3>
+            <p class="mt-1 text-sm text-gray-400">Follow these steps to install this plugin in Dalamud.</p>
+        </div>
+
+        <div class="space-y-4 px-6 py-5 text-sm text-gray-300 leading-relaxed">
+            <ol class="list-decimal space-y-2 pl-5">
+                <li>Open Dalamud settings using <code>/xlsettings</code>.</li>
+                <li>Go to the <code>Experimental</code> tab.</li>
+                <li>
+                    Under <code>Custom Plugin Repositories</code> make sure one of the following URls is added.
+                    <ul class="list-disc space-y-1 pl-5 pt-2">
+                        <li>
+                            The root plugin list URL (adds every plugin available on the list):<br>
+                            <code>
+                                <a href="/" target="_blank" data-url=""></a>
+                            </code>
+                        </li>
+                        <li>
+                            The direct plugin URL (only adds this plugin):<br>
+                            <code>
+                                <a href="/plugin/{{Plugin.InternalName}}.json" target="_blank" data-url="/plugin/{{Plugin.InternalName}}.json"></a>
+                            </code>
+                        </li>
+                        {{if !IsInternal}}
+                        <li>
+                            The original repository URL of this plugin:<br>
+                            <code>
+                                <a href="{{Plugin.RepositoryOrigin.RepositoryUrl}}" target="_blank">{{Plugin.RepositoryOrigin.RepositoryUrl}}</a>
+                            </code>
+                        </li>
+                        {{end}}
+                    </ul>
+                </li>
+                <li>Click the <code>+</code> button.</li>
+                <li>Click the <code>Save and Close</code> button.</li>
+            </ol>
+
+            <p>You should now be able to install {{Plugin.Name}} from the plugin lists by searching for it.</p>
+        </div>
+
+        <div class="flex flex-col gap-2 border-t border-gray-700 px-6 py-4 sm:flex-row sm:justify-end">
+            <button type="button" data-install-close
+                class="inline-flex items-center justify-center rounded-lg border border-gray-700 bg-gray-950 px-4 py-2 text-xs font-semibold text-gray-200 transition-colors hover:border-indigo-500 hover:text-white">
+                Close
+            </button>
+        </div>
+    </div>
+</div>
+
+{{ include "partials/js/download-count" }}
+{{ include "partials/js/last-update" }}
+
+<script>
+    (function () {
+        document.querySelectorAll('[data-url]').forEach(element => {
+            element.textContent = window.origin + element.dataset.url;
+        });
+
+        let installTrigger = document.querySelector('[data-install-trigger]')
+        let modal = document.getElementById('install-modal')
+
+        if (!installTrigger || !modal) {
+            return
+        }
+
+        function closeModal() {
+            modal.classList.add('hidden')
+            modal.classList.remove('flex')
+            modal.setAttribute('aria-hidden', 'true')
+            document.body.classList.remove('overflow-hidden')
+        }
+
+        function openModal() {
+            modal.classList.remove('hidden')
+            modal.classList.add('flex')
+            modal.setAttribute('aria-hidden', 'false')
+            document.body.classList.add('overflow-hidden')
+        }
+
+        installTrigger.addEventListener('click', function (event) {
+            event.preventDefault()
+            openModal()
+        })
+
+        modal.querySelectorAll('[data-install-close]').forEach(function (element) {
+            element.addEventListener('click', closeModal)
+        })
+
+        document.addEventListener('keydown', function (event) {
+            if (event.key === 'Escape' && modal.classList.contains('flex')) {
+                closeModal()
+            }
+        })
+    })()
+</script>

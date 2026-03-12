@@ -1,0 +1,26 @@
+<script>
+    document.querySelectorAll('[data-last-update]').forEach(function (element) {
+        let rawValue = (element.dataset.lastUpdate || '').trim()
+        let timestamp = Number(rawValue)
+
+        if (!rawValue || Number.isNaN(timestamp)) {
+            return
+        }
+
+        if (timestamp < 1000000000000) {
+            timestamp *= 1000
+        }
+
+        let date = new Date(timestamp)
+
+        if (Number.isNaN(date.getTime())) {
+            return
+        }
+
+        element.textContent = new Intl.DateTimeFormat('en-US', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric'
+        }).format(date)
+    })
+</script>

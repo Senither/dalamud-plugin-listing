@@ -57,7 +57,7 @@
 
         <!-- Buttons -->
         <div class="mt-auto flex w-full items-stretch divide-x divide-gray-700 border-t border-gray-700 bg-gray-950/60">
-            <a href="{{plugin.RepoUrl}}" target="_blank" rel="noopener noreferrer"
+            <a href="/plugin/{{plugin.InternalName}}"
                 class="flex min-h-12 flex-1 items-center justify-center gap-1.5 px-4 py-3 text-xs font-medium text-gray-300 transition-all hover:bg-indigo-500 hover:text-white">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                     stroke="currentColor" class="size-3.5">
@@ -105,40 +105,5 @@
     {{end}}
 </div>
 
-<script>
-    document.querySelectorAll('[data-download-count]').forEach(function (element) {
-        let rawValue = (element.dataset.downloadCount || '').trim()
-        let numericValue = Number(rawValue)
-
-        if (!rawValue || Number.isNaN(numericValue)) {
-            return
-        }
-
-        element.textContent = new Intl.NumberFormat('en-US').format(numericValue) + ' downloads'
-    })
-
-    document.querySelectorAll('[data-last-update]').forEach(function (element) {
-        let rawValue = (element.dataset.lastUpdate || '').trim()
-        let timestamp = Number(rawValue)
-
-        if (!rawValue || Number.isNaN(timestamp)) {
-            return
-        }
-
-        if (timestamp < 1000000000000) {
-            timestamp *= 1000
-        }
-
-        let date = new Date(timestamp)
-
-        if (Number.isNaN(date.getTime())) {
-            return
-        }
-
-        element.textContent = new Intl.DateTimeFormat('en-US', {
-            year: 'numeric',
-            month: 'short',
-            day: 'numeric'
-        }).format(date)
-    })
-</script>
+{{ include "js/download-count" }}
+{{ include "js/last-update" }}
