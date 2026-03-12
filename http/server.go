@@ -31,6 +31,7 @@ func SetupServer() {
 	app.Get("/metrics", promhttp.Handler())
 
 	app.Post("/webhook/github-release", routes.GitHubReleaseWebhook)
+	app.Get("/download/*", routes.DownloadPlugin)
 
 	app.Get("/", middleware.RouteSplitter(routes.HomepageHtml, routes.HomepageJson))
 
