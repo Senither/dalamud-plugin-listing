@@ -5,10 +5,16 @@ import (
 	"github.com/senither/dalamud-plugin-listing/state"
 )
 
-func DashboardHtml(c fiber.Ctx) error {
-	return c.SendFile("./views/index.html")
+func HomepageHtml(c fiber.Ctx) error {
+	return c.Render("homepage", fiber.Map{
+		"RepositoryCount":      state.GetUrlsSize(),
+		"PluginsTotalCount":    state.GetRepositoriesSize(),
+		"PluginsInternalCount": state.GetInternalPluginSize(),
+		"PluginsSenitherCount": state.GetSenitherPluginSize(),
+		"Plugins":              state.GetRepositories(),
+	})
 }
 
-func DashboardJson(c fiber.Ctx) error {
+func HomepageJson(c fiber.Ctx) error {
 	return c.JSON(state.GetRepositories())
 }

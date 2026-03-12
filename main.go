@@ -1,6 +1,7 @@
 package main
 
 import (
+	"embed"
 	"log/slog"
 	"os"
 	"os/signal"
@@ -10,6 +11,9 @@ import (
 	"github.com/senither/dalamud-plugin-listing/cron"
 	"github.com/senither/dalamud-plugin-listing/http"
 )
+
+//go:embed views/**
+var views embed.FS
 
 func main() {
 	runningCh := make(chan struct{}, 1)
@@ -47,7 +51,7 @@ func main() {
 	}()
 
 	cron.SetupJobs()
-	http.SetupServer()
+	http.SetupServer(views)
 
 	<-runningCh
 }

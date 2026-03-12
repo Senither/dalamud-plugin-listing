@@ -5,90 +5,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dalamud Plugin Listing</title>
-    <script src="//unpkg.com/alpinejs" defer></script>
     <link href="/assets/styles.css?id=@file-hash" rel="stylesheet">
-
-    <script>
-        async function loadRepositories() {
-            const response = await fetch('/', {
-                headers: {
-                    'Accept': 'application/json'
-                }
-            })
-
-            return (await response.json())
-                .sort((a, b) => a.Name.localeCompare(b.Name))
-        }
-    </script>
 </head>
 
-<body class="bg-gray-950 text-slate-50" x-data="{
-    filteredRepositories() {
-        this.updateUrlQuery()
-
-        repos = this.repositories
-        if (this.hideOutdatedPlugins) {
-            repos = repos.filter(repo => !repo.IsOutdated)
-        }
-
-        if (this.query.trim().length === 0) {
-            return repos
-        }
-
-        let query = this.query.toLowerCase().trim()
-
-        return repos.filter(repo => {
-            return repo.Name.toLowerCase().includes(query) ||
-                repo.Author.toLowerCase().includes(query) ||
-                repo.Description?.toLowerCase().includes(query) ||
-                repo.Punchline?.toLowerCase().includes(query)
-        })
-    },
-    loadQueryFromUrl() {
-        let url = new URL(window.location.href)
-
-        if (url.searchParams.get('hide-outdated') === 'true') {
-            this.hideOutdatedPlugins = true
-        }
-
-        let query = url.searchParams.get('q')
-        if (query) {
-            this.query = query
-        }
-    },
-    updateUrlQuery() {
-        let url = new URL(window.location.href)
-
-        if (this.hideOutdatedPlugins) {
-            url.searchParams.set('hide-outdated', 'true')
-        } else {
-            url.searchParams.delete('hide-outdated')
-        }
-
-        if (this.query.trim().length === 0) {
-            url.searchParams.delete('q')
-            window.history.pushState({}, '', url)
-            return
-        }
-
-        url.searchParams.set('q', this.query)
-        window.history.pushState({}, '', url)
-    },
-    canBeReset() {
-        return this.query.trim().length > 0 || this.hideOutdatedPlugins
-    },
-    reset() {
-        this.query = ''
-        this.hideOutdatedPlugins = false
-    },
-    hideOutdatedPlugins: false,
-    repositories: [],
-    query: '',
-}" x-init="async () => {
-    loadQueryFromUrl()
-
-    repositories = await loadRepositories()
-}">
+<body class="bg-gray-950 text-slate-50">
     <div
         class="top-3 right-3 left-3 z-[-1] absolute bg-gradient-to-t from-gray-950 via-gray-500/5 to-indigo-500/20 rounded-t-3xl w-[95sw] h-[150vh]">
     </div>
@@ -108,11 +28,16 @@
                 </p>
 
                 <p>
-                    The list itself is a collection of <span class="font-bold text-indigo-100">@state-url-size</span>
+                    The list itself is a collection of <span class="font-bold text-indigo-100">
+                        {{ RepositoryCount }}
+                    </span>
                     different repositories, combined providing access to
-                    <span class="font-bold text-indigo-100">@state-repo-size</span> plugins within a single repository,
-                    including <span class="font-bold text-indigo-100">@state-internal-size</span> internal plugins with
-                    <span class="font-bold text-indigo-100">@state-senither-size</span> of them being my own plugins.
+                    <span class="font-bold text-indigo-100">{{ PluginsTotalCount }}</span> plugins within a single
+                    repository,
+                    including <span class="font-bold text-indigo-100">{{PluginsInternalCount}}</span> internal plugins
+                    with
+                    <span class="font-bold text-indigo-100">{{PluginsSenitherCount}}</span> of them being my own
+                    plugins.
                     The list is then updated once an hour to check for updates, this makes it possible to have a single
                     plugin repository in Dalamud and still get updates from all the different repositories.
                 </p>
@@ -286,6 +211,8 @@
                     </div>
                 </div>
             </section>
+
+            <div>{{ Plugins }}</div>
 
             <section class="gap-8 grid grid-cols-1 md:grid-cols-2">
                 <template x-for="repo in filteredRepositories()">
