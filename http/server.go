@@ -30,6 +30,8 @@ func SetupServer() {
 	app.Get("/assets/*", static.New("./assets"))
 	app.Get("/metrics", promhttp.Handler())
 
+	app.Post("/webhook/github-release", routes.GitHubReleaseWebhook)
+
 	app.Get("/", middleware.RouteSplitter(routes.HomepageHtml, routes.HomepageJson))
 
 	app.Listen(addr)
