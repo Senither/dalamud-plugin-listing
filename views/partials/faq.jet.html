@@ -1,0 +1,94 @@
+<h2 class="text-2xl font-bold text-white mb-6">Frequently Asked Questions</h2>
+<div class="space-y-3">
+    <details class="group rounded-lg border border-gray-700 bg-gray-900">
+        <summary
+            class="cursor-pointer select-none px-5 py-4 font-medium text-gray-100 hover:text-indigo-300 transition-colors">
+            Can I use this plugin list too?
+        </summary>
+        <div class="px-5 pb-4 text-gray-300 space-y-4">
+            <p>Ofcourse! You can add this repository to Dalamud by following the steps below:</p>
+
+            <ul class="list-disc list-inside space-y-1.5">
+                <li>Open Dalamud's settings (<code>/xlsettings</code>)</li>
+                <li>Click on the <code>Experimental</code> tab</li>
+                <li>Scroll Down to <code>Custom Plugin Repositories</code></li>
+                <li>
+                    Add the following URL: <code>https://dalamud-plugins.senither.com</code>,
+                    then click on
+                    the Plus next to it
+                </li>
+                <li>Click on the Save icon in the bottom right corner</li>
+            </ul>
+
+            <div class="flex flex-col justify-center items-center w-full">
+                <p>Example of how you add the repo to FFXIV.</p>
+                <img src="/assets/imgs/dalamud-add-plugin-repository.png" alt="Add custom plugin repository to Dalamud"
+                    class="rounded-lg mt-2" />
+            </div>
+        </div>
+    </details>
+    <details class="group rounded-lg border border-gray-700 bg-gray-900">
+        <summary
+            class="cursor-pointer select-none px-5 py-4 font-medium text-gray-100 hover:text-indigo-300 transition-colors">
+            Can I get only a small selection of the plugins?
+        </summary>
+        <div class="px-5 pb-4 text-gray-300 space-y-4">
+            <p>
+                Yes! If you'd like to only get plugins which match specific criteria, such as containing some text in
+                the name, or getting plugins from a subset of authors, you can use the following URLs:
+            </p>
+
+            <ul class="ist-disc list-inside space-y-1.5">
+                <li>
+                    /authors/&lt;search query&gt;.json
+                    <br>
+                    <span class="text-sm ml-4">
+                        Finds all plugins matching the authors to your search query.
+                    </span>
+                </li>
+                <li>
+                    /plugins/&lt;search query&gt;.json
+                    <br>
+                    <span class="text-sm ml-4">
+                        Finds all plugins matching the name, description, or punchline to your search
+                        query.
+                    </span>
+                </li>
+            </ul>
+
+            <p>
+                As an example, if you only want to get plugins I've made you could add the following URL:
+                <br>
+                <code class="ml-4" data-url="/authors/senither.json"></code>
+                <br>
+                or to get all plugins containing the word "auto" you could use the following URL:
+                <br>
+                <code class="ml-4" data-url="/plugins/auto.json"></code>
+            </p>
+        </div>
+    </details>
+    <details class="group rounded-lg border border-gray-700 bg-gray-900">
+        <summary
+            class="cursor-pointer select-none px-5 py-4 font-medium text-gray-100 hover:text-indigo-300 transition-colors">
+            What are the "internal" plugins?
+        </summary>
+        <div class="px-5 pb-4 text-gray-300 space-y-4">
+            <p>
+                Internal plugins are plugins that are not loaded from any existing plugin list, but instead linked
+                directly with GitHub and the plugin releases from their repositories.
+            </p>
+
+            <p>
+                Internal plugins are updated automatically when a new release is created on GitHub, the GitHub API is
+                also used to fetch the download count for the .zip file in the releases to show how many times an
+                internal plugin has been downloaded.
+            </p>
+        </div>
+    </details>
+</div>
+
+<script>
+    document.querySelectorAll('[data-url]').forEach(element => {
+        element.textContent = window.origin + element.dataset.url;
+    });
+</script>

@@ -1,0 +1,144 @@
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    {{range _,plugin := Plugins}}
+    <div class="plugin-card flex flex-col overflow-hidden rounded-xl border border-gray-700 bg-gray-900 transition duration-200 ease-out hover:scale-105 hover:shadow-lg hover:shadow-indigo-950/40"
+        data-name="{{plugin.Name}}" data-description="{{plugin.Description}}" data-author="{{plugin.Author}}">
+
+        <div class="flex flex-1 flex-col p-5">
+            <!-- Header: icon + title + version -->
+            <div class="flex items-start gap-4 mb-3">
+                <img src="{{plugin.IconUrl}}" alt="" onerror="this.src = '/assets/not-found.svg'"
+                    class="size-16 shrink-0 rounded-lg bg-gray-800 object-cover" loading="lazy" />
+
+                <div class="min-w-0 flex-1">
+                    <h3 class="font-semibold text-white truncate">{{plugin.Name}}</h3>
+                    <p class="text-xs text-gray-500 truncate">by {{plugin.Author}}</p>
+                    {{if plugin.AssemblyVersion}}
+                    <span class="text-xs text-gray-500">v{{plugin.AssemblyVersion}}</span>
+                    {{end}}
+                </div>
+            </div>
+
+            <!-- Description -->
+            <p class="mb-4 flex-1 text-sm text-gray-400 line-clamp-2">
+                {{if plugin.Punchline}}{{plugin.Punchline}}{{else}}{{plugin.Description}}{{end}}
+            </p>
+        </div>
+
+        <!-- Metadata -->
+        <div class="flex w-full items-stretch divide-x divide-gray-700 border-t border-gray-700 bg-gray-950/30">
+            <!-- Download count -->
+            <div class="flex min-h-8 flex-1 items-center justify-center gap-1.5 px-4 py-3 text-xs text-gray-500">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                    stroke="currentColor" class="size-4">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" />
+                </svg>
+                {{if plugin.DownloadCount}}
+                <span data-download-count="{{plugin.DownloadCount}}">{{plugin.DownloadCount}} downloads</span>
+                {{else}}
+                <span>N/A downloads</span>
+                {{end}}
+            </div>
+
+            <!-- Last updated -->
+            <div class="flex min-h-8 flex-1 items-center justify-center gap-1.5 px-4 py-3 text-xs text-gray-500">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                    stroke="currentColor" class="size-4">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0z" />
+                </svg>
+                {{if plugin.LastUpdate}}
+                <span data-last-update="{{plugin.LastUpdate}}">{{plugin.LastUpdate}}</span>
+                {{else}}
+                <span>Unknown update date</span>
+                {{end}}
+            </div>
+        </div>
+
+        <!-- Buttons -->
+        <div class="mt-auto flex w-full items-stretch divide-x divide-gray-700 border-t border-gray-700 bg-gray-950/60">
+            <a href="{{plugin.RepoUrl}}" target="_blank" rel="noopener noreferrer"
+                class="flex min-h-12 flex-1 items-center justify-center gap-1.5 px-4 py-3 text-xs font-medium text-gray-300 transition-all hover:bg-indigo-500 hover:text-white">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                    stroke="currentColor" class="size-3.5">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
+                </svg>
+                View
+            </a>
+
+            {{if plugin.RepoUrl}}
+            <a href="{{plugin.RepoUrl}}" target="_blank" rel="noopener noreferrer"
+                class="flex min-h-12 flex-1 items-center justify-center gap-1.5 px-4 py-3 text-xs font-medium text-gray-300 transition-all hover:bg-indigo-500 hover:text-white">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                    stroke="currentColor" class="size-3.5">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
+                </svg>
+                Repository
+            </a>
+            {{end}}
+
+            {{if plugin.RepositoryOrigin.IsInternalPlugin}}
+            <a href="{{plugin.RepositoryOrigin.RepositoryUrl}}" target="_blank" rel="noopener noreferrer"
+                class="flex min-h-12 flex-1 items-center justify-center gap-1.5 px-4 py-3 text-xs font-medium text-gray-300 transition-all hover:bg-indigo-500 hover:text-white">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                    stroke="currentColor" class="size-3.5">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 0h10.5A2.25 2.25 0 0 1 19.5 12.75v6A2.25 2.25 0 0 1 17.25 21h-10.5A2.25 2.25 0 0 1 4.5 18.75v-6A2.25 2.25 0 0 1 6.75 10.5Z" />
+                </svg>
+                Internal
+            </a>
+            {{else}}
+            <a href="{{plugin.RepositoryOrigin.RepositoryUrl}}" target="_blank" rel="noopener noreferrer"
+                class="flex min-h-12 flex-1 items-center justify-center gap-1.5 px-4 py-3 text-xs font-medium text-gray-300 transition-all hover:bg-indigo-500 hover:text-white">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                    stroke="currentColor" class="size-3.5">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M8.25 6.75h12M8.25 12h12m-12 5.25h12M3.75 6.75h.007v.008H3.75V6.75Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0ZM3.75 12h.007v.008H3.75V12Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm-.375 5.25h.007v.008H3.75v-.008Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z" />
+                </svg>
+                Origin List
+            </a>
+            {{end}}
+        </div>
+    </div>
+    {{end}}
+</div>
+
+<script>
+    document.querySelectorAll('[data-download-count]').forEach(function (element) {
+        let rawValue = (element.dataset.downloadCount || '').trim()
+        let numericValue = Number(rawValue)
+
+        if (!rawValue || Number.isNaN(numericValue)) {
+            return
+        }
+
+        element.textContent = new Intl.NumberFormat('en-US').format(numericValue) + ' downloads'
+    })
+
+    document.querySelectorAll('[data-last-update]').forEach(function (element) {
+        let rawValue = (element.dataset.lastUpdate || '').trim()
+        let timestamp = Number(rawValue)
+
+        if (!rawValue || Number.isNaN(timestamp)) {
+            return
+        }
+
+        if (timestamp < 1000000000000) {
+            timestamp *= 1000
+        }
+
+        let date = new Date(timestamp)
+
+        if (Number.isNaN(date.getTime())) {
+            return
+        }
+
+        element.textContent = new Intl.DateTimeFormat('en-US', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric'
+        }).format(date)
+    })
+</script>

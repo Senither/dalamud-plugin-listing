@@ -2,12 +2,14 @@ package http
 
 import (
 	"context"
-	"embed"
+	"crypto/sha256"
+	"fmt"
 	"log/slog"
 	"os"
 	"time"
 
 	"github.com/gofiber/fiber/v3"
+	"github.com/gofiber/fiber/v3/middleware/favicon"
 	"github.com/gofiber/fiber/v3/middleware/static"
 	"github.com/gofiber/template/jet/v3"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
@@ -17,15 +19,13 @@ import (
 
 var app *fiber.App
 
-func SetupServer(views embed.FS) {
+func SetupServer() {
 	addr := os.Getenv("APP_ADDR")
 	if addr == "" {
 		addr = "127.0.0.1:8080"
 	}
 
-	app = fiber.New(fiber.Config{
-		Views: jet.New("./views", ".jet"),
-	})
+	app = createFiberApp()
 
 	app.Get("/assets/*", static.New("./assets"))
 	app.Get("/metrics", promhttp.Handler())
@@ -33,6 +33,33 @@ func SetupServer(views embed.FS) {
 	app.Get("/", middleware.RouteSplitter(routes.HomepageHtml, routes.HomepageJson))
 
 	app.Listen(addr)
+}
+
+func createFiberApp() *fiber.App {
+	engine := jet.New("./views", ".jet.html")
+
+	app = fiber.New(fiber.Config{
+		Views: engine,
+	})
+
+	app.Use(favicon.New(favicon.Config{
+		File: "./assets/icons/favicon.ico",
+		URL:  "/favicon.ico",
+	}))
+
+	engine.Templates.AddGlobal("StyleHash", generateStyleHashId())
+
+	return app
+}
+
+func generateStyleHashId() string {
+	file, err := os.ReadFile("./assets/styles.css")
+	if err != nil {
+		slog.Error("Failed to read styles.css", "err", err)
+		return ""
+	}
+
+	return fmt.Sprintf("%x", sha256.Sum256(file))
 }
 
 func ShutdownServer() {
