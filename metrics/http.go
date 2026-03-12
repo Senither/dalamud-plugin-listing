@@ -15,9 +15,8 @@ var (
 type RouteMetric string
 
 const (
-	HtmlRoute  RouteMetric = "html"
-	JsonRoute  RouteMetric = "json"
-	ErrorRoute RouteMetric = "error"
+	HtmlRoute RouteMetric = "html"
+	JsonRoute RouteMetric = "json"
 )
 
 func IncrementRouteRequestCounter(route RouteMetric) {
