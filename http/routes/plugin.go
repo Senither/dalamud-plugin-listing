@@ -12,7 +12,7 @@ import (
 func PluginHtml(c fiber.Ctx) error {
 	plugin, err := findPluginRepositoryFromContext(c)
 	if err != nil {
-		return c.Status(fiber.StatusNotFound).SendString("Plugin not found")
+		return RenderErrorPage(c, 404, "Plugin Not Found", "No plugin was found with the given name.")
 	}
 
 	return c.Render("plugin", fiber.Map{
@@ -27,10 +27,7 @@ func PluginHtml(c fiber.Ctx) error {
 func PluginJson(c fiber.Ctx) error {
 	plugin, err := findPluginRepositoryFromContext(c)
 	if err != nil {
-		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
-			"status": 404,
-			"reason": "No plugin were found with the given name",
-		})
+		return RenderErrorPage(c, 404, "Plugin Not Found", "No plugin was found with the given name.")
 	}
 
 	return c.JSON(plugin)

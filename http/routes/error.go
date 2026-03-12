@@ -1,0 +1,44 @@
+package routes
+
+import (
+	"strings"
+
+	"github.com/gofiber/fiber/v3"
+)
+
+func NotFound(c fiber.Ctx) error {
+	return RenderErrorPage(c,
+		404,
+		"Page Not Found",
+		"The page or resource you requested does not exist or may have been moved.",
+	)
+}
+
+func RenderErrorPage(c fiber.Ctx, status int, title string, message string) error {
+	if isJsonRequest(c) {
+		return c.Status(status).JSON(fiber.Map{
+			"status": status,
+			"reason": message,
+			"path":   c.Path(),
+		})
+	}
+
+	err := c.Status(status).Render("error", fiber.Map{
+		"Status":  status,
+		"Title":   title,
+		"Message": message,
+		"Path":    c.Path(),
+	}, "layouts/app")
+
+	if err != nil {
+		return c.Status(status).SendString(message)
+	}
+
+	return nil
+}
+
+func isJsonRequest(c fiber.Ctx) bool {
+	return c.Get("Accept") == "application/json" ||
+		strings.HasPrefix(c.Get("User-Agent"), "Dalamud/") ||
+		strings.HasSuffix(c.FullURL(), ".json")
+}

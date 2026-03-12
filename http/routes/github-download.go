@@ -16,17 +16,17 @@ func DownloadPlugin(c fiber.Ctx) error {
 
 	parts := strings.Split(release, "/")
 	if len(parts) != 4 {
-		return c.Status(fiber.StatusBadRequest).SendString("Bad request, invalid release file format")
+		return RenderErrorPage(c, fiber.StatusBadRequest, "Bad request", "Bad request, invalid release file format")
 	}
 
 	plugin := state.GetInternalPluginByName(parts[0] + "/" + parts[1])
 	if plugin == nil || !plugin.Private {
-		return c.Status(fiber.StatusNotFound).SendString("Plugin not found")
+		return RenderErrorPage(c, fiber.StatusNotFound, "Plugin Not Found", "The requested plugin could not be found.")
 	}
 
 	releases := state.GetReleaseMetadataByRepositoryName(plugin.Name)
 	if releases == nil {
-		return c.Status(fiber.StatusNotFound).SendString("No release metadata found for plugin")
+		return RenderErrorPage(c, fiber.StatusNotFound, "Release Not Found", "No release metadata was found for the requested plugin.")
 	}
 
 	var assetUrl *string = nil
@@ -44,19 +44,17 @@ func DownloadPlugin(c fiber.Ctx) error {
 	}
 
 	if assetUrl == nil {
-		return c.Status(fiber.StatusNotFound).SendString("Release asset not found")
+		return RenderErrorPage(c, fiber.StatusNotFound, "Release Asset Not Found", "The requested release asset could not be found.")
 	}
 
 	token := os.Getenv("GITHUB_TOKEN")
 	if token == "" {
-		return c.Status(fiber.StatusInternalServerError).
-			SendString("Server misconfigured, missing GITHUB_TOKEN")
+		return RenderErrorPage(c, fiber.StatusInternalServerError, "Internal Error", "Server misconfigured, missing GITHUB token environment")
 	}
 
 	req, err := http.NewRequestWithContext(c, http.MethodGet, *assetUrl, nil)
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).
-			SendString("Failed to create upstream request")
+		return RenderErrorPage(c, fiber.StatusInternalServerError, "Internal Error", "Failed to create upstream request")
 	}
 
 	req.Header.Set("Accept", "application/octet-stream")
@@ -74,16 +72,18 @@ func DownloadPlugin(c fiber.Ctx) error {
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
-		c.SendString("Failed to download release asset from GitHub")
-		return c.SendStatus(fiber.StatusBadGateway)
+		return RenderErrorPage(c, fiber.StatusBadGateway, "Bad Gateway", "Failed to download release asset from GitHub")
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode < 200 || resp.StatusCode > 299 {
 		body, _ := io.ReadAll(io.LimitReader(resp.Body, 8<<10))
 
-		return c.Status(fiber.StatusBadGateway).
-			SendString("Failed to download release asset from GitHub: " + strings.TrimSpace(string(body)))
+		return RenderErrorPage(
+			c,
+			fiber.StatusBadGateway,
+			"Bad Gateway", "Failed to download release asset from GitHub: "+strings.TrimSpace(string(body)),
+		)
 	}
 
 	for _, h := range []string{

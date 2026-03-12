@@ -36,6 +36,8 @@ func SetupServer() {
 	app.Get("/plugin/*", middleware.RouteSplitter(routes.PluginHtml, routes.PluginJson))
 	app.Get("/", middleware.RouteSplitter(routes.HomepageHtml, routes.HomepageJson))
 
+	app.Use(routes.NotFound)
+
 	app.Listen(addr)
 }
 
