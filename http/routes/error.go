@@ -14,11 +14,24 @@ func NotFound(c fiber.Ctx) error {
 	)
 }
 
+func OnlyAcceptsJsonError(c fiber.Ctx) error {
+	return RenderErrorPageWithView(c,
+		406,
+		"Not Acceptable",
+		"This endpoint only accepts requests with 'Accept: application/json' header or requests ending with '.json'.",
+		"errors/json",
+	)
+}
+
 func InternalServerError(c fiber.Ctx, err error) error {
 	return RenderErrorPage(c, fiber.StatusInternalServerError, "Internal Server Error", err.Error())
 }
 
 func RenderErrorPage(c fiber.Ctx, status int, title string, message string) error {
+	return RenderErrorPageWithView(c, status, title, message, "errors/error")
+}
+
+func RenderErrorPageWithView(c fiber.Ctx, status int, title string, message string, view string) error {
 	if isJsonRequest(c) {
 		return c.Status(status).JSON(fiber.Map{
 			"status": status,
@@ -27,7 +40,7 @@ func RenderErrorPage(c fiber.Ctx, status int, title string, message string) erro
 		})
 	}
 
-	err := c.Status(status).Render("error", fiber.Map{
+	err := c.Status(status).Render(view, fiber.Map{
 		"Status":  status,
 		"Title":   title,
 		"Message": message,

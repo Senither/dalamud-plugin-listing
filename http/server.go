@@ -36,6 +36,8 @@ func SetupServer() {
 	app.Get("/download/*", routes.DownloadPlugin)
 
 	app.Get("/plugin/*", middleware.RouteSplitter(routes.PluginHtml, routes.PluginJson))
+	app.Get("/plugins/*", middleware.RouteSplitter(routes.OnlyAcceptsJsonError, routes.SearchPluginsByName))
+	app.Get("/authors/*", middleware.RouteSplitter(routes.OnlyAcceptsJsonError, routes.SearchPluginsByAuthor))
 	app.Get("/", middleware.RouteSplitter(routes.HomepageHtml, routes.HomepageJson))
 
 	app.Use(routes.NotFound)
