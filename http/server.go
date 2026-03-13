@@ -51,6 +51,19 @@ func createFiberApp() *fiber.App {
 		ErrorHandler: routes.InternalServerError,
 	})
 
+	app.Use(func(c fiber.Ctx) error {
+		c.Set("Access-Control-Allow-Origin", "*")
+		c.Set("Access-Control-Allow-Methods", "GET")
+		c.Set("Access-Control-Allow-Headers", "accept,content-type")
+		c.Set("Access-Control-Max-Age", "300")
+
+		c.Set("Server", "Dalamud Plugin List")
+		c.Set("X-Powered-By", "Nerd Rage and Caffeine")
+		c.Set("X-Accepts", "text/html,application/json")
+
+		return c.Next()
+	})
+
 	app.Use(favicon.New(favicon.Config{
 		File: "./assets/icons/favicon.ico",
 		URL:  "/favicon.ico",
