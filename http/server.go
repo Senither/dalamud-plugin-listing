@@ -38,6 +38,7 @@ func SetupServer() {
 	app.Get("/plugin/*", middleware.ParseRepositoryParam, middleware.RouteSplitter(routes.PluginHtml, routes.PluginJson))
 	app.Get("/plugins/*", middleware.ParseRepositoryParam, middleware.RouteSplitter(routes.OnlyAcceptsJsonError, routes.SearchPluginsByName))
 	app.Get("/authors/*", middleware.ParseRepositoryParam, middleware.RouteSplitter(routes.OnlyAcceptsJsonError, routes.SearchPluginsByAuthor))
+	app.Get("/changelog/*", middleware.ParseRepositoryParam, middleware.RouteSplitter(routes.ChangelogHtml, routes.ChangelogJson))
 
 	app.Get("/", middleware.RouteSplitter(routes.HomepageHtml, routes.HomepageJson))
 

@@ -138,6 +138,16 @@ func GetRepositoryByGitHubReleaseRepositoryName(repoName string) *Repository {
 	return nil
 }
 
+func GetRepositoryByAuthorAndInternalName(author string, internalName string) *Repository {
+	for _, repository := range GetRepositories() {
+		if repository.Author == author && repository.InternalName == internalName {
+			return &repository
+		}
+	}
+
+	return nil
+}
+
 func GetRepositoriesLastUpdatedAt() int64 {
 	return repositoryLastUpdatedAt
 }

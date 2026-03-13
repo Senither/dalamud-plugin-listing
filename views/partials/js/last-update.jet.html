@@ -1,17 +1,23 @@
 <script>
     document.querySelectorAll('[data-last-update]').forEach(function (element) {
         let rawValue = (element.dataset.lastUpdate || '').trim()
-        let timestamp = Number(rawValue)
+        let date
 
-        if (!rawValue || Number.isNaN(timestamp)) {
+        if (!rawValue) {
             return
         }
 
-        if (timestamp < 1000000000000) {
-            timestamp *= 1000
-        }
+        let timestamp = Number(rawValue)
 
-        let date = new Date(timestamp)
+        if (!Number.isNaN(timestamp)) {
+            if (timestamp < 1000000000000) {
+                timestamp *= 1000
+            }
+
+            date = new Date(timestamp)
+        } else {
+            date = new Date(rawValue)
+        }
 
         if (Number.isNaN(date.getTime())) {
             return
