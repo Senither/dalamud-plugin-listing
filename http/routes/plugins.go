@@ -69,12 +69,10 @@ func SearchPluginsByAuthor(c fiber.Ctx) error {
 }
 
 func findPluginRepositoryFromContext(c fiber.Ctx) (*state.Repository, error) {
-	name := c.Params("*")
-	if before, ok := strings.CutSuffix(name, ".json"); ok {
-		name = before
+	name, ok := c.Locals("repository").(string)
+	if !ok {
+		return nil, fmt.Errorf("No plugin name was provided in the request")
 	}
-
-	name = strings.ReplaceAll(name, "%20", " ")
 
 	for _, repo := range state.GetRepositories() {
 		if strings.EqualFold(repo.InternalName, name) {
@@ -86,8 +84,10 @@ func findPluginRepositoryFromContext(c fiber.Ctx) (*state.Repository, error) {
 }
 
 func searchPluginRepositoriesFromContext(c fiber.Ctx, callback RepositorySearchCallback) ([]state.Repository, error) {
-	searchQuery := strings.ToLower(c.Params("*"))
-	searchQuery, _ = strings.CutSuffix(searchQuery, ".json")
+	searchQuery, ok := c.Locals("repository").(string)
+	if !ok {
+		return nil, fmt.Errorf("No plugin name was provided in the request")
+	}
 
 	var results []state.Repository = make([]state.Repository, 0)
 

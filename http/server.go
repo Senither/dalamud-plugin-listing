@@ -33,11 +33,12 @@ func SetupServer() {
 	app.Get("/metrics", promhttp.Handler())
 
 	app.Post("/webhook/github-release", routes.GitHubReleaseWebhook)
-	app.Get("/download/*", routes.DownloadPlugin)
 
-	app.Get("/plugin/*", middleware.RouteSplitter(routes.PluginHtml, routes.PluginJson))
-	app.Get("/plugins/*", middleware.RouteSplitter(routes.OnlyAcceptsJsonError, routes.SearchPluginsByName))
-	app.Get("/authors/*", middleware.RouteSplitter(routes.OnlyAcceptsJsonError, routes.SearchPluginsByAuthor))
+	app.Get("/download/*", middleware.ParseRepositoryParam, routes.DownloadPlugin)
+	app.Get("/plugin/*", middleware.ParseRepositoryParam, middleware.RouteSplitter(routes.PluginHtml, routes.PluginJson))
+	app.Get("/plugins/*", middleware.ParseRepositoryParam, middleware.RouteSplitter(routes.OnlyAcceptsJsonError, routes.SearchPluginsByName))
+	app.Get("/authors/*", middleware.ParseRepositoryParam, middleware.RouteSplitter(routes.OnlyAcceptsJsonError, routes.SearchPluginsByAuthor))
+
 	app.Get("/", middleware.RouteSplitter(routes.HomepageHtml, routes.HomepageJson))
 
 	app.Use(routes.NotFound)

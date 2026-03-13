@@ -12,7 +12,10 @@ import (
 )
 
 func DownloadPlugin(c fiber.Ctx) error {
-	release := c.Params("*")
+	release, ok := c.Locals("repository").(string)
+	if !ok {
+		return RenderErrorPage(c, fiber.StatusBadRequest, "Bad request", "Bad request, invalid repository name")
+	}
 
 	parts := strings.Split(release, "/")
 	if len(parts) != 4 {
