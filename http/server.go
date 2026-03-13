@@ -11,6 +11,7 @@ import (
 	"github.com/gofiber/fiber/v3"
 	"github.com/gofiber/fiber/v3/middleware/favicon"
 	"github.com/gofiber/fiber/v3/middleware/logger"
+	"github.com/gofiber/fiber/v3/middleware/responsetime"
 	"github.com/gofiber/fiber/v3/middleware/static"
 	"github.com/gofiber/template/jet/v3"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
@@ -72,6 +73,8 @@ func createFiberApp() *fiber.App {
 	app.Use(logger.New(logger.Config{
 		Format: "${time} | ${status} | ${latency} | ${ip} | ${method} | ${path} | ${error}\n",
 	}))
+
+	app.Use(responsetime.New())
 
 	engine.Templates.AddGlobal("StyleHash", generateStyleHashId())
 
