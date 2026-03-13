@@ -177,7 +177,7 @@
 <div id="install-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4" aria-hidden="true">
     <div data-install-close class="absolute inset-0 bg-black/70"></div>
 
-    <div class="relative z-10 w-full max-w-3xl rounded-xl border border-gray-700 bg-gray-900 shadow-2xl shadow-indigo-950/40"
+    <div class="relative z-10 w-full max-w-3xl rounded-xl border border-gray-700 bg-gray-900 shadow-2xl shadow-indigo-950/40 overflow-hidden"
         role="dialog" aria-modal="true" aria-labelledby="install-modal-title">
         <div class="border-b border-gray-700 px-6 py-4">
             <h3 id="install-modal-title" class="text-lg font-semibold text-white">Install {{Plugin.Name}}</h3>
@@ -193,22 +193,70 @@
                     <ul class="list-disc space-y-1 pl-5 pt-2">
                         <li>
                             The root plugin list URL (adds every plugin available on the list):<br>
-                            <code>
-                                <a href="/" target="_blank" data-url=""></a>
-                            </code>
+                            <div class="mt-1 flex items-center gap-1">
+                                <input type="text" data-url="" readonly
+                                    class="min-w-0 flex-1 rounded border border-gray-700 bg-gray-950/60 px-2.5 py-1.5 text-xs font-mono text-gray-200 select-all cursor-pointer focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/30" />
+                                <button type="button" data-copy-btn
+                                    class="shrink-0 rounded border border-gray-700 bg-gray-950/60 p-1.5 text-gray-400 transition-colors hover:border-indigo-500 hover:text-indigo-300 focus:outline-none focus:ring-1 focus:ring-indigo-500/30"
+                                    title="Copy to clipboard">
+                                    <svg data-copy-icon xmlns="http://www.w3.org/2000/svg" fill="none"
+                                        viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-3.5">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                            d="M15.75 17.25v3.375c0 .621-.504 1.125-1.125 1.125h-9.75a1.125 1.125 0 0 1-1.125-1.125V7.875c0-.621.504-1.125 1.125-1.125H6.75a9.06 9.06 0 0 1 1.5.124m7.5 10.376h3.375c.621 0 1.125-.504 1.125-1.125V11.25c0-4.46-3.243-8.161-7.5-8.876a9.06 9.06 0 0 0-1.5-.124H9.375c-.621 0-1.125.504-1.125 1.125v3.5m7.5 10.375H9.375a1.125 1.125 0 0 1-1.125-1.125v-9.25m12 6.625v-1.875a3.375 3.375 0 0 0-3.375-3.375h-1.5a1.125 1.125 0 0 1-1.125-1.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H9.75" />
+                                    </svg>
+                                    <svg data-check-icon xmlns="http://www.w3.org/2000/svg" fill="none"
+                                        viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                                        class="size-3.5 hidden text-emerald-400">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                            d="m4.5 12.75 6 6 9-13.5" />
+                                    </svg>
+                                </button>
+                            </div>
                         </li>
                         <li>
                             The direct plugin URL (only adds this plugin):<br>
-                            <code>
-                                <a href="/plugin/{{Plugin.InternalName}}.json" target="_blank" data-url="/plugin/{{Plugin.InternalName}}.json"></a>
-                            </code>
+                            <div class="mt-1 flex items-center gap-1">
+                                <input type="text" data-url="/plugin/{{Plugin.InternalName}}.json" readonly
+                                    class="min-w-0 flex-1 rounded border border-gray-700 bg-gray-950/60 px-2.5 py-1.5 text-xs font-mono text-gray-200 select-all cursor-pointer focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/30" />
+                                <button type="button" data-copy-btn
+                                    class="shrink-0 rounded border border-gray-700 bg-gray-950/60 p-1.5 text-gray-400 transition-colors hover:border-indigo-500 hover:text-indigo-300 focus:outline-none focus:ring-1 focus:ring-indigo-500/30"
+                                    title="Copy to clipboard">
+                                    <svg data-copy-icon xmlns="http://www.w3.org/2000/svg" fill="none"
+                                        viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-3.5">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                            d="M15.75 17.25v3.375c0 .621-.504 1.125-1.125 1.125h-9.75a1.125 1.125 0 0 1-1.125-1.125V7.875c0-.621.504-1.125 1.125-1.125H6.75a9.06 9.06 0 0 1 1.5.124m7.5 10.376h3.375c.621 0 1.125-.504 1.125-1.125V11.25c0-4.46-3.243-8.161-7.5-8.876a9.06 9.06 0 0 0-1.5-.124H9.375c-.621 0-1.125.504-1.125 1.125v3.5m7.5 10.375H9.375a1.125 1.125 0 0 1-1.125-1.125v-9.25m12 6.625v-1.875a3.375 3.375 0 0 0-3.375-3.375h-1.5a1.125 1.125 0 0 1-1.125-1.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H9.75" />
+                                    </svg>
+                                    <svg data-check-icon xmlns="http://www.w3.org/2000/svg" fill="none"
+                                        viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                                        class="size-3.5 hidden text-emerald-400">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                            d="m4.5 12.75 6 6 9-13.5" />
+                                    </svg>
+                                </button>
+                            </div>
                         </li>
                         {{if !IsInternal}}
                         <li>
                             The original repository URL of this plugin:<br>
-                            <code>
-                                <a href="{{Plugin.RepositoryOrigin.RepositoryUrl}}" target="_blank">{{Plugin.RepositoryOrigin.RepositoryUrl}}</a>
-                            </code>
+                            <div class="mt-1 flex items-center gap-1">
+                                <input type="text" value="{{Plugin.RepositoryOrigin.RepositoryUrl}}" readonly
+                                    class="min-w-0 flex-1 rounded border border-gray-700 bg-gray-950/60 px-2.5 py-1.5 text-xs font-mono text-gray-200 select-all cursor-pointer focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/30" />
+                                <button type="button" data-copy-btn
+                                    class="shrink-0 rounded border border-gray-700 bg-gray-950/60 p-1.5 text-gray-400 transition-colors hover:border-indigo-500 hover:text-indigo-300 focus:outline-none focus:ring-1 focus:ring-indigo-500/30"
+                                    title="Copy to clipboard">
+                                    <svg data-copy-icon xmlns="http://www.w3.org/2000/svg" fill="none"
+                                        viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-3.5">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                            d="M15.75 17.25v3.375c0 .621-.504 1.125-1.125 1.125h-9.75a1.125 1.125 0 0 1-1.125-1.125V7.875c0-.621.504-1.125 1.125-1.125H6.75a9.06 9.06 0 0 1 1.5.124m7.5 10.376h3.375c.621 0 1.125-.504 1.125-1.125V11.25c0-4.46-3.243-8.161-7.5-8.876a9.06 9.06 0 0 0-1.5-.124H9.375c-.621 0-1.125.504-1.125 1.125v3.5m7.5 10.375H9.375a1.125 1.125 0 0 1-1.125-1.125v-9.25m12 6.625v-1.875a3.375 3.375 0 0 0-3.375-3.375h-1.5a1.125 1.125 0 0 1-1.125-1.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H9.75" />
+                                    </svg>
+                                    <svg data-check-icon xmlns="http://www.w3.org/2000/svg" fill="none"
+                                        viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                                        class="size-3.5 hidden text-emerald-400">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                            d="m4.5 12.75 6 6 9-13.5" />
+                                    </svg>
+                                </button>
+                            </div>
                         </li>
                         {{end}}
                     </ul>
@@ -235,7 +283,33 @@
 <script>
     (function () {
         document.querySelectorAll('[data-url]').forEach(element => {
-            element.textContent = window.origin + element.dataset.url;
+            if (element.nodeName === 'INPUT') {
+                element.value = window.origin + element.dataset.url;
+            } else {
+                element.textContent = window.origin + element.dataset.url;
+            }
+        });
+
+        document.querySelectorAll('[data-copy-btn]').forEach(btn => {
+            btn.addEventListener('click', function () {
+                const input = btn.closest('div').querySelector('input');
+                if (!input) {
+                    return;
+                }
+
+                navigator.clipboard.writeText(input.value).then(() => {
+                    const copyIcon = btn.querySelector('[data-copy-icon]');
+                    const checkIcon = btn.querySelector('[data-check-icon]');
+
+                    copyIcon.classList.add('hidden');
+                    checkIcon.classList.remove('hidden');
+
+                    setTimeout(() => {
+                        copyIcon.classList.remove('hidden');
+                        checkIcon.classList.add('hidden');
+                    }, 1500);
+                });
+            });
         });
 
         let installTrigger = document.querySelector('[data-install-trigger]')
