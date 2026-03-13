@@ -1,6 +1,6 @@
 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
     {{range _,plugin := Plugins}}
-    <div class="plugin-card flex flex-col overflow-hidden rounded-xl border border-gray-700 bg-gray-900 transition duration-200 ease-out hover:scale-105 hover:shadow-lg hover:shadow-indigo-950/40"
+    <div class="plugin-card flex flex-col overflow-hidden rounded-xl border transition duration-200 ease-out hover:scale-105 hover:shadow-lg {{if plugin.IsOutdated}}border-amber-500/50 bg-linear-to-br from-amber-500/10 via-gray-900 to-gray-900 hover:shadow-amber-950/40{{else}}border-gray-700 bg-gray-900 hover:shadow-indigo-950/40{{end}}"
         data-name="{{plugin.Name}}" data-description="{{plugin.Description}}" data-author="{{plugin.Author}}">
 
         <div class="flex flex-1 flex-col p-5">
@@ -15,24 +15,36 @@
                 {{end}}
 
                 <div class="min-w-0 flex-1">
-                    <h3 class="font-semibold text-white truncate">{{plugin.Name}}</h3>
+                    <div class="flex items-start justify-between gap-3">
+                        <h3 class="min-w-0 flex-1 font-semibold text-white truncate">{{plugin.Name}}</h3>
+                        {{if plugin.IsOutdated}}
+                        <span
+                            class="shrink-0 rounded-md border border-amber-500/40 bg-amber-500/10 px-2 py-1 text-[10px] font-semibold uppercase tracking-wide text-amber-100">
+                            Outdated API
+                        </span>
+                        {{end}}
+                    </div>
                     <p class="text-xs text-gray-500 truncate">by {{plugin.Author}}</p>
                     {{if plugin.AssemblyVersion}}
-                    <span class="text-xs text-gray-500">v{{plugin.AssemblyVersion}}</span>
+                    <span
+                        class="text-xs {{if plugin.IsOutdated}}text-amber-200{{else}}text-gray-500{{end}}">v{{plugin.AssemblyVersion}}</span>
                     {{end}}
                 </div>
             </div>
 
             <!-- Description -->
-            <p class="mb-4 flex-1 text-sm text-gray-400 line-clamp-2">
+            <p
+                class="mb-4 flex-1 text-sm {{if plugin.IsOutdated}}text-amber-50/80{{else}}text-gray-400{{end}} line-clamp-2">
                 {{if plugin.Punchline}}{{plugin.Punchline}}{{else}}{{plugin.Description}}{{end}}
             </p>
         </div>
 
         <!-- Metadata -->
-        <div class="flex w-full items-stretch divide-x divide-gray-700 border-t border-gray-700 bg-gray-950/30">
+        <div
+            class="flex w-full items-stretch divide-x {{if plugin.IsOutdated}}divide-amber-500/20 border-amber-500/30 bg-amber-500/5{{else}}divide-gray-700 border-gray-700 bg-gray-950/30{{end}} border-t">
             <!-- Download count -->
-            <div class="flex min-h-8 flex-1 items-center justify-center gap-1.5 px-4 py-3 text-xs text-gray-500">
+            <div
+                class="flex min-h-8 flex-1 items-center justify-center gap-1.5 px-4 py-3 text-xs {{if plugin.IsOutdated}}text-amber-100/80{{else}}text-gray-500{{end}}">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                     stroke="currentColor" class="size-4">
                     <path stroke-linecap="round" stroke-linejoin="round"
@@ -46,7 +58,8 @@
             </div>
 
             <!-- Last updated -->
-            <div class="flex min-h-8 flex-1 items-center justify-center gap-1.5 px-4 py-3 text-xs text-gray-500">
+            <div
+                class="flex min-h-8 flex-1 items-center justify-center gap-1.5 px-4 py-3 text-xs {{if plugin.IsOutdated}}text-amber-100/80{{else}}text-gray-500{{end}}">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                     stroke="currentColor" class="size-4">
                     <path stroke-linecap="round" stroke-linejoin="round"
@@ -61,9 +74,10 @@
         </div>
 
         <!-- Buttons -->
-        <div class="mt-auto flex w-full items-stretch divide-x divide-gray-700 border-t border-gray-700 bg-gray-950/60">
+        <div
+            class="mt-auto flex w-full items-stretch divide-x {{if plugin.IsOutdated}}divide-amber-500/20 border-amber-500/30 bg-amber-950/20{{else}}divide-gray-700 border-gray-700 bg-gray-950/60{{end}} border-t">
             <a href="/plugin/{{plugin.InternalName}}"
-                class="flex min-h-12 flex-1 items-center justify-center gap-1.5 px-4 py-3 text-xs font-medium text-gray-300 transition-all hover:bg-indigo-500 hover:text-white">
+                class="flex min-h-12 flex-1 items-center justify-center gap-1.5 px-4 py-3 text-xs font-medium {{if plugin.IsOutdated}}text-amber-100 hover:bg-amber-500/20 hover:text-white{{else}}text-gray-300 hover:bg-indigo-500 hover:text-white{{end}} transition-all">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                     stroke="currentColor" class="size-3.5">
                     <path stroke-linecap="round" stroke-linejoin="round"
@@ -84,7 +98,7 @@
             </span>
             {{else if plugin.RepoUrl}}
             <a href="{{plugin.RepoUrl}}" target="_blank" rel="noopener noreferrer"
-                class="flex min-h-12 flex-1 items-center justify-center gap-1.5 px-4 py-3 text-xs font-medium text-gray-300 transition-all hover:bg-indigo-500 hover:text-white">
+                class="flex min-h-12 flex-1 items-center justify-center gap-1.5 px-4 py-3 text-xs font-medium {{if plugin.IsOutdated}}text-amber-100 hover:bg-amber-500/20 hover:text-white{{else}}text-gray-300 hover:bg-indigo-500 hover:text-white{{end}} transition-all">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                     stroke="currentColor" class="size-3.5">
                     <path stroke-linecap="round" stroke-linejoin="round"
@@ -106,7 +120,7 @@
             </span>
             {{else}}
             <a href="{{plugin.RepositoryOrigin.RepositoryUrl}}" target="_blank" rel="noopener noreferrer"
-                class="flex min-h-12 flex-1 items-center justify-center gap-1.5 px-4 py-3 text-xs font-medium text-gray-300 transition-all hover:bg-indigo-500 hover:text-white">
+                class="flex min-h-12 flex-1 items-center justify-center gap-1.5 px-4 py-3 text-xs font-medium {{if plugin.IsOutdated}}text-amber-100 hover:bg-amber-500/20 hover:text-white{{else}}text-gray-300 hover:bg-indigo-500 hover:text-white{{end}} transition-all">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                     stroke="currentColor" class="size-3.5">
                     <path stroke-linecap="round" stroke-linejoin="round"
