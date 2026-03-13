@@ -2,7 +2,6 @@ package routes
 
 import (
 	"fmt"
-	"log/slog"
 	"strings"
 
 	"github.com/gofiber/fiber/v3"
@@ -35,7 +34,6 @@ func PluginJson(c fiber.Ctx) error {
 
 func findPluginRepositoryFromContext(c fiber.Ctx) (*state.Repository, error) {
 	name := c.Params("*")
-	slog.Info("Plugin name", "name", name)
 	if before, ok := strings.CutSuffix(name, ".json"); ok {
 		name = before
 	}

@@ -10,6 +10,7 @@ import (
 
 	"github.com/gofiber/fiber/v3"
 	"github.com/gofiber/fiber/v3/middleware/favicon"
+	"github.com/gofiber/fiber/v3/middleware/logger"
 	"github.com/gofiber/fiber/v3/middleware/static"
 	"github.com/gofiber/template/jet/v3"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
@@ -45,12 +46,18 @@ func createFiberApp() *fiber.App {
 	engine := jet.New("./views", ".jet.html")
 
 	app = fiber.New(fiber.Config{
-		Views: engine,
+		AppName:      "Dalamud Plugin List",
+		Views:        engine,
+		ErrorHandler: routes.InternalServerError,
 	})
 
 	app.Use(favicon.New(favicon.Config{
 		File: "./assets/icons/favicon.ico",
 		URL:  "/favicon.ico",
+	}))
+
+	app.Use(logger.New(logger.Config{
+		Format: "${time} | ${status} | ${latency} | ${ip} | ${method} | ${path} | ${error}\n",
 	}))
 
 	engine.Templates.AddGlobal("StyleHash", generateStyleHashId())

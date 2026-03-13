@@ -14,6 +14,10 @@ func NotFound(c fiber.Ctx) error {
 	)
 }
 
+func InternalServerError(c fiber.Ctx, err error) error {
+	return RenderErrorPage(c, fiber.StatusInternalServerError, "Internal Server Error", err.Error())
+}
+
 func RenderErrorPage(c fiber.Ctx, status int, title string, message string) error {
 	if isJsonRequest(c) {
 		return c.Status(status).JSON(fiber.Map{
