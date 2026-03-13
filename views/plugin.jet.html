@@ -13,8 +13,13 @@
     <div class="overflow-hidden rounded-xl border border-gray-700 bg-gray-900">
         <div class="flex flex-col gap-6 p-6 md:flex-row md:items-start md:justify-between md:p-8">
             <div class="flex min-w-0 flex-1 items-start gap-5">
+                {{if Plugin.IconUrl}}
                 <img src="{{Plugin.IconUrl}}" alt="{{Plugin.Name}} icon" onerror="this.src = '/assets/not-found.svg'"
                     class="size-20 shrink-0 rounded-xl bg-gray-800 object-cover" loading="lazy" />
+                {{else}}
+                <img src="/assets/not-found.svg" alt="" class="size-20 shrink-0 rounded-xl bg-gray-800 object-cover"
+                    loading="lazy" />
+                {{end}}
 
                 <div class="min-w-0 space-y-3">
                     <h1 class="text-3xl font-bold tracking-tight text-white md:text-4xl">{{Plugin.Name}}</h1>
@@ -118,7 +123,8 @@
             <div class="bg-gray-950/40 px-4 py-3 col-span-1 md:col-span-2">
                 <p class="text-[11px] uppercase tracking-wide text-gray-500">Origin</p>
                 {{if IsInternal}}
-                <a data-url="/plugin/{{Plugin.InternalName}}.json" href="/plugin/{{Plugin.InternalName}}.json" target="_blank" rel="noopener noreferrer"
+                <a data-url="/plugin/{{Plugin.InternalName}}.json" href="/plugin/{{Plugin.InternalName}}.json"
+                    target="_blank" rel="noopener noreferrer"
                     class="mt-1 block truncate text-sm font-semibold text-indigo-200 transition-colors hover:text-indigo-100"
                     title="{{Plugin.Name}} plugin repository"></a>
                 {{else}}
