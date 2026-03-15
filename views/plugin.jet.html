@@ -80,7 +80,8 @@
 
                 {{if !IsPrivate && Plugin.RepoUrl}}
                 <a href="{{Plugin.RepoUrl}}" target="_blank" rel="noopener noreferrer"
-                    class="inline-flex items-center justify-center gap-2 rounded-lg border border-gray-700 bg-gray-950 px-4 py-2.5 font-semibold text-gray-200 transition-colors hover:border-indigo-500 hover:text-white">
+                    class="inline-flex items-center justify-center gap-2 rounded-lg border border-gray-700 bg-gray-950 px-4 py-2.5 font-semibold text-gray-200 transition-colors hover:border-indigo-500 hover:text-white"
+                    hx-boost="false">
                     Source Repository
                 </a>
                 {{end}}
