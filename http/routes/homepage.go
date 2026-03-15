@@ -8,6 +8,19 @@ import (
 )
 
 func HomepageHtml(c fiber.Ctx) error {
+	return c.Render("homepage", fiber.Map{
+		"RepositoryCount":      state.GetUrlsSize(),
+		"PluginsTotalCount":    state.GetRepositoriesSize(),
+		"PluginsInternalCount": state.GetInternalPluginSize(),
+		"PluginsSenitherCount": state.GetSenitherPluginSize(),
+	}, "layouts/app")
+}
+
+func HomepageJson(c fiber.Ctx) error {
+	return c.JSON(state.GetRepositories())
+}
+
+func RenderPluginListComponent(c fiber.Ctx) error {
 	repositories := state.GetRepositories()
 	sort.Slice(repositories, func(i, j int) bool {
 		return repositories[i].Name < repositories[j].Name
@@ -19,16 +32,8 @@ func HomepageHtml(c fiber.Ctx) error {
 			*repo.RepositoryOrigin.IsPrivatePlugin
 	}
 
-	return c.Render("homepage", fiber.Map{
-		"RepositoryCount":      state.GetUrlsSize(),
-		"PluginsTotalCount":    state.GetRepositoriesSize(),
-		"PluginsInternalCount": state.GetInternalPluginSize(),
-		"PluginsSenitherCount": state.GetSenitherPluginSize(),
-		"Plugins":              repositories,
-		"IsPrivatePlugin":      privatePlugins,
-	}, "layouts/app")
-}
-
-func HomepageJson(c fiber.Ctx) error {
-	return c.JSON(state.GetRepositories())
+	return c.Render("components/plugin-list", fiber.Map{
+		"Plugins":         repositories,
+		"IsPrivatePlugin": privatePlugins,
+	})
 }
