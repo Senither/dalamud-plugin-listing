@@ -76,7 +76,9 @@
         <!-- Buttons -->
         <div
             class="mt-auto flex w-full items-stretch divide-x {{if plugin.IsOutdated}}divide-amber-500/20 border-amber-500/30 bg-amber-950/20{{else}}divide-gray-700 border-gray-700 bg-gray-950/60{{end}} border-t">
-            <a href="/plugin/{{plugin.InternalName}}"
+            <a href="/plugin/{{plugin.InternalName}}" hx-boost="true" hx-target="body" hx-swap="innerHTML"
+                hx-push-url="true" hx-params="none"
+                hx-disinherit="hx-get hx-trigger hx-target hx-swap hx-include hx-params"
                 class="flex min-h-12 flex-1 items-center justify-center gap-1.5 px-4 py-3 text-xs font-medium {{if plugin.IsOutdated}}text-amber-100 hover:bg-amber-500/20 hover:text-white{{else}}text-gray-300 hover:bg-indigo-500 hover:text-white{{end}} transition-all">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                     stroke="currentColor" class="size-3.5">

@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/url"
 	"os"
+	"sort"
 	"strings"
 	"time"
 )
@@ -98,6 +99,64 @@ func GetRepositories() []Repository {
 
 func GetRepositoriesSize() int {
 	return len(repositories)
+}
+
+func GetRepositoryTags() []string {
+	tagMap := make(map[string]string)
+
+	for _, repository := range repositories {
+		for _, tag := range repository.Tags {
+			normalizedTag := strings.Trim(strings.TrimSpace(tag), "\"")
+			if normalizedTag == "" {
+				continue
+			}
+
+			key := strings.ToLower(normalizedTag)
+			if _, exists := tagMap[key]; !exists {
+				tagMap[key] = normalizedTag
+			}
+		}
+	}
+
+	tags := make([]string, 0, len(tagMap))
+	for _, tag := range tagMap {
+		tags = append(tags, tag)
+	}
+
+	sort.Slice(tags, func(i, j int) bool {
+		return strings.ToLower(tags[i]) < strings.ToLower(tags[j])
+	})
+
+	return tags
+}
+
+func GetRepositoryAuthors() []string {
+	authorMap := make(map[string]string)
+
+	for _, repository := range repositories {
+		for _, author := range strings.Split(repository.Author, ",") {
+			normalizedAuthor := strings.TrimSpace(author)
+			if normalizedAuthor == "" {
+				continue
+			}
+
+			key := strings.ToLower(normalizedAuthor)
+			if _, exists := authorMap[key]; !exists {
+				authorMap[key] = normalizedAuthor
+			}
+		}
+	}
+
+	authors := make([]string, 0, len(authorMap))
+	for _, author := range authorMap {
+		authors = append(authors, author)
+	}
+
+	sort.Slice(authors, func(i, j int) bool {
+		return strings.ToLower(authors[i]) < strings.ToLower(authors[j])
+	})
+
+	return authors
 }
 
 func GetRepositoriesByOriginUrl(url string) []Repository {

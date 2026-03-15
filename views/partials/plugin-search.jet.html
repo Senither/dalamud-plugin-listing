@@ -1,44 +1,456 @@
 <h2 class="text-2xl font-bold text-white mb-6">Available Plugins</h2>
-<div class="relative">
-    <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4 text-gray-400">
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-            stroke="currentColor" class="size-5">
-            <path stroke-linecap="round" stroke-linejoin="round"
-                d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z" />
-            <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
-        </svg>
+<form id="plugin-search-form" class="space-y-3" hx-get="/hx/plugins" hx-target="#plugins-list"
+    hx-trigger="submit, change delay:300ms from:#filters" hx-params="not tag-search,author-search">
+    <div>
+        <input type="text" id="plugin-search" name="search"
+            placeholder="Search plugins by name, author, or description..."
+            class="w-full rounded-lg border border-gray-700 bg-gray-900 py-3 px-4 text-gray-100 placeholder-gray-500 outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-colors" />
     </div>
-    <input type="text" id="plugin-search" placeholder="Filter plugins by name or description..."
-        class="w-full rounded-lg border border-gray-700 bg-gray-900 py-3 pl-12 pr-4 text-gray-100 placeholder-gray-500 outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-colors" />
-</div>
-<p id="search-count" class="mt-3 text-sm text-gray-500 hidden"></p>
+
+    <div id="filters" class="flex flex-col gap-3 md:flex-row md:flex-wrap md:items-center">
+        <!-- Tags Filter Dropdown -->
+        <div class="relative w-fit shrink-0">
+            <details class="group relative" id="tags-filter-details">
+                <summary
+                    class="inline-flex cursor-pointer list-none items-center justify-between gap-3 rounded-lg border border-gray-700 bg-gray-900 px-3 py-2 text-sm text-gray-200 transition-colors hover:border-gray-600 hover:bg-gray-900 group-open:border-indigo-500">
+                    <span id="tags-filter-label">Tags</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                        stroke="currentColor" class="size-4 transition-transform group-open:rotate-180">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+                    </svg>
+                </summary>
+
+                <div
+                    class="absolute left-0 top-full z-20 mt-2 w-80 space-y-3 rounded-xl border border-gray-700 bg-gray-950 p-3 shadow-2xl shadow-black/30">
+                    <div>
+                        <label for="filter-tag-search" class="sr-only">Search tags</label>
+                        <input type="search" id="filter-tag-search" name="tag-search" placeholder="Search tags"
+                            class="w-full rounded-lg border border-gray-700 bg-gray-900 px-3 py-2 text-sm text-gray-100 placeholder-gray-500 outline-none transition-colors focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500" />
+                    </div>
+
+                    <div id="filter-tag-options" class="max-h-56 space-y-2 overflow-y-auto pr-1">
+                        {{range _, tag := Tags}}
+                        <label data-filter-option
+                            class="flex items-center gap-3 rounded-lg border border-gray-700 bg-gray-900 px-3 py-2 text-sm text-gray-200">
+                            <input type="checkbox" name="tag" value="{{tag}}"
+                                class="size-4 rounded border-gray-600 bg-gray-900 text-indigo-500 focus:ring-indigo-500" />
+                            <span>{{tag}}</span>
+                        </label>
+                        {{end}}
+                    </div>
+                </div>
+            </details>
+        </div>
+
+        <!-- Authors Filter Dropdown -->
+        <div class="relative w-fit shrink-0">
+            <details class="group relative" id="authors-filter-details">
+                <summary
+                    class="inline-flex cursor-pointer list-none items-center justify-between gap-3 rounded-lg border border-gray-700 bg-gray-900 px-3 py-2 text-sm text-gray-200 transition-colors hover:border-gray-600 hover:bg-gray-900 group-open:border-indigo-500">
+                    <span id="authors-filter-label">Authors</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                        stroke="currentColor" class="size-4 transition-transform group-open:rotate-180">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+                    </svg>
+                </summary>
+
+                <div
+                    class="absolute left-0 top-full z-20 mt-2 w-80 space-y-3 rounded-xl border border-gray-700 bg-gray-950 p-3 shadow-2xl shadow-black/30">
+                    <div>
+                        <label for="filter-author-search" class="sr-only">Search authors</label>
+                        <input type="search" id="filter-author-search" name="author-search" placeholder="Search authors"
+                            class="w-full rounded-lg border border-gray-700 bg-gray-900 px-3 py-2 text-sm text-gray-100 placeholder-gray-500 outline-none transition-colors focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500" />
+                    </div>
+
+                    <div id="filter-author-options" class="max-h-56 space-y-2 overflow-y-auto pr-1">
+                        {{range _, author := Authors}}
+                        <label data-filter-option
+                            class="flex items-center gap-3 rounded-lg border border-gray-700 bg-gray-900 px-3 py-2 text-sm text-gray-200">
+                            <input type="checkbox" name="author" value="{{author}}"
+                                class="size-4 rounded border-gray-600 bg-gray-900 text-indigo-500 focus:ring-indigo-500" />
+                            <span>{{author}}</span>
+                        </label>
+                        {{end}}
+                    </div>
+                </div>
+            </details>
+        </div>
+
+        <!-- Sort Dropdown -->
+        <div class="relative w-fit shrink-0">
+            <select id="sort-plugins" name="sort"
+                class="rounded-lg border border-gray-700 bg-gray-900 px-3 py-2 pr-9 text-sm text-gray-200 outline-none transition-colors focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500">
+                <option value="name-asc" selected>Name (A-Z)</option>
+                <option value="name-desc">Name (Z-A)</option>
+                <option value="downloads-asc">Most downloads</option>
+                <option value="downloads-desc">Least downloads</option>
+                <option value="recently-updated">Recently updated</option>
+            </select>
+            <span id="sort-width-probe"
+                class="pointer-events-none invisible absolute left-0 top-0 whitespace-nowrap px-3 py-2 pr-9 text-sm font-normal"></span>
+        </div>
+
+        <button id="clear-filters-button" type="button"
+            class="hidden rounded-lg border border-gray-700 bg-gray-950 px-3 py-2 text-sm text-gray-200 transition-colors hover:border-gray-600 hover:bg-gray-800 hover:text-white">
+            <span class="flex items-center gap-1">
+                <svg class="size-4 opacity-80" data-slot="icon" fill="none" stroke-width="1.5" stroke="currentColor"
+                    viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12"></path>
+                </svg>
+                Clear
+            </span>
+        </button>
+
+        <p id="search-count" class="hidden text-sm text-gray-500 md:ml-auto"></p>
+    </div>
+
+    <div id="selected-filters" class="hidden flex-wrap gap-2">
+        <div id="selected-filter-badges" class="flex flex-wrap gap-2"></div>
+    </div>
+</form>
 
 <script>
-    document.getElementById('plugin-search').addEventListener('input', function () {
-        let query = this.value.toLowerCase()
-        let cards = document.querySelectorAll('.plugin-card')
-        let visible = 0
+    (function () {
+        const DEFAULT_SORT = 'name-asc'
+        const DEFAULT_SORTER_HORIZONTAL_PADDING = 28
+        const DEFAULT_SORTER_MIN_WIDTH = 96
 
-        cards.forEach(function (card) {
-            let name = (card.dataset.name || '').toLowerCase()
-            let desc = (card.dataset.description || '').toLowerCase()
-            let author = (card.dataset.author || '').toLowerCase()
-
-            let match = !query || name.indexOf(query) !== -1 || desc.indexOf(query) !== -1 || author.indexOf(query) !== -1
-
-            card.classList.toggle('hidden', !match)
-            if (match) {
-                visible++
+        const dropdownConfigs = [
+            {
+                detailsId: 'tags-filter-details',
+                labelId: 'tags-filter-label',
+                checkboxName: 'tag',
+                defaultLabel: 'Tags',
+                searchInputId: 'filter-tag-search',
+                optionsId: 'filter-tag-options',
+                badgePrefix: 'Tag',
+                badgeClassName: 'inline-flex items-center rounded-full border border-indigo-500/30 bg-indigo-500/10 px-3 py-1 text-xs font-medium text-indigo-100'
+            },
+            {
+                detailsId: 'authors-filter-details',
+                labelId: 'authors-filter-label',
+                checkboxName: 'author',
+                defaultLabel: 'Authors',
+                searchInputId: 'filter-author-search',
+                optionsId: 'filter-author-options',
+                badgePrefix: 'Author',
+                badgeClassName: 'inline-flex items-center rounded-full border border-gray-600 bg-gray-800 px-3 py-1 text-xs font-medium text-gray-200'
             }
+        ]
+
+        const form = document.getElementById('plugin-search-form')
+        const searchInput = document.getElementById('plugin-search')
+        const filters = document.getElementById('filters')
+        const sortSelect = document.getElementById('sort-plugins')
+        const sortWidthProbe = document.getElementById('sort-width-probe')
+        const clearButton = document.getElementById('clear-filters-button')
+        const searchCount = document.getElementById('search-count')
+        const selectedFilters = document.getElementById('selected-filters')
+        const selectedFilterBadges = document.getElementById('selected-filter-badges')
+        const dropdowns = dropdownConfigs.map((config) => document.getElementById(config.detailsId)).filter((details) => details)
+
+        if (!form || !searchInput || !filters || !sortSelect || !sortWidthProbe || !clearButton || !searchCount || !selectedFilters || !selectedFilterBadges) {
+            console.error('Plugin search form is missing required elements.')
+            return
+        }
+
+        function getCheckedInputs(name) {
+            return Array.from(document.querySelectorAll('input[name="' + name + '"]:checked'))
+        }
+
+        function getCheckedValues(name) {
+            return getCheckedInputs(name).map((input) => input.value)
+        }
+
+        function getCurrentState() {
+            return {
+                search: searchInput.value.trim(),
+                tags: getCheckedValues('tag'),
+                authors: getCheckedValues('author'),
+                sort: sortSelect.value
+            }
+        }
+
+        function hydrateFiltersFromUrl() {
+            const params = new URLSearchParams(window.location.search)
+            const sortValue = params.get('sort')
+
+            searchInput.value = params.get('search') || ''
+
+            document.querySelectorAll('input[name="tag"]').forEach(function (input) {
+                input.checked = params.getAll('tag').indexOf(input.value) !== -1
+            })
+
+            document.querySelectorAll('input[name="author"]').forEach(function (input) {
+                input.checked = params.getAll('author').indexOf(input.value) !== -1
+            })
+
+            if (sortValue && Array.from(sortSelect.options).some(function (option) {
+                return option.value === sortValue
+            })) {
+                sortSelect.value = sortValue
+            }
+        }
+
+        function updateFilterUrl() {
+            const state = getCurrentState()
+            const params = new URLSearchParams()
+
+            if (state.search) {
+                params.set('search', state.search)
+            }
+
+            state.tags.forEach(function (tag) {
+                params.append('tag', tag)
+            })
+
+            state.authors.forEach(function (author) {
+                params.append('author', author)
+            })
+
+            if (state.sort && state.sort !== DEFAULT_SORT) {
+                params.set('sort', state.sort)
+            }
+
+            const queryString = params.toString()
+            window.history.replaceState({}, '', queryString
+                ? window.location.pathname + '?' + queryString
+                : window.location.pathname
+            )
+        }
+
+        function createBadge(text, className) {
+            const badge = document.createElement('span')
+
+            badge.className = className
+            badge.textContent = text
+
+            return badge
+        }
+
+        function renderSelectedFilterBadges() {
+            let fragment = document.createDocumentFragment()
+
+            dropdownConfigs.forEach(function (config) {
+                getCheckedValues(config.checkboxName).forEach(function (value) {
+                    fragment.appendChild(createBadge(config.badgePrefix + ': ' + value, config.badgeClassName))
+                })
+            })
+
+            selectedFilterBadges.replaceChildren(fragment)
+            selectedFilters.classList.toggle('hidden', selectedFilterBadges.childElementCount === 0)
+        }
+
+        function updateClearFiltersButton() {
+            const state = getCurrentState()
+            const hasFilters = Boolean(state.search || state.tags.length || state.authors.length || state.sort !== DEFAULT_SORT)
+
+            clearButton.classList.toggle('hidden', !hasFilters)
+        }
+
+        function updateDropdownLabel(config) {
+            const details = document.getElementById(config.detailsId)
+            const label = document.getElementById(config.labelId)
+
+            if (!details || !label) {
+                return
+            }
+
+            const selectedCount = details.querySelectorAll('input[name="' + config.checkboxName + '"]:checked').length
+            label.textContent = selectedCount ? config.defaultLabel + ' (' + selectedCount + ')' : config.defaultLabel
+        }
+
+        function filterDropdownOptions(config) {
+            const input = document.getElementById(config.searchInputId)
+            const options = document.getElementById(config.optionsId)
+
+            if (!input || !options) {
+                return
+            }
+
+            const query = input.value.toLowerCase().trim()
+
+            options.querySelectorAll('[data-filter-option]').forEach(function (item) {
+                const text = item.textContent.toLowerCase()
+                const isVisible = !query || text.indexOf(query) !== -1
+
+                item.classList.toggle('hidden', !isVisible)
+            })
+        }
+
+        function bindDropdownSearch(config) {
+            const input = document.getElementById(config.searchInputId)
+            if (!input) {
+                return
+            }
+
+            input.addEventListener('input', function () {
+                filterDropdownOptions(config)
+            })
+        }
+
+        function bindDropdownCount(config) {
+            const details = document.getElementById(config.detailsId)
+            if (!details) {
+                return
+            }
+
+            details.addEventListener('change', function (event) {
+                if (!event.target || !event.target.matches('input[name="' + config.checkboxName + '"]')) {
+                    return
+                }
+
+                updateDropdownLabel(config)
+                renderSelectedFilterBadges()
+                updateClearFiltersButton()
+                updateFilterUrl()
+            })
+
+            updateDropdownLabel(config)
+        }
+
+        function bindDropdownDismiss() {
+            if (!dropdowns.length) {
+                return
+            }
+
+            document.addEventListener('click', function (event) {
+                dropdowns.forEach(function (details) {
+                    if (details.open && !details.contains(event.target)) {
+                        details.open = false
+                    }
+                })
+            })
+
+            document.addEventListener('keydown', function (event) {
+                if (event.key !== 'Escape') {
+                    return
+                }
+
+                dropdowns.forEach(function (details) {
+                    details.open = false
+                })
+            })
+        }
+
+        function updateSortWidth() {
+            const selectedOption = sortSelect.options[sortSelect.selectedIndex]
+            if (!selectedOption) {
+                return
+            }
+
+            const styles = window.getComputedStyle(sortSelect)
+
+            sortWidthProbe.textContent = selectedOption.textContent
+            sortWidthProbe.style.font = styles.font
+            sortWidthProbe.style.letterSpacing = styles.letterSpacing
+            sortSelect.style.width = Math.max(DEFAULT_SORTER_MIN_WIDTH, Math.ceil(sortWidthProbe.offsetWidth + DEFAULT_SORTER_HORIZONTAL_PADDING)) + 'px'
+        }
+
+        function resetDropdownSearches() {
+            dropdownConfigs.forEach(function (config) {
+                const input = document.getElementById(config.searchInputId)
+                if (input) {
+                    input.value = ''
+                }
+
+                filterDropdownOptions(config)
+            })
+        }
+
+        function closeDropdowns() {
+            dropdowns.forEach(function (details) {
+                details.open = false
+            })
+        }
+
+        function triggerFiltersReload() {
+            filters.dispatchEvent(new Event('change', { bubbles: true }))
+        }
+
+        function updateSearchResults() {
+            const query = searchInput.value.toLowerCase()
+            const cards = document.querySelectorAll('.plugin-card')
+            let visibleCount = 0
+
+            cards.forEach(function (card) {
+                let name = (card.dataset.name || '').toLowerCase()
+                let description = (card.dataset.description || '').toLowerCase()
+                let author = (card.dataset.author || '').toLowerCase()
+                let matches = !query || name.indexOf(query) !== -1 || description.indexOf(query) !== -1 || author.indexOf(query) !== -1
+
+                card.classList.toggle('hidden', !matches)
+
+                if (matches) {
+                    visibleCount++
+                }
+            })
+
+            if (query) {
+                searchCount.textContent = visibleCount + ' of ' + cards.length + ' plugins shown'
+                searchCount.classList.remove('hidden')
+            } else {
+                searchCount.classList.add('hidden')
+            }
+
+            updateClearFiltersButton()
+            updateFilterUrl()
+        }
+
+        function clearAllFilters() {
+            searchInput.value = ''
+            sortSelect.value = DEFAULT_SORT
+
+            document.querySelectorAll('input[name="tag"], input[name="author"]').forEach(function (input) {
+                input.checked = false
+            })
+
+            resetDropdownSearches()
+            closeDropdowns()
+
+            updateSortWidth()
+            renderSelectedFilterBadges()
+            updateClearFiltersButton()
+            updateFilterUrl()
+            triggerFiltersReload()
+
+            dropdownConfigs.forEach(updateDropdownLabel)
+            searchInput.dispatchEvent(new Event('input'))
+        }
+
+        function handleFormReset() {
+            window.setTimeout(function () {
+                dropdownConfigs.forEach(function (config) {
+                    updateDropdownLabel(config)
+                    filterDropdownOptions(config)
+                })
+
+                updateSortWidth()
+                renderSelectedFilterBadges()
+                updateClearFiltersButton()
+                updateFilterUrl()
+            }, 0)
+        }
+
+        hydrateFiltersFromUrl()
+        dropdownConfigs.forEach(bindDropdownCount)
+        dropdownConfigs.forEach(bindDropdownSearch)
+        bindDropdownDismiss()
+        updateSortWidth()
+        renderSelectedFilterBadges()
+        updateClearFiltersButton()
+        updateFilterUrl()
+
+        form.addEventListener('reset', handleFormReset)
+        clearButton.addEventListener('click', clearAllFilters)
+
+        sortSelect.addEventListener('change', function () {
+            updateSortWidth()
+            updateClearFiltersButton()
+            updateFilterUrl()
         })
 
-        let countEl = document.getElementById('search-count')
-
-        if (query) {
-            countEl.textContent = visible + ' of ' + cards.length + ' plugins shown'
-            countEl.classList.remove('hidden')
-        } else {
-            countEl.classList.add('hidden')
-        }
-    })
+        searchInput.addEventListener('input', updateSearchResults)
+        searchInput.dispatchEvent(new Event('input'))
+    })()
 </script>

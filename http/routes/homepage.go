@@ -13,6 +13,8 @@ func HomepageHtml(c fiber.Ctx) error {
 		"PluginsTotalCount":    state.GetRepositoriesSize(),
 		"PluginsInternalCount": state.GetInternalPluginSize(),
 		"PluginsSenitherCount": state.GetSenitherPluginSize(),
+		"Authors":              state.GetRepositoryAuthors(),
+		"Tags":                 state.GetRepositoryTags(),
 	}, "layouts/app")
 }
 
