@@ -67,6 +67,8 @@
                 </svg>
                 {{if plugin.LastUpdate}}
                 <span data-last-update="{{plugin.LastUpdate}}">{{plugin.LastUpdate}}</span>
+                {{else if plugin.LastUpdated}}
+                <span data-last-update="{{plugin.LastUpdated}}">{{plugin.LastUpdated}}</span>
                 {{else}}
                 <span>Unknown update date</span>
                 {{end}}
