@@ -2,10 +2,16 @@ package routes
 
 import (
 	"sort"
+	"strings"
 
 	"github.com/gofiber/fiber/v3"
 	"github.com/senither/dalamud-plugin-listing/state"
 )
+
+type Filter struct {
+	Tags    []string `query:"tag"`
+	Authors []string `query:"author"`
+}
 
 func HomepageHtml(c fiber.Ctx) error {
 	return c.Render("homepage", fiber.Map{
@@ -31,12 +37,70 @@ func RenderPluginListComponent(c fiber.Ctx) error {
 			*repo.RepositoryOrigin.IsPrivatePlugin
 	}
 
+	var filter Filter
+	if err := c.Bind().Query(&filter); err != nil {
+		return err
+	}
+
+	repositories = filter.byTags(repositories)
+	repositories = filter.byAuthors(repositories)
 	sortRepositories(repositories, c.Query("sort"))
 
 	return c.Render("components/plugin-list", fiber.Map{
 		"Plugins":         repositories,
 		"IsPrivatePlugin": privatePlugins,
 	})
+}
+
+func (f *Filter) byTags(repositories []state.Repository) []state.Repository {
+	return filterRepositories(repositories, f.Tags, func(repo state.Repository, value string) bool {
+		for _, repoTag := range repo.Tags {
+			if strings.ToLower(repoTag) == value {
+				return true
+			}
+		}
+
+		return false
+	})
+}
+
+func (f *Filter) byAuthors(repositories []state.Repository) []state.Repository {
+	return filterRepositories(repositories, f.Authors, func(repo state.Repository, value string) bool {
+		for _, repoAuthor := range strings.Split(repo.Author, ",") {
+			if strings.TrimSpace(strings.ToLower(repoAuthor)) == value {
+				return true
+			}
+		}
+
+		return false
+	})
+}
+
+func filterRepositories(
+	repositories []state.Repository,
+	filters []string,
+	match func(repo state.Repository, value string) bool,
+) []state.Repository {
+	if len(filters) == 0 {
+		return repositories
+	}
+
+	normalized := make([]string, len(filters))
+	for i, v := range filters {
+		normalized[i] = strings.ToLower(v)
+	}
+
+	var filtered []state.Repository
+	for _, repo := range repositories {
+		for _, value := range normalized {
+			if match(repo, value) {
+				filtered = append(filtered, repo)
+				break
+			}
+		}
+	}
+
+	return filtered
 }
 
 func sortRepositories(repositories []state.Repository, sortKey string) {
