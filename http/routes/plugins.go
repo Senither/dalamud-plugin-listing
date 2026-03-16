@@ -16,8 +16,14 @@ func PluginHtml(c fiber.Ctx) error {
 		return RenderErrorPage(c, 404, "Plugin Not Found", "No plugin was found with the given name.")
 	}
 
+	var authors []string = make([]string, 0)
+	for _, author := range strings.Split(plugin.Author, ",") {
+		authors = append(authors, strings.TrimSpace(author))
+	}
+
 	return c.Render("plugin", fiber.Map{
 		"Plugin":       plugin,
+		"Authors":      authors,
 		"IsInternal":   plugin.RepositoryOrigin.IsInternalPlugin != nil && *plugin.RepositoryOrigin.IsInternalPlugin,
 		"IsPrivate":    plugin.RepositoryOrigin.IsPrivatePlugin != nil && *plugin.RepositoryOrigin.IsPrivatePlugin,
 		"HasTags":      len(plugin.Tags) > 0,
