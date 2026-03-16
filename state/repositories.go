@@ -55,6 +55,11 @@ var (
 	repositoryLastUpdatedAt = time.Now().Unix()
 )
 
+func TouchRepository(repo Repository) {
+	repo.RepositoryOrigin.LastUpdatedAt = time.Now().Unix()
+	UpsertRepository(repo)
+}
+
 func UpsertRepository(repo Repository) {
 	if repo.RepoUrl == nil || *repo.RepoUrl == "" {
 		repo.RepoUrl = findRepositoryUrl(repo)
