@@ -125,7 +125,7 @@
                 searchInputId: 'filter-tag-search',
                 optionsId: 'filter-tag-options',
                 badgePrefix: 'Tag',
-                badgeClassName: 'inline-flex items-center rounded-full border border-indigo-500/30 bg-indigo-500/10 px-3 py-1 text-xs font-medium text-indigo-100'
+                badgeClassName: 'inline-flex items-center gap-1.5 rounded-full border border-indigo-500/30 bg-indigo-500/10 pl-3 pr-2 py-1 text-xs font-medium text-indigo-100'
             },
             {
                 detailsId: 'authors-filter-details',
@@ -135,7 +135,7 @@
                 searchInputId: 'filter-author-search',
                 optionsId: 'filter-author-options',
                 badgePrefix: 'Author',
-                badgeClassName: 'inline-flex items-center rounded-full border border-gray-600 bg-gray-800 px-3 py-1 text-xs font-medium text-gray-200'
+                badgeClassName: 'inline-flex items-center gap-1.5 rounded-full border border-gray-600 bg-gray-800 pl-3 pr-2 py-1 text-xs font-medium text-gray-200'
             }
         ]
 
@@ -220,11 +220,23 @@
             )
         }
 
-        function createBadge(text, className) {
+        function createBadge(text, className, onDismiss) {
             const badge = document.createElement('span')
-
             badge.className = className
-            badge.textContent = text
+
+            const label = document.createElement('span')
+            label.textContent = text
+            badge.appendChild(label)
+
+            if (onDismiss) {
+                const btn = document.createElement('button')
+                btn.type = 'button'
+                btn.setAttribute('aria-label', 'Remove ' + text)
+                btn.className = 'cursor-pointer rounded-full opacity-60 transition-opacity hover:opacity-100 focus:outline-none'
+                btn.innerHTML = '<svg class="size-3" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12"/></svg>'
+                btn.addEventListener('click', onDismiss)
+                badge.appendChild(btn)
+            }
 
             return badge
         }
@@ -234,7 +246,25 @@
 
             dropdownConfigs.forEach(function (config) {
                 getCheckedValues(config.checkboxName).forEach(function (value) {
-                    fragment.appendChild(createBadge(config.badgePrefix + ': ' + value, config.badgeClassName))
+                    fragment.appendChild(createBadge(
+                        config.badgePrefix + ': ' + value,
+                        config.badgeClassName,
+                        function () {
+                            var checkbox = document.querySelector(
+                                'input[name="' + config.checkboxName + '"][value="' + CSS.escape(value) + '"]'
+                            )
+
+                            if (checkbox) {
+                                checkbox.checked = false
+                            }
+
+                            updateDropdownLabel(config)
+                            renderSelectedFilterBadges()
+                            updateClearFiltersButton()
+                            updateFilterUrl()
+                            triggerFiltersReload()
+                        }
+                    ))
                 })
             })
 
