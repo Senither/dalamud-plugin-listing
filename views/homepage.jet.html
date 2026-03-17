@@ -10,23 +10,6 @@
     {{ include "partials/plugin-search" }}
 </section>
 
-<section class="max-w-6xl mx-auto px-6 pb-20" id="plugins-list" hx-get="/hx/plugins" hx-trigger="load"
-    hx-swap="innerHTML" hx-target="#plugins-list" hx-include="#plugin-search-form"
-    hx-params="not tag-search,author-search">
-    <div id="plugins-loading" class="flex justify-center items-center py-10">
-        <svg class="animate-spin h-8 w-8 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none"
-            viewBox="0 0 24 24">
-            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
-        </svg>
-        <span class="ml-3 text-gray-400">Loading plugins...</span>
-    </div>
-
-    <script>
-        document.body.addEventListener('htmx:afterSwap', function (evt) {
-            if (evt.detail.target?.id === "plugins-loading") {
-                document.getElementById("plugins-loading")?.remove();
-            }
-        });
-    </script>
+<section class="max-w-6xl mx-auto px-6 pb-20" id="plugins-list">
+    {{ include "components/plugin-list" }}
 </section>

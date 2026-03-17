@@ -15,6 +15,11 @@ type Filter struct {
 }
 
 func HomepageHtml(c fiber.Ctx) error {
+	repositories, privatePlugins, err := buildRepositories(c)
+	if err != nil {
+		return err
+	}
+
 	return c.Render("homepage", fiber.Map{
 		"RepositoryCount":      state.GetUrlsSize(),
 		"PluginsTotalCount":    state.GetRepositoriesSize(),
@@ -22,6 +27,8 @@ func HomepageHtml(c fiber.Ctx) error {
 		"PluginsSenitherCount": state.GetSenitherPluginSize(),
 		"Authors":              state.GetRepositoryAuthors(),
 		"Tags":                 state.GetRepositoryTags(),
+		"Plugins":              repositories,
+		"IsPrivatePlugin":      privatePlugins,
 	}, "layouts/app")
 }
 
@@ -30,9 +37,21 @@ func HomepageJson(c fiber.Ctx) error {
 }
 
 func RenderPluginListComponent(c fiber.Ctx) error {
+	repositories, privatePlugins, err := buildRepositories(c)
+	if err != nil {
+		return err
+	}
+
+	return c.Render("components/plugin-list", fiber.Map{
+		"Plugins":         repositories,
+		"IsPrivatePlugin": privatePlugins,
+	})
+}
+
+func buildRepositories(c fiber.Ctx) ([]state.Repository, fiber.Map, error) {
 	repositories := state.GetRepositories()
 
-	var privatePlugins fiber.Map = make(fiber.Map)
+	privatePlugins := make(fiber.Map)
 	for _, repo := range repositories {
 		privatePlugins[repo.InternalName] = repo.RepositoryOrigin.IsPrivatePlugin != nil &&
 			*repo.RepositoryOrigin.IsPrivatePlugin
@@ -40,7 +59,7 @@ func RenderPluginListComponent(c fiber.Ctx) error {
 
 	var filter Filter
 	if err := c.Bind().Query(&filter); err != nil {
-		return err
+		return nil, nil, err
 	}
 
 	repositories = filter.bySearch(repositories)
@@ -48,9 +67,9 @@ func RenderPluginListComponent(c fiber.Ctx) error {
 	repositories = filter.byAuthors(repositories)
 	sortRepositories(repositories, c.Query("sort"))
 
-	return c.Render("components/plugin-list", fiber.Map{
-		"Plugins":         repositories,
-		"IsPrivatePlugin": privatePlugins,
+	return repositories, privatePlugins, nil
+}
+
 func (f *Filter) bySearch(repositories []state.Repository) []state.Repository {
 	if f.Search == "" {
 		return repositories
