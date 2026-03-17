@@ -1,5 +1,5 @@
 <h2 class="text-2xl font-bold text-white mb-6">Available Plugins</h2>
-<form id="plugin-search-form" class="space-y-3" hx-get="/hx/plugins" hx-target="#plugins-list"
+<form id="plugin-search-form" class="space-y-3" data-total-plugins="{{ PluginsTotalCount }}" hx-get="/hx/plugins" hx-target="#plugins-list"
     hx-trigger="submit, change delay:300ms from:#filters, input delay:400ms from:#plugin-search" hx-sync="this:replace"
     hx-params="not tag-search,author-search">
     <div>
@@ -80,7 +80,7 @@
         <!-- Sort Dropdown -->
         <div class="relative w-fit shrink-0">
             <select id="sort-plugins" name="sort"
-                class="appearance-none rounded-lg border border-gray-700 bg-gray-900 px-3 py-2 pr-3 text-sm text-gray-200 outline-none transition-colors hover:border-gray-600 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500">
+                class="cursor-pointer appearance-none rounded-lg border border-gray-700 bg-gray-900 px-3 py-2 pr-3 text-sm text-gray-200 outline-none transition-colors hover:border-gray-600 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500">
                 <option value="name-asc" selected>Name (A-Z)</option>
                 <option value="name-desc">Name (Z-A)</option>
                 <option value="downloads-asc">Most downloads</option>
@@ -97,7 +97,7 @@
         </div>
 
         <button id="clear-filters-button" type="button"
-            class="hidden rounded-lg border border-gray-700 bg-gray-950 px-3 py-2 text-sm text-gray-200 transition-colors hover:border-gray-600 hover:bg-gray-800 hover:text-white">
+            class="hidden cursor-pointer rounded-lg border border-gray-700 bg-gray-950 px-3 py-2 text-sm text-gray-200 transition-colors hover:border-gray-600 hover:bg-gray-800 hover:text-white">
             <span class="flex items-center gap-1">
                 <svg class="size-4 opacity-80" data-slot="icon" fill="none" stroke-width="1.5" stroke="currentColor"
                     viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
@@ -115,7 +115,32 @@
     </div>
 </form>
 
-<script>const TOTAL_PLUGINS = {{ PluginsTotalCount }}</script>
+<div id="no-results-card"
+    class="hidden mt-6 rounded-2xl border border-gray-800 bg-linear-to-br from-gray-900 via-gray-950 to-gray-900 p-8 text-center shadow-2xl shadow-black/20">
+    <div
+        class="mx-auto mb-4 flex size-14 items-center justify-center rounded-2xl border border-indigo-500/20 bg-indigo-500/10 text-indigo-200">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+            class="size-7">
+            <path stroke-linecap="round" stroke-linejoin="round"
+                d="m15.75 15.75 2.489 2.489m0 0 2.261 2.261m-2.261-2.261A8.966 8.966 0 0 1 12 21a9 9 0 1 1 6.239-2.761Z" />
+        </svg>
+    </div>
+    <h3 class="text-lg font-semibold text-white">No plugins matched your filters</h3>
+    <p class="mx-auto mt-2 max-w-3xl text-sm leading-6 text-gray-400">
+        Try clearing one or two filters, broadening your search text, or switching the selected author or tag to find
+        more results.
+    </p>
+
+    <button id="no-results-clear-filters" type="button"
+        class="cursor-pointer mt-6 inline-flex items-center gap-2 rounded-lg border border-gray-700 bg-gray-900 px-4 py-2 text-sm font-medium text-gray-200 transition-colors hover:border-gray-600 hover:bg-gray-800 hover:text-white">
+        <svg class="size-4 opacity-80" fill="none" stroke-width="1.5" stroke="currentColor" viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12"></path>
+        </svg>
+        Clear filters
+    </button>
+</div>
+
 <script>
     (function () {
         const DEFAULT_SORT = 'name-asc'
@@ -151,15 +176,19 @@
         const sortSelect = document.getElementById('sort-plugins')
         const sortWidthProbe = document.getElementById('sort-width-probe')
         const clearButton = document.getElementById('clear-filters-button')
+        const noResultsClearButton = document.getElementById('no-results-clear-filters')
         const searchCount = document.getElementById('search-count')
+        const noResultsCard = document.getElementById('no-results-card')
         const selectedFilters = document.getElementById('selected-filters')
         const selectedFilterBadges = document.getElementById('selected-filter-badges')
         const dropdowns = dropdownConfigs.map((config) => document.getElementById(config.detailsId)).filter((details) => details)
 
-        if (!form || !searchInput || !filters || !sortSelect || !sortWidthProbe || !clearButton || !searchCount || !selectedFilters || !selectedFilterBadges) {
+        if (!form || !searchInput || !filters || !sortSelect || !sortWidthProbe || !clearButton || !searchCount || !noResultsCard || !selectedFilters || !selectedFilterBadges) {
             console.error('Plugin search form is missing required elements.')
             return
         }
+
+        const totalPlugins = Number(form.dataset.totalPlugins || 0)
 
         if (window.__pluginSearchAbortController) {
             window.__pluginSearchAbortController.abort()
@@ -433,11 +462,13 @@
 
             if (visibleCount === 0) {
                 searchCount.textContent = 'No plugins found'
-            } else if (visibleCount === TOTAL_PLUGINS) {
-                searchCount.textContent = TOTAL_PLUGINS + ' plugins'
+            } else if (visibleCount === totalPlugins) {
+                searchCount.textContent = totalPlugins + ' plugins'
             } else {
-                searchCount.textContent = visibleCount + ' of ' + TOTAL_PLUGINS + ' plugins shown'
+                searchCount.textContent = visibleCount + ' of ' + totalPlugins + ' plugins shown'
             }
+
+            noResultsCard.classList.toggle('hidden', visibleCount !== 0)
 
             updateClearFiltersButton()
             updateFilterUrl()
@@ -495,6 +526,9 @@
 
         form.addEventListener('reset', handleFormReset)
         clearButton.addEventListener('click', clearAllFilters)
+        if (noResultsClearButton) {
+            noResultsClearButton.addEventListener('click', clearAllFilters)
+        }
 
         sortSelect.addEventListener('change', function () {
             updateSortWidth()
