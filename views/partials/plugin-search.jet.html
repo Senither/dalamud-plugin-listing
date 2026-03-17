@@ -107,7 +107,7 @@
             </span>
         </button>
 
-        <p id="search-count" class="hidden text-sm text-gray-500 md:ml-auto"></p>
+        <p id="search-count" class="text-sm text-gray-500 md:ml-auto"></p>
     </div>
 
     <div id="selected-filters" class="hidden flex-wrap gap-2">
@@ -115,6 +115,7 @@
     </div>
 </form>
 
+<script>const TOTAL_PLUGINS = {{ PluginsTotalCount }}</script>
 <script>
     (function () {
         const DEFAULT_SORT = 'name-asc'
@@ -159,6 +160,14 @@
             console.error('Plugin search form is missing required elements.')
             return
         }
+
+        if (window.__pluginSearchAbortController) {
+            window.__pluginSearchAbortController.abort()
+        }
+
+        const eventController = new AbortController()
+        const eventListenerOptions = { signal: eventController.signal }
+        window.__pluginSearchAbortController = eventController
 
         function getCheckedInputs(name) {
             return Array.from(document.querySelectorAll('input[name="' + name + '"]:checked'))
@@ -356,7 +365,7 @@
                         details.open = false
                     }
                 })
-            })
+            }, eventListenerOptions)
 
             document.addEventListener('keydown', function (event) {
                 if (event.key !== 'Escape') {
@@ -366,7 +375,7 @@
                 dropdowns.forEach(function (details) {
                     details.open = false
                 })
-            })
+            }, eventListenerOptions)
         }
 
         function updateSortWidth() {
@@ -422,15 +431,22 @@
                 }
             })
 
-            if (query) {
-                searchCount.textContent = visibleCount + ' of ' + cards.length + ' plugins shown'
-                searchCount.classList.remove('hidden')
+            if (visibleCount === 0) {
+                searchCount.textContent = 'No plugins found'
+            } else if (visibleCount === TOTAL_PLUGINS) {
+                searchCount.textContent = TOTAL_PLUGINS + ' plugins'
             } else {
-                searchCount.classList.add('hidden')
+                searchCount.textContent = visibleCount + ' of ' + TOTAL_PLUGINS + ' plugins shown'
             }
 
             updateClearFiltersButton()
             updateFilterUrl()
+        }
+
+        function queueSearchResultsUpdate() {
+            window.requestAnimationFrame(function () {
+                window.requestAnimationFrame(updateSearchResults)
+            })
         }
 
         function clearAllFilters() {
@@ -487,12 +503,12 @@
         })
 
         searchInput.addEventListener('input', updateSearchResults)
-        updateSearchResults()
+        queueSearchResultsUpdate()
 
         document.addEventListener('htmx:afterSettle', function (evt) {
             if (evt.detail.target && evt.detail.target.id === 'plugins-list') {
-                updateSearchResults()
+                queueSearchResultsUpdate()
             }
-        })
+        }, eventListenerOptions)
     })()
 </script>
