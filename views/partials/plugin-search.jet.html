@@ -1,6 +1,7 @@
 <h2 class="text-2xl font-bold text-white mb-6">Available Plugins</h2>
 <form id="plugin-search-form" class="space-y-3" hx-get="/hx/plugins" hx-target="#plugins-list"
-    hx-trigger="submit, change delay:300ms from:#filters" hx-params="not tag-search,author-search">
+    hx-trigger="submit, change delay:300ms from:#filters, input delay:400ms from:#plugin-search" hx-sync="this:replace"
+    hx-params="not tag-search,author-search">
     <div>
         <input type="text" id="plugin-search" name="search"
             placeholder="Search plugins by name, author, or description..."
@@ -415,7 +416,7 @@
             triggerFiltersReload()
 
             dropdownConfigs.forEach(updateDropdownLabel)
-            searchInput.dispatchEvent(new Event('input'))
+            updateSearchResults()
         }
 
         function handleFormReset() {
@@ -451,6 +452,12 @@
         })
 
         searchInput.addEventListener('input', updateSearchResults)
-        searchInput.dispatchEvent(new Event('input'))
+        updateSearchResults()
+
+        document.addEventListener('htmx:afterSettle', function (evt) {
+            if (evt.detail.target && evt.detail.target.id === 'plugins-list') {
+                updateSearchResults()
+            }
+        })
     })()
 </script>

@@ -9,6 +9,7 @@ import (
 )
 
 type Filter struct {
+	Search  string   `query:"search"`
 	Tags    []string `query:"tag"`
 	Authors []string `query:"author"`
 }
@@ -42,6 +43,7 @@ func RenderPluginListComponent(c fiber.Ctx) error {
 		return err
 	}
 
+	repositories = filter.bySearch(repositories)
 	repositories = filter.byTags(repositories)
 	repositories = filter.byAuthors(repositories)
 	sortRepositories(repositories, c.Query("sort"))
@@ -49,7 +51,23 @@ func RenderPluginListComponent(c fiber.Ctx) error {
 	return c.Render("components/plugin-list", fiber.Map{
 		"Plugins":         repositories,
 		"IsPrivatePlugin": privatePlugins,
-	})
+func (f *Filter) bySearch(repositories []state.Repository) []state.Repository {
+	if f.Search == "" {
+		return repositories
+	}
+
+	query := strings.ToLower(f.Search)
+
+	var filtered []state.Repository
+	for _, repo := range repositories {
+		if strings.Contains(strings.ToLower(repo.Name), query) ||
+			strings.Contains(strings.ToLower(repo.Description), query) ||
+			strings.Contains(strings.ToLower(repo.Author), query) {
+			filtered = append(filtered, repo)
+		}
+	}
+
+	return filtered
 }
 
 func (f *Filter) byTags(repositories []state.Repository) []state.Repository {
