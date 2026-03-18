@@ -165,7 +165,7 @@
         <h2 class="mt-8 text-2xl font-bold text-white">Tags</h2>
         <div class="mt-4 flex flex-wrap gap-2">
             {{range _, tag := Plugin.Tags}}
-            <a href="/?tag={{tag}}"
+            <a href="/?tag={{tag|lower}}"
                 class="rounded-md border border-gray-700 bg-gray-950/70 px-3 py-1.5 text-xs font-medium text-gray-300">
                 {{tag}}
             </a>

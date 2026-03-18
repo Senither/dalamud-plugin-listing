@@ -106,8 +106,8 @@ func GetRepositoriesSize() int {
 	return len(repositories)
 }
 
-func GetRepositoryTags() []string {
-	tagMap := make(map[string]string)
+func GetRepositoryTags() map[string]string {
+	tags := make(map[string]string)
 
 	for _, repository := range repositories {
 		for _, tag := range repository.Tags {
@@ -117,22 +117,27 @@ func GetRepositoryTags() []string {
 			}
 
 			key := strings.ToLower(normalizedTag)
-			if _, exists := tagMap[key]; !exists {
-				tagMap[key] = normalizedTag
+			if _, exists := tags[key]; !exists {
+				tags[key] = normalizedTag
 			}
 		}
 	}
 
-	tags := make([]string, 0, len(tagMap))
-	for _, tag := range tagMap {
-		tags = append(tags, tag)
+	tagSlice := make([]string, 0, len(tags))
+	for _, tag := range tags {
+		tagSlice = append(tagSlice, tag)
 	}
 
-	sort.Slice(tags, func(i, j int) bool {
-		return strings.ToLower(tags[i]) < strings.ToLower(tags[j])
+	sort.Slice(tagSlice, func(i, j int) bool {
+		return strings.ToLower(tagSlice[i]) < strings.ToLower(tagSlice[j])
 	})
 
-	return tags
+	sortedTags := make(map[string]string)
+	for _, tag := range tagSlice {
+		sortedTags[strings.ToLower(tag)] = tag
+	}
+
+	return sortedTags
 }
 
 func GetRepositoryAuthors() []string {

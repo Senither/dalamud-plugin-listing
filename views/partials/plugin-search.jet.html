@@ -30,10 +30,10 @@
                     </div>
 
                     <div id="filter-tag-options" class="max-h-56 space-y-2 overflow-y-auto pr-1">
-                        {{range _, tag := Tags}}
+                        {{range key, tag := Tags}}
                         <label data-filter-option
                             class="flex items-center gap-3 rounded-lg border border-gray-700 bg-gray-900 px-3 py-2 text-sm text-gray-200">
-                            <input type="checkbox" name="tag" value="{{tag}}"
+                            <input type="checkbox" name="tag" value="{{key}}"
                                 class="size-4 rounded border-gray-600 bg-gray-900 text-indigo-500 focus:ring-indigo-500" />
                             <span>{{tag}}</span>
                         </label>
