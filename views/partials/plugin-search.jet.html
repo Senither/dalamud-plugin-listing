@@ -537,7 +537,12 @@
         })
 
         searchInput.addEventListener('input', updateSearchResults)
-        queueSearchResultsUpdate()
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', queueSearchResultsUpdate, { once: true })
+        } else {
+            queueSearchResultsUpdate()
+        }
 
         document.addEventListener('htmx:afterSettle', function (evt) {
             if (evt.detail.target && evt.detail.target.id === 'plugins-list') {
