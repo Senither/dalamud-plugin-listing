@@ -79,7 +79,8 @@ func createFiberApp() *fiber.App {
 	}))
 
 	app.Use(logger.New(logger.Config{
-		Format: "${time} | ${status} | ${latency} | ${ip} | ${method} | ${path} | ${error}\n",
+		CustomTags: map[string]logger.LogFunc{"realIP": middleware.RequestIP},
+		Format:     "${time} | ${status} | ${latency} | ${realIP} | ${method} | ${path} | ${error}\n",
 	}))
 
 	app.Use(responsetime.New())
