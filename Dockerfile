@@ -13,7 +13,7 @@ RUN npm install
 RUN npm run build
 
 # Setup the Go build stage
-FROM golang:1.22 AS go-build
+FROM golang:1.26 AS go-build
 
 # Enable Go modules
 ARG CGO_ENABLED=0

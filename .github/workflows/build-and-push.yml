@@ -1,15 +1,13 @@
 name: Build and Push Images
 
 on:
-    push:
-      branches:
-        - main
+  push:
+    branches:
+      - main
 
 jobs:
   tests:
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: true
     permissions:
       contents: read
       packages: write
@@ -23,7 +21,7 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v5
         with:
-          go-version: '1.22'
+          go-version: "1.26"
 
       - run: go version
 
@@ -39,8 +37,6 @@ jobs:
   build-and-push-image:
     runs-on: ubuntu-latest
     needs: tests
-    strategy:
-      fail-fast: true
     permissions:
       contents: read
       packages: write

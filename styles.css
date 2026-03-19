@@ -1,3 +1,35 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+@layer utilities {
+    .bg-grid-pattern {
+        isolation: isolate;
+        position: relative;
+    }
+
+    .bg-grid-pattern::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        z-index: -1;
+        background-image:
+            linear-gradient(to right, rgb(255 255 255 / 0.04) 1px, transparent 1px),
+            linear-gradient(to bottom, rgb(255 255 255 / 0.04) 1px, transparent 1px);
+        background-size: 48px 48px;
+        mask-image: linear-gradient(to bottom, black 0px, transparent 800px);
+        -webkit-mask-image: linear-gradient(to bottom, black 0px, transparent 800px);
+    }
+}
+
+.bg-grid-pattern::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: -2;
+    background-image: linear-gradient(to bottom, rgb(67 56 202 / 0.35) 0px, transparent 800px);
+}
+
+code {
+    @apply text-white bg-gray-950/60 hover:bg-gray-950/20 transition-colors rounded px-3 py-1.5 font-mono text-sm;
+}

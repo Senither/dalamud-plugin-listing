@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/url"
 	"os"
+	"sort"
 	"strings"
 	"time"
 )
@@ -54,6 +55,11 @@ var (
 	repositoryLastUpdatedAt = time.Now().Unix()
 )
 
+func TouchRepository(repo Repository) {
+	repo.RepositoryOrigin.LastUpdatedAt = time.Now().Unix()
+	UpsertRepository(repo)
+}
+
 func UpsertRepository(repo Repository) {
 	if repo.RepoUrl == nil || *repo.RepoUrl == "" {
 		repo.RepoUrl = findRepositoryUrl(repo)
@@ -100,6 +106,69 @@ func GetRepositoriesSize() int {
 	return len(repositories)
 }
 
+func GetRepositoryTags() map[string]string {
+	tags := make(map[string]string)
+
+	for _, repository := range repositories {
+		for _, tag := range repository.Tags {
+			normalizedTag := strings.Trim(strings.TrimSpace(tag), "\"")
+			if normalizedTag == "" {
+				continue
+			}
+
+			key := strings.ToLower(normalizedTag)
+			if _, exists := tags[key]; !exists {
+				tags[key] = normalizedTag
+			}
+		}
+	}
+
+	tagSlice := make([]string, 0, len(tags))
+	for _, tag := range tags {
+		tagSlice = append(tagSlice, tag)
+	}
+
+	sort.Slice(tagSlice, func(i, j int) bool {
+		return strings.ToLower(tagSlice[i]) < strings.ToLower(tagSlice[j])
+	})
+
+	sortedTags := make(map[string]string)
+	for _, tag := range tagSlice {
+		sortedTags[strings.ToLower(tag)] = tag
+	}
+
+	return sortedTags
+}
+
+func GetRepositoryAuthors() []string {
+	authorMap := make(map[string]string)
+
+	for _, repository := range repositories {
+		for _, author := range strings.Split(repository.Author, ",") {
+			normalizedAuthor := strings.TrimSpace(author)
+			if normalizedAuthor == "" {
+				continue
+			}
+
+			key := strings.ToLower(normalizedAuthor)
+			if _, exists := authorMap[key]; !exists {
+				authorMap[key] = normalizedAuthor
+			}
+		}
+	}
+
+	authors := make([]string, 0, len(authorMap))
+	for _, author := range authorMap {
+		authors = append(authors, author)
+	}
+
+	sort.Slice(authors, func(i, j int) bool {
+		return strings.ToLower(authors[i]) < strings.ToLower(authors[j])
+	})
+
+	return authors
+}
+
 func GetRepositoriesByOriginUrl(url string) []Repository {
 	var filteredRepos []Repository
 
@@ -131,6 +200,16 @@ func GetRepositoryByGitHubReleaseRepositoryName(repoName string) *Repository {
 		if ip.Private && strings.Contains(*downloadLink, localLink) {
 			return &repository
 		} else if !ip.Private && strings.Contains(*downloadLink, githubLink) {
+			return &repository
+		}
+	}
+
+	return nil
+}
+
+func GetRepositoryByAuthorAndInternalName(author string, internalName string) *Repository {
+	for _, repository := range GetRepositories() {
+		if repository.Author == author && repository.InternalName == internalName {
 			return &repository
 		}
 	}

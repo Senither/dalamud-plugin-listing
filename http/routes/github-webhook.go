@@ -1,11 +1,13 @@
-package http
+package routes
 
 import (
+	"bytes"
 	"encoding/json"
 	"log/slog"
 	"net/http"
 	"time"
 
+	"github.com/gofiber/fiber/v3"
 	"github.com/senither/dalamud-plugin-listing/cron/jobs"
 	"github.com/senither/dalamud-plugin-listing/state"
 )
@@ -20,20 +22,18 @@ type GitHubWebhookRepository struct {
 	FullName string `json:"full_name"`
 }
 
-func handleGitHubReleaseWebhook(w http.ResponseWriter, r *http.Request) {
-	slog.InfoContext(r.Context(), "Handling GitHub release webhook",
-		"method", r.Method,
-		"path", r.URL.Path,
-		"remote", GetRequestIP(r),
+func GitHubReleaseWebhook(c fiber.Ctx) error {
+	slog.InfoContext(c, "Handling GitHub release webhook",
+		"remote", c.IP(),
 	)
 
 	var req GitHubWebhookRequest = GitHubWebhookRequest{}
-	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+	if err := json.NewDecoder(bytes.NewReader(c.Body())).Decode(&req); err != nil {
 		slog.Error("Failed to decode GitHub release webhook request",
 			"error", err,
 		)
-		http.Error(w, "Failed to decode request", http.StatusBadRequest)
-		return
+
+		return c.Status(http.StatusBadRequest).SendString("Failed to decode request")
 	}
 
 	for _, internalPlugin := range state.GetInternalPlugins() {
@@ -50,10 +50,9 @@ func handleGitHubReleaseWebhook(w http.ResponseWriter, r *http.Request) {
 				jobs.RunGitHubReleaseUpdateJob(req.Repository.FullName)
 			}()
 
-			w.WriteHeader(http.StatusAccepted)
-			return
+			return c.SendStatus(fiber.StatusAccepted)
 		}
 	}
 
-	w.WriteHeader(http.StatusNotFound)
+	return c.SendStatus(fiber.StatusNotFound)
 }

@@ -138,6 +138,16 @@ func runUpdatePluginRelease(ip *state.InternalPlugin) {
 		slog.Info("No changes detected in releases, skipping processing",
 			"repoName", ip.Name,
 		)
+
+		repository := state.GetRepositoryByGitHubReleaseRepositoryName(ip.Name)
+		if repository != nil {
+			slog.Info("Touching repository to update timestamp",
+				"repoName", ip.Name,
+			)
+
+			state.TouchRepository(*repository)
+		}
+
 		return
 	}
 

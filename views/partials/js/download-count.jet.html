@@ -1,0 +1,12 @@
+<script>
+    document.querySelectorAll('[data-download-count]').forEach(function (element) {
+        let rawValue = (element.dataset.downloadCount || '').trim()
+        let numericValue = Number(rawValue)
+
+        if (!rawValue || Number.isNaN(numericValue)) {
+            return
+        }
+
+        element.textContent = new Intl.NumberFormat('en-US').format(numericValue) + ' downloads'
+    })
+</script>
