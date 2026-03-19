@@ -1,12 +1,10 @@
-# Dalamud Plugin Listing
+# Dalamud Plugin List
 
-Dalamud Plugin Listing is a small web application that combines all the plugin repositories I use when playing FFXIV, and combines them into a single list. This removes all the clutter of having 15+ different repositories saved, and instead provides a single URL that provides all the plugins I want to use.
-
-The project is my first attempt at using Go, and is in no way perfect. I'm sure there are many things that could be done better, and I'm open to suggestions.
+Dalamud Plugin List is a small web application that combines a bunch of plugin repositories for Final Fantasy 14, and then serves them as a single list that can be used to install and receive updates for all the available plugins. This removes all the clutter of having 20+ different repositories saved, and instead provides a single URL that provides all the plugins you might want to use.
 
 ## Prerequisites
 
- - Go version 1.20 or later
+ - Go version 1.25 or later
  - NodeJS version 22.0.0 or later
 
 ## Installation
@@ -27,31 +25,32 @@ npm install
 go mod download
 ```
 
-Now we can build the Tailwind CSS file by using `npx`.
+Now we can build the Tailwind CSS file by using the `build` or `dev` scripts.
 
 ```bash
-npx tailwindcss -i ./styles.css -o ./assets/styles.css
+# Builds, minimizes, and optimizes the styles.css file
+npm run build
+# Starts a watching to rebuild the styles anytime any of the files changes
+npm run dev
 ```
 
-We're not finally ready to launch the service.
+We're now finally ready to launch the service.
 
 ```bash
 go run main.go
 ```
 
-## Building with Docker
+> It's recommend to use [air](https://github.com/air-verse/air) during development for quickly reloading the application on file changes.
 
-Building the application is made easy with Docker, the project comes with a `docker-compose.yml` file that sets up the necessary names and image tags up, so to build the image you can run the following command.
+## Starting with Docker
 
-```bash
-docker compose build plugin-listing
-```
-
-From here you can just start up the container with `docker compose up -d`, alternatively you can directly re-build the image with the `up` command as well.
+Starting the application is made easy with Docker, the project comes with a `docker-compose.yml` file that sets up the necessary names and image tags, so to start the application you can run the following command.
 
 ```bash
-docker compose up -d --build
+docker compose up -d
 ```
+
+The image will be built automatically the first time you start the application, and on subsequent runs it will boot up instantly. You can also pass the `--build` flag to rebuild the application image if you already have the image locally.
 
 ## Testing
 
