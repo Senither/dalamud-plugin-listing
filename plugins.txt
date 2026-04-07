@@ -1,2 +1,2 @@
 Senither/Auto-Multimode
-P:Senither/AutoWeeklyCap
+Senither/AutoWeeklyCap
