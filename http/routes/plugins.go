@@ -37,7 +37,7 @@ func PluginJson(c fiber.Ctx) error {
 		return RenderErrorPage(c, 404, "Plugin Not Found", "No plugin was found with the given name.")
 	}
 
-	return c.JSON(plugin)
+	return c.JSON([]state.Repository{*plugin})
 }
 
 func SearchPluginsByName(c fiber.Ctx) error {
