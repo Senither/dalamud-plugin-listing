@@ -7,6 +7,7 @@ import (
 	"net/url"
 	"os"
 	"sort"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -92,8 +93,8 @@ func GetRepositories() []Repository {
 
 	for i, repository := range repositories {
 		if repository.DalamudApiLevel != nil {
-			level, ok := repository.DalamudApiLevel.(float64)
-			if ok {
+			level, err := strconv.ParseFloat(fmt.Sprintf("%+v", repository.DalamudApiLevel), 64)
+			if err == nil {
 				repositories[i].IsOutdated = level != latestDalamudApiLevel
 			}
 		}
