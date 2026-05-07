@@ -31,3 +31,5 @@ https://raw.githubusercontent.com/TomestoneGG/Dalamud.Tomestone/master/repo.json
 https://raw.githubusercontent.com/Eisenhuth/TrustworthyDalamudPlugins/master/pluginmaster.json
 https://raw.githubusercontent.com/OhKannaDuh/plugins/refs/heads/master/manifest.json
 https://raw.githubusercontent.com/Ricimon/FFXIV-ProximityVoiceChat/refs/heads/master/repo.json
+https://repo.lightless-sync.org/
+https://raw.githubusercontent.com/Ottermandias/SeaOfStars/main/repo.json
