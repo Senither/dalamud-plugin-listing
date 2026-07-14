@@ -1,2 +1,3 @@
 Senither/Auto-Multimode
 Senither/AutoWeeklyCap
+P:Senither/DalamudMediaPlayer
