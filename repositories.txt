@@ -34,3 +34,4 @@ https://raw.githubusercontent.com/Ricimon/FFXIV-ProximityVoiceChat/refs/heads/ma
 https://raw.githubusercontent.com/anomek/MyDalamudPlugins/master/pluginmaster.json
 https://raw.githubusercontent.com/marzent/IINACT/main/repo.json
 https://raw.githubusercontent.com/LegendsOfTheGame/TimeMemoriaV3/main/repo.json
+https://raw.githubusercontent.com/LegendsOfTheGame/BestiaryMapper/master/repo.json
